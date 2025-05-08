@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zed Champions Predictor</title>
+  <style>
+    /* —— Reset & Base —— */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; padding: 20px; }
+    h1, h2 { margin-bottom: 10px; }
+
+    /* —— Container —— */
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+    /* —— Form Inputs & Buttons —— */
+    .input-group { margin-bottom: 10px; }
+    .input-group input {
+      width: calc(25% - 10px);
+      padding: 8px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #0077cc;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #005fa3; }
+
+    /* —— Horse Table —— */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background: #f7fafc; }
+
+    /* —— Result Box —— */
+    #result {
+      padding: 15px;
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ZedChampions Predictor</h1>
+
+    <!-- Add Horse Form -->
+    <div id="add-horse-section">
+      <h2>Add a Horse</h2>
+      <div class="input-group">
+        <input type="text" id="horseName" placeholder="Name" />
+        <input type="number" id="horseSpeed" placeholder="Speed" />
+        <input type="number" id="horseStamina" placeholder="Stamina" />
+        <input type="number" id="horseAccel" placeholder="Acceleration" />
+        <button id="addHorseBtn">Add Horse</button>
+      </div>
+    </div>
+
+    <!-- Horse List Table -->
+    <h2>My Horses</h2>
+    <table id="horseTable">
+      <thead>
+        <tr><th>Name</th><th>Speed</th><th>Stamina</th><th>Acceleration</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- Action Buttons -->
+    <button id="predictFastestBtn">Predict Fastest Horse</button>
+    <button id="bestBreedingBtn">Find Best Breeding Pair</button>
+
+    <!-- Results -->
+    <div id="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    // —— Data Store —— 
+    const horses = [];
+
+    // —— Utility: redraw table —— 
+    function renderTable() {
+      const tbody = document.querySelector('#horseTable tbody');
+      tbody.innerHTML = '';
+      horses.forEach((h, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${h.name}</td>
+          <td>${h.speed}</td>
+          <td>${h.stamina}</td>
+          <td>${h.acceleration}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // —— Add Horse Handler —— 
+    document.getElementById('addHorseBtn').addEventListener('click', () => {
+      const name = document.getElementById('horseName').value.trim();
+      const speed = parseFloat(document.getElementById('horseSpeed').value);
+      const stamina = parseFloat(document.getElementById('horseStamina').value);
+      const acceleration = parseFloat(document.getElementById('horseAccel').value);
+
+      if (!name || isNaN(speed) || isNaN(stamina) || isNaN(acceleration)) {
+        alert('Please fill out all fields correctly.');
+        return;
+      }
+
+      horses.push({ name, speed, stamina, acceleration });
+      renderTable();
+      // clear inputs
+      document.getElementById('horseName').value = '';
+      document.getElementById('horseSpeed').value = '';
+      document.getElementById('horseStamina').value = '';
+      document.getElementById('horseAccel').value = '';
+    });
+
+    // —— Performance Formula —— 
+    function performance(h) {
+      // tweak weights as desired
+      return h.speed * 0.5 + h.stamina * 0.3 + h.acceleration * 0.2;
+    }
+
+    // —— Predict Fastest —— 
+    document.getElementById('predictFastestBtn').addEventListener('click', () => {
+      if (horses.length === 0) {
+        alert('Add at least one horse first.');
+        return;
+      }
+      let best = horses[0];
+      horses.forEach(h => {
+        if (performance(h) > performance(best)) best = h;
+      });
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+      result.innerHTML = `<strong>Fastest Horse:</strong> ${best.name} 
+        (Score: ${performance(best).toFixed(2)})`;
+    });
+
+    // —— Predict Foal Performance as avg of parents —— 
+    function foalPerformance(h1, h2) {
+      return (
+        ((h1.speed + h2.speed) / 2) * 0.5 +
+        ((h1.stamina + h2.stamina) / 2) * 0.3 +
+        ((h1.acceleration + h2.acceleration) / 2) * 0.2
+      );
+    }
+
+    // —— Find Best Breeding Pair —— 
+    document.getElementById('bestBreedingBtn').addEventListener('click', () => {
+      if (horses.length < 2) {
+        alert('Need at least two horses to breed.');
+        return;
+      }
+      let bestPair = null;
+      let bestScore = -Infinity;
+      // brute-force all pairs
+      for (let i = 0; i < horses.length; i++) {
+        for (let j = i + 1; j < horses.length; j++) {
+          const score = foalPerformance(horses[i], horses[j]);
+          if (score > bestScore) {
+            bestScore = score;
+            bestPair = [horses[i], horses[j]];
+          }
+        }
+      }
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+      result.innerHTML = `
+        <strong>Best Breeding Pair:</strong><br/>
+        ${bestPair[0].name} &amp; ${bestPair[1].name}<br/>
+        <strong>Predicted Foal Score:</strong> ${bestScore.toFixed(2)}
+      `;
+    });
+  </script>
+</body>
+</html>
+<!-- End of HTML Document -->
