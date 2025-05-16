@@ -1,229 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stable Tool</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zed Champions Predictor</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    /* —— Reset & Base —— */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f4f8; color: #333; padding: 20px; }
     h1, h2 { margin-bottom: 10px; }
-    .section { margin-bottom: 20px; }
-    .section form input, .section form select { margin-right: 10px; margin-bottom: 10px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
-    button { padding: 8px 14px; border: none; border-radius: 4px; background: #0077cc; color: #fff; cursor: pointer; }
+
+    /* —— Container —— */
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+    /* —— Form Inputs & Buttons —— */
+    .input-group { margin-bottom: 10px; }
+    .input-group input {
+      width: calc(25% - 10px);
+      padding: 8px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #0077cc;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
     button:hover { background: #005fa3; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #f7f7f7; }
-    #result { padding: 12px; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 4px; margin-top: 10px; }
+
+    /* —— Horse Table —— */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background: #f7fafc; }
+
+    /* —— Result Box —— */
+    #result {
+      padding: 15px;
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Stable Tool</h1>
+    <h1>ZedChampions Predictor</h1>
 
-    <!-- Manual Entry: Horses -->
-    <div class="section" id="horses-section">
-      <h2>Horses</h2>
-      <form id="horse-form">
-        <input type="text" id="horse-name" placeholder="Name" required>
-        <input type="number" id="horse-speed" placeholder="Speed" required>
-        <input type="number" id="horse-stamina" placeholder="Stamina" required>
-        <input type="number" id="horse-accel" placeholder="Acceleration" required>
-        <select id="horse-color" required></select>
-        <select id="horse-breed" required></select>
-        <select id="horse-sire"></select>
-        <select id="horse-dam"></select>
-        <button type="button" id="add-horse-btn">Add Horse</button>
-      </form>
-      <table id="horses-table">
-        <thead><tr>
-          <th>Name</th><th>Speed</th><th>Stamina</th><th>Accel</th>
-          <th>Color</th><th>Breed</th><th>Sire</th><th>Dam</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
+    <!-- Add Horse Form -->
+    <div id="add-horse-section">
+      <h2>Add a Horse</h2>
+      <div class="input-group">
+        <input type="text" id="horseName" placeholder="Name" />
+        <input type="number" id="horseSpeed" placeholder="Speed" />
+        <input type="number" id="horseStamina" placeholder="Stamina" />
+        <input type="number" id="horseAccel" placeholder="Acceleration" />
+        <button id="addHorseBtn">Add Horse</button>
+      </div>
     </div>
 
-    <!-- Manual Entry: Races -->
-    <div class="section" id="races-section">
-      <h2>Races</h2>
-      <form id="race-form">
-        <select id="race-horse" required></select>
-        <input type="text" id="race-augment" placeholder="Augment Used" required>
-        <input type="number" id="race-time" placeholder="Finish Time" step="0.01" required>
-        <input type="number" id="race-pot" placeholder="Race Pot Amount" step="0.01" required>
-        <input type="number" id="race-net" placeholder="Net Won/Lost" step="0.01" required>
-        <button type="button" id="add-race-btn">Add Race</button>
-      </form>
-      <table id="races-table">
-        <thead><tr>
-          <th>Horse</th><th>Augment</th><th>Time</th><th>Pot</th><th>Net</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <!-- Horse List Table -->
+    <h2>My Horses</h2>
+    <table id="horseTable">
+      <thead>
+        <tr><th>Name</th><th>Speed</th><th>Stamina</th><th>Acceleration</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
-    <!-- Prediction -->
-    <div class="section">
-      <button id="predict-augments-btn">Analyze Best Augments</button>
-      <div id="result" style="display:none;"></div>
-    </div>
+    <!-- Action Buttons -->
+    <button id="predictFastestBtn">Predict Fastest Horse</button>
+    <button id="bestBreedingBtn">Find Best Breeding Pair</button>
+
+    <!-- Results -->
+    <div id="result" style="display:none;"></div>
   </div>
 
-  <script type="module">
-    // Placeholder for future API
-    const API_BASE = 'https://api.zedchampions.com';
+  <script>
+    // —— Data Store —— 
+    const horses = [];
 
-    // Static lists from guides (populate with full data from PDFs)
-    const COLORS = [
-      { name: 'Sea Pink', hex: '#EF9A9A' },
-      { name: 'Jordy Blue', hex: '#81D4FA' },
-      { name: 'Light Wisteria', hex: '#E040FB' },
-      { name: 'Prelude', hex: '#7C4DFF' },
-      { name: 'Paris Daisy', hex: '#C6FF00' }
-      // ...add all from New Color chartciteturn1file1
-    ];
-    const BREEDS = [
-      'Arabian', 'Thoroughbred', 'Mustang', 'Quarter Horse', 'Appaloosa'
-      // ...add all breeds from Horse Breeds and Traits guideciteturn1file0
-    ];
+    // —— Utility: redraw table —— 
+    function renderTable() {
+      const tbody = document.querySelector('#horseTable tbody');
+      tbody.innerHTML = '';
+      horses.forEach((h, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${h.name}</td>
+          <td>${h.speed}</td>
+          <td>${h.stamina}</td>
+          <td>${h.acceleration}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
 
-    let horses = [];
-    let races = [];
+    // —— Add Horse Handler —— 
+    document.getElementById('addHorseBtn').addEventListener('click', () => {
+      const name = document.getElementById('horseName').value.trim();
+      const speed = parseFloat(document.getElementById('horseSpeed').value);
+      const stamina = parseFloat(document.getElementById('horseStamina').value);
+      const acceleration = parseFloat(document.getElementById('horseAccel').value);
 
-    async function initializeData() {
-      try {
-        const [hRes, rRes] = await Promise.all([
-          fetch(`${API_BASE}/horses`),
-          fetch(`${API_BASE}/races`)
-        ]);
-        if (hRes.ok && rRes.ok) {
-          horses = await hRes.json();
-          races = await rRes.json();
-        } else throw new Error('API missing');
-      } catch (err) {
-        console.warn('API unavailable, manual-only mode', err);
+      if (!name || isNaN(speed) || isNaN(stamina) || isNaN(acceleration)) {
+        alert('Please fill out all fields correctly.');
+        return;
       }
-      populateStaticSelects();
-      renderHorses();
-      renderRaces();
-    }
 
-    // DOM refs
-    const horseSelectors = {
-      horseSelect: document.getElementById('race-horse'),
-      sireSelect: document.getElementById('horse-sire'),
-      damSelect: document.getElementById('horse-dam')
-    };
-
-    // Populate color & breed dropdowns
-    function populateStaticSelects() {
-      const colorEl = document.getElementById('horse-color');
-      COLORS.forEach(c => {
-        const opt = document.createElement('option'); opt.value = c.name;
-        opt.textContent = c.name;
-        colorEl.append(opt);
-      });
-      const breedEl = document.getElementById('horse-breed');
-      BREEDS.forEach(b => {
-        const opt = document.createElement('option'); opt.value = b;
-        opt.textContent = b;
-        breedEl.append(opt);
-      });
-    }
-
-    // Add horse
-    document.getElementById('add-horse-btn').addEventListener('click', () => {
-      const name = document.getElementById('horse-name').value.trim();
-      const speed = parseFloat(document.getElementById('horse-speed').value);
-      const stamina = parseFloat(document.getElementById('horse-stamina').value);
-      const accel = parseFloat(document.getElementById('horse-accel').value);
-      const color = document.getElementById('horse-color').value;
-      const breed = document.getElementById('horse-breed').value;
-      const sire = parseInt(horseSelectors.sireSelect.value) || null;
-      const dam = parseInt(horseSelectors.damSelect.value) || null;
-      if (!name || isNaN(speed) || isNaN(stamina) || isNaN(accel) || !color || !breed) return;
-      horses.push({ id: Date.now(), name, speed, stamina, accel, color, breed, sire, dam });
-      document.getElementById('horse-form').reset();
-      renderHorses();
+      horses.push({ name, speed, stamina, acceleration });
+      renderTable();
+      // clear inputs
+      document.getElementById('horseName').value = '';
+      document.getElementById('horseSpeed').value = '';
+      document.getElementById('horseStamina').value = '';
+      document.getElementById('horseAccel').value = '';
     });
 
-    // Add race
-    document.getElementById('add-race-btn').addEventListener('click', () => {
-      const horseId = parseInt(document.getElementById('race-horse').value);
-      const augment = document.getElementById('race-augment').value.trim();
-      const time = parseFloat(document.getElementById('race-time').value);
-      const pot = parseFloat(document.getElementById('race-pot').value);
-      const net = parseFloat(document.getElementById('race-net').value);
-      if (!horseId || !augment || isNaN(time) || isNaN(pot) || isNaN(net)) return;
-      races.push({ horseId, augment, time, pot, net });
-      document.getElementById('race-form').reset();
-      renderRaces();
-    });
+    // —— Performance Formula —— 
+    function performance(h) {
+      // tweak weights as desired
+      return h.speed * 0.5 + h.stamina * 0.3 + h.acceleration * 0.2;
+    }
 
-    // Render horses table & update selects
-    function renderHorses() {
-      const tbody = document.querySelector('#horses-table tbody'); tbody.innerHTML = '';
+    // —— Predict Fastest —— 
+    document.getElementById('predictFastestBtn').addEventListener('click', () => {
+      if (horses.length === 0) {
+        alert('Add at least one horse first.');
+        return;
+      }
+      let best = horses[0];
       horses.forEach(h => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${h.name}</td><td>${h.speed}</td><td>${h.stamina}</td><td>${h.accel}</td>
-          <td style="background:${COLORS.find(c=>c.name===h.color)?.hex}">${h.color}</td>
-          <td>${h.breed}</td>
-          <td>${horses.find(x=>x.id===h.sire)?.name||''}</td>
-          <td>${horses.find(x=>x.id===h.dam)?.name||''}</td>
-        `;
-        tbody.append(tr);
+        if (performance(h) > performance(best)) best = h;
       });
-      updateHorseSelects();
-    }
-    function updateHorseSelects() {
-      const { horseSelect, sireSelect, damSelect } = horseSelectors;
-      [horseSelect, sireSelect, damSelect].forEach(sel => {
-        sel.innerHTML = '<option value="">--Select--</option>';
-        horses.forEach(h => {
-          const opt = document.createElement('option');
-          opt.value = h.id; opt.textContent = h.name;
-          sel.append(opt);
-        });
-      });
-    }
-
-    // Render races table
-    function renderRaces() {
-      const tbody = document.querySelector('#races-table tbody'); tbody.innerHTML = '';
-      races.forEach(r => {
-        const h = horses.find(h=>h.id===r.horseId);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${h?.name||'Unknown'}</td><td>${r.augment}</td><td>${r.time}</td>
-          <td>${r.pot.toFixed(2)}</td><td>${r.net.toFixed(2)}</td>
-        `;
-        tbody.append(tr);
-      });
-    }
-
-    // Analyze augments: avg finish time per augment
-    document.getElementById('predict-augments-btn').addEventListener('click', () => {
-      if (races.length === 0) return;
-      const stats = {};
-      races.forEach(r => {
-        stats[r.augment] = stats[r.augment] || { total: 0, count: 0 };
-        stats[r.augment].total += r.time;
-        stats[r.augment].count += 1;
-      });
-      const results = Object.entries(stats).map(([augment, { total, count }]) => ({
-        augment,
-        avg: total/count
-      })).sort((a,b)=>a.avg - b.avg);
-      const best = results[0];
-      const out = document.getElementById('result');
-      out.style.display = 'block';
-      out.innerHTML = `<strong>Best Augment:</strong> ${best.augment} (Avg Time: ${best.avg.toFixed(2)})`;
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+      result.innerHTML = `<strong>Fastest Horse:</strong> ${best.name} 
+        (Score: ${performance(best).toFixed(2)})`;
     });
 
-    initializeData();
+    // —— Predict Foal Performance as avg of parents —— 
+    function foalPerformance(h1, h2) {
+      return (
+        ((h1.speed + h2.speed) / 2) * 0.5 +
+        ((h1.stamina + h2.stamina) / 2) * 0.3 +
+        ((h1.acceleration + h2.acceleration) / 2) * 0.2
+      );
+    }
+
+    // —— Find Best Breeding Pair —— 
+    document.getElementById('bestBreedingBtn').addEventListener('click', () => {
+      if (horses.length < 2) {
+        alert('Need at least two horses to breed.');
+        return;
+      }
+      let bestPair = null;
+      let bestScore = -Infinity;
+      // brute-force all pairs
+      for (let i = 0; i < horses.length; i++) {
+        for (let j = i + 1; j < horses.length; j++) {
+          const score = foalPerformance(horses[i], horses[j]);
+          if (score > bestScore) {
+            bestScore = score;
+            bestPair = [horses[i], horses[j]];
+          }
+        }
+      }
+      const result = document.getElementById('result');
+      result.style.display = 'block';
+      result.innerHTML = `
+        <strong>Best Breeding Pair:</strong><br/>
+        ${bestPair[0].name} &amp; ${bestPair[1].name}<br/>
+        <strong>Predicted Foal Score:</strong> ${bestScore.toFixed(2)}
+      `;
+    });
   </script>
 </body>
 </html>
