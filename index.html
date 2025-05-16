@@ -49,6 +49,7 @@
       border: 1px solid #c8e6c9;
       border-radius: 4px;
       margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
@@ -82,7 +83,7 @@
     <button id="bestBreedingBtn">Find Best Breeding Pair</button>
 
     <!-- Results -->
-    <div id="result" style="display:none;"></div>
+    <div id="result"></div>
   </div>
 
   <script>
@@ -105,30 +106,35 @@
       });
     }
 
-    // —— Add Horse Handler —— 
-    document.getElementById('addHorseBtn').addEventListener('click', () => {
+    function validateHorseInputs() {
       const name = document.getElementById('horseName').value.trim();
       const speed = parseFloat(document.getElementById('horseSpeed').value);
       const stamina = parseFloat(document.getElementById('horseStamina').value);
       const acceleration = parseFloat(document.getElementById('horseAccel').value);
 
-      if (!name || isNaN(speed) || isNaN(stamina) || isNaN(acceleration)) {
+      if (!name || isNaN(speed) || isNaN(stamina) || isNaN(acceleration) || speed <= 0 || stamina <= 0 || acceleration <= 0) {
         alert('Please fill out all fields correctly.');
-        return;
+        return null;
       }
 
-      horses.push({ name, speed, stamina, acceleration });
+      return { name, speed, stamina, acceleration };
+    }
+
+    function addHorse(horse) {
+      horses.push(horse);
       renderTable();
       // clear inputs
       document.getElementById('horseName').value = '';
       document.getElementById('horseSpeed').value = '';
       document.getElementById('horseStamina').value = '';
       document.getElementById('horseAccel').value = '';
-    });
+    }
 
     // —— Performance Formula —— 
     function performance(h) {
-      // tweak weights as desired
+      // Adjust the weights to prioritize specific attributes:
+      // For example, increasing the weight of 'speed' will make faster horses score higher.
+      // Current weights: 50% speed, 30% stamina, 20% acceleration.
       return h.speed * 0.5 + h.stamina * 0.3 + h.acceleration * 0.2;
     }
 
@@ -140,15 +146,23 @@
       }
       let best = horses[0];
       horses.forEach(h => {
-        if (performance(h) > performance(best)) best = h;
+        const hPerformance = performance(h);
+        if (hPerformance > performance(best)) best = h;
       });
+      const formattedScore = performance(best).toFixed(2);
       const result = document.getElementById('result');
       result.style.display = 'block';
-      result.innerHTML = `<strong>Fastest Horse:</strong> ${best.name} 
-        (Score: ${performance(best).toFixed(2)})`;
+      result.innerHTML = `<strong>Fastest Horse:</strong> ${best.name} <br/><strong>Score:</strong> ${formattedScore}`;
     });
 
     // —— Predict Foal Performance as avg of parents —— 
+    /**
+     * Calculates the predicted performance of a foal based on the average attributes of its parents.
+     * The formula applies weights: 50% speed, 30% stamina, and 20% acceleration.
+     * @param {Object} h1 - The first parent horse with attributes: speed, stamina, acceleration.
+     * @param {Object} h2 - The second parent horse with attributes: speed, stamina, acceleration.
+     * @returns {number} - The predicted performance score of the foal.
+     */
     function foalPerformance(h1, h2) {
       return (
         ((h1.speed + h2.speed) / 2) * 0.5 +
@@ -162,26 +176,35 @@
       if (horses.length < 2) {
         alert('Need at least two horses to breed.');
         return;
-      }
       let bestPair = null;
       let bestScore = -Infinity;
-      // brute-force all pairs
-      for (let i = 0; i < horses.length; i++) {
-        for (let j = i + 1; j < horses.length; j++) {
-          const score = foalPerformance(horses[i], horses[j]);
+
+      // Sort horses by performance in descending order
+      const sortedHorses = [...horses].sort((a, b) => performance(b) - performance(a));
+
+      // Compare only the top 5 horses (or fewer if less than 5 exist)
+      const topHorses = sortedHorses.slice(0, Math.min(5, sortedHorses.length));
+      for (let i = 0; i < topHorses.length; i++) {
+        for (let j = i + 1; j < topHorses.length; j++) {
+          const score = foalPerformance(topHorses[i], topHorses[j]);
           if (score > bestScore) {
             bestScore = score;
-            bestPair = [horses[i], horses[j]];
+            bestPair = [topHorses[i], topHorses[j]];
           }
         }
       }
+      }
       const result = document.getElementById('result');
       result.style.display = 'block';
-      result.innerHTML = `
-        <strong>Best Breeding Pair:</strong><br/>
-        ${bestPair[0].name} &amp; ${bestPair[1].name}<br/>
-        <strong>Predicted Foal Score:</strong> ${bestScore.toFixed(2)}
-      `;
+      if (bestPair) {
+        result.innerHTML = `
+          <strong>Best Breeding Pair:</strong><br/>
+          ${bestPair[0].name} &amp; ${bestPair[1].name}<br/>
+          <strong>Predicted Foal Score:</strong> ${bestScore.toFixed(2)}
+        `;
+      } else {
+        result.innerHTML = `<strong>No valid breeding pair found.</strong>`;
+      }
     });
   </script>
 </body>
