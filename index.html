@@ -358,6 +358,7 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.7); /* Darker backdrop */
+            -webkit-backdrop-filter: blur(2px); /* Subtle blur effect for Safari and iOS */
             backdrop-filter: blur(2px); /* Subtle blur effect (works in modern browsers) */
         }
         .modal-content {
@@ -667,7 +668,7 @@
             /* Ensure table scroll containers work */
             div[style*="overflow-x:auto"] {
                 overflow-x: auto;
-                -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+                /* Removed -webkit-overflow-scrolling as it is no longer supported */
             }
         }
 
@@ -1353,6 +1354,7 @@
                 <h3>Registered Racing Horses</h3>
                 <!-- Simplified Filter Controls -->
                 <div class="filter-controls">
+                    <label for="horse-filter-bloodline" class="visually-hidden">Filter by Bloodline:</label>
                     <select id="horse-filter-bloodline" class="filter-item">
                         <option value="">All Bloodlines</option>
                         <option value="Nakamoto">Nakamoto</option>
@@ -1360,7 +1362,7 @@
                         <option value="Finney">Finney</option>
                         <option value="Buterin">Buterin</option>
                     </select>
-                    <select id="horse-filter-gender" class="filter-item">
+                    <select id="horse-filter-gender" class="filter-item" title="Filter by Gender">
                         <option value="">All Genders</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
