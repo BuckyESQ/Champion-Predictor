@@ -724,3 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const authUI = new ZedAuthUI();
     authUI.initialize();
 });
+
+// Add this to your document.addEventListener('DOMContentLoaded')
+document.addEventListener('DOMContentLoaded', function() {
+  // Existing initialization code...
+  
+  // Initialize the API integration UI
+  initializeApiIntegration();
+});
