@@ -755,3 +755,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const authUI = new ZedAuthUI();
     authUI.initialize();
 });
+
+// Add missing methods to window.zedApi
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait for zedApi to be created
+  setTimeout(function() {
+    if (window.zedApi) {
+      // Add fetchHorseTypes directly to window.zedApi
+      window.zedApi.fetchHorseTypes = async function() {
+        return {
+          success: true, 
+          data: ['racing', 'breeding']
+        };
+      };
+      
+      // Create self-reference for compatibility
+      window.zedApi.apiService = window.zedApi;
+      
+      console.log("Added fetchHorseTypes to window.zedApi");
+    } else {
+      console.error("window.zedApi not found!");
+    }
+  }, 100); // Small delay to ensure scripts are loaded
+});
