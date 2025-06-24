@@ -2399,36 +2399,36 @@
             <div id="single-import-status" class="import-status"></div>
           `;
           
-          apiContainer.appendChild(tokenSection);
-          
-          // Set up event listeners
-          document.getElementById('set-token-btn').addEventListener('click', function() {
-            const token = document.getElementById('zed-api-token').value.trim();
-            if (!token) {
-              showConnectionStatus('Please enter a valid API token', false);
-              return;
-            }
+            apiContainer.innerHTML = ''; // Clear container first
+            apiContainer.appendChild(tokenSection);
             
-            ZED_API.setAuthToken(token);
-            showConnectionStatus('API token set successfully. Please test the connection.', true);
-          });
-          
-          document.getElementById('test-connection-btn').addEventListener('click', async function() {
-            showConnectionStatus('Testing connection...', null);
+            // Set up event listeners
+            document.getElementById('set-token-btn').addEventListener('click', function() {
+                const token = document.getElementById('zed-api-token').value.trim();
+                if (!token) {
+                    showConnectionStatus('Please enter a valid API token', false);
+                    return;
+                }
+                
+                ZED_API.setAuthToken(token);
+                showConnectionStatus('API token set successfully. Please test the connection.', true);
+            });
             
-            try {
-              const result = await ZED_API.testConnection();
-              showConnectionStatus(result.message, result.success);
-            } catch (error) {
-              showConnectionStatus(`Error: ${error.message}`, false);
-            }
-          });
-          
-          document.getElementById('import-racing-stable-btn').addEventListener('click', importRacingStable);
-          document.getElementById('import-breeding-stable-btn').addEventListener('click', importBreedingStable);
-          document.getElementById('import-single-horse-btn').addEventListener('click', importSingleHorse);
+            document.getElementById('test-connection-btn').addEventListener('click', async function() {
+                showConnectionStatus('Testing connection...', null);
+                
+                try {
+                    const result = await ZED_API.testConnection();
+                    showConnectionStatus(result.message, result.success);
+                } catch (error) {
+                    showConnectionStatus(`Error: ${error.message}`, false);
+                }
+            });
+            
+            document.getElementById('import-racing-stable-btn').addEventListener('click', importRacingStable);
+            document.getElementById('import-breeding-stable-btn').addEventListener('click', importBreedingStable);
+            document.getElementById('import-single-horse-btn').addEventListener('click', importSingleHorse);
         }
-
         // 1️⃣ Define your color palettes per bloodline.
 
         const breedColorOptions = {
