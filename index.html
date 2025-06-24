@@ -2640,40 +2640,29 @@
         // Helper function to show import status
         // Fix 3: Fix the showImportStatus function - this is causing status messages to fail
         function showImportStatus(element, message, isSuccess) {
-            // Handle both cases where element is a DOM element or a string selector
-            let statusElement;
-            if (typeof element === 'string') {
-                statusElement = document.getElementById(element);
-            } else {
-                statusElement = element;
-            }
+            if (!element) return;
             
-            if (!statusElement) {
-                console.error("Import status element not found:", element);
-                return;
-            }
-            
-            statusElement.style.display = 'block';
-            statusElement.textContent = message;
+            element.style.display = 'block';
+            element.textContent = message;
             
             if (isSuccess === true) {
-                statusElement.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-                statusElement.style.color = '#4CAF50';
-                statusElement.style.padding = '8px 12px';
-                statusElement.style.borderRadius = '4px';
+                element.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+                element.style.color = '#4CAF50';
+                element.style.padding = '8px 12px';
+                element.style.borderRadius = '4px';
             } else if (isSuccess === false) {
-                statusElement.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
-                statusElement.style.color = '#F44336';
-                statusElement.style.padding = '8px 12px';
-                statusElement.style.borderRadius = '4px';
+                element.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+                element.style.color = '#F44336';
+                element.style.padding = '8px 12px';
+                element.style.borderRadius = '4px';
             } else {
-                statusElement.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
-                statusElement.style.color = '#2196F3';
-                statusElement.style.padding = '8px 12px';
-                statusElement.style.borderRadius = '4px';
+                element.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+                element.style.color = '#2196F3';
+                element.style.padding = '8px 12px';
+                element.style.borderRadius = '4px';
             }
         }
-            // --- REPLACE the entire ZED_API and all duplicate fetchHorse/searchHorses definitions with this block ---
+                    // --- REPLACE the entire ZED_API and all duplicate fetchHorse/searchHorses definitions with this block ---
             
             const ZED_API = {
                 authToken: null,
