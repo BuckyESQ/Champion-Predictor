@@ -2305,6 +2305,97 @@
             <script src="zed-auth-ui.js"></script>
 
         <script>
+        // Add to the beginning of your script section in index.html
+        function initializeApiIntegration() {
+          // Create container for the ZED API UI
+          const apiContainer = document.getElementById('api-import-container');
+          if (!apiContainer) {
+            console.error("API import container not found!");
+            return;
+          }
+          
+          // Create API token input section
+          const tokenSection = document.createElement('div');
+          tokenSection.className = 'section';
+          tokenSection.innerHTML = `
+            <h3>ZedChampions API Connection</h3>
+            <p>To import horses from ZedChampions, you need to set your API token.</p>
+            <div class="form-grid">
+              <div>
+                <label for="zed-api-token">API Token:</label>
+                <input type="text" id="zed-api-token" placeholder="Enter your ZedChampions API token">
+              </div>
+              <div>
+                <button id="set-token-btn" class="button">Set Token</button>
+                <button id="test-connection-btn" class="button">Test Connection</button>
+              </div>
+            </div>
+            <div id="api-connection-status" style="margin-top: 10px; display: none;"></div>
+            
+            <hr style="margin: 2em 0; border-color: var(--border-color);">
+            
+            <h3>Import Horses</h3>
+            <div class="form-grid">
+              <div>
+                <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
+                <div id="racing-import-status" class="import-status"></div>
+              </div>
+              <div>
+                <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
+                <div id="breeding-import-status" class="import-status"></div>
+              </div>
+            </div>
+            
+            <h3>Import Single Horse</h3>
+            <div class="form-grid">
+              <div>
+                <label for="zed-horse-id">Horse ID:</label>
+                <input type="text" id="zed-horse-id" placeholder="Enter ZedChampions horse ID">
+              </div>
+              <div>
+                <label for="import-horse-type">Import As:</label>
+                <select id="import-horse-type">
+                  <option value="racing">Racing Horse</option>
+                  <option value="breeding">Breeding Horse</option>
+                </select>
+              </div>
+              <div>
+                <button id="import-single-horse-btn" class="button">Import Horse</button>
+              </div>
+            </div>
+            <div id="single-import-status" class="import-status"></div>
+          `;
+          
+          apiContainer.appendChild(tokenSection);
+          
+          // Set up event listeners
+          document.getElementById('set-token-btn').addEventListener('click', function() {
+            const token = document.getElementById('zed-api-token').value.trim();
+            if (!token) {
+              showConnectionStatus('Please enter a valid API token', false);
+              return;
+            }
+            
+            ZED_API.setAuthToken(token);
+            showConnectionStatus('API token set successfully. Please test the connection.', true);
+          });
+          
+          document.getElementById('test-connection-btn').addEventListener('click', async function() {
+            showConnectionStatus('Testing connection...', null);
+            
+            try {
+              const result = await ZED_API.testConnection();
+              showConnectionStatus(result.message, result.success);
+            } catch (error) {
+              showConnectionStatus(`Error: ${error.message}`, false);
+            }
+          });
+          
+          document.getElementById('import-racing-stable-btn').addEventListener('click', importRacingStable);
+          document.getElementById('import-breeding-stable-btn').addEventListener('click', importBreedingStable);
+          document.getElementById('import-single-horse-btn').addEventListener('click', importSingleHorse);
+        }
+
         // 1️⃣ Define your color palettes per bloodline.
 
         const breedColorOptions = {
