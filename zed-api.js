@@ -728,6 +728,17 @@ class ZedAuthUI {
     }
 }
 
+// Add fetchHorseTypes directly to the window.zedApi object
+window.zedApi.fetchHorseTypes = async function() {
+    return {
+        success: true, 
+        data: ['racing', 'breeding']
+    };
+};
+
+// Make sure window.zedApi.apiService points to itself to match expected structure
+window.zedApi.apiService = window.zedApi;
+
 window.zedApi = new ZedApiService();
 // Initialize the UI when the DOM is ready
 // This event listener waits for the DOM content to be fully loaded before executing.
