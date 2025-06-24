@@ -728,7 +728,10 @@ class ZedAuthUI {
     }
 }
 
-// Add fetchHorseTypes directly to the window.zedApi object
+// First create the ZedApiService and assign it to window.zedApi
+window.zedApi = new ZedApiService();
+
+// THEN add properties to it (not before)
 window.zedApi.fetchHorseTypes = async function() {
     return {
         success: true, 
@@ -736,10 +739,12 @@ window.zedApi.fetchHorseTypes = async function() {
     };
 };
 
-// Make sure window.zedApi.apiService points to itself to match expected structure
+// THEN create the self-reference
 window.zedApi.apiService = window.zedApi;
 
-window.zedApi = new ZedApiService();
+// Remove any duplicate initialization that might appear later in the file
+// DO NOT put `window.zedApi = new ZedApiService();` again after this point
+
 // Initialize the UI when the DOM is ready
 // This event listener waits for the DOM content to be fully loaded before executing.
 // It creates an instance of the ZedAuthUI class and calls its initialize method.
