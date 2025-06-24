@@ -1,4 +1,4 @@
-        class ZedApiService {
+class ZedApiService {
         constructor() {
             this.authManager = window.zedAuth;
             const host = window.location.hostname;
@@ -140,6 +140,42 @@
         }
     }
     // Note: The duplicate fetchFromApi method was removed as it's already defined above
+
+    /**
+     * Test the API connection
+     */
+    async testConnection() {
+        if (!this.authManager.getToken()) {
+            return { success: false, message: "No API token set. Please set your token first." };
+        }
+        
+        if (this.authManager.isTokenExpired(this.authManager.getToken())) {
+            return { success: false, message: "Your API token has expired. Please get a new token." };
+        }
+        
+        try {
+            const response = await fetch('https://api.zedchampions.com/v1/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.authManager.getToken()}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return { 
+                    success: true, 
+                    message: `Connected successfully. Welcome, ${data.username || 'racer'}!`,
+                    data
+                };
+            } else {
+                return { success: false, message: `API Error: ${response.status} ${response.statusText}` };
+            }
+        } catch (error) {
+            return { success: false, message: `Connection error: ${error.message}` };
+        }
+    }
 }
 
 class ZedAuthUI {
