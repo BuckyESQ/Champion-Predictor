@@ -89,7 +89,11 @@ class ZedApiService {
      * Fetch horse types dynamically from the API
      */
     async fetchHorseTypes() {
-        return ['racing', 'breeding']; // Default horse types
+        // For now, just return default types
+        return {
+            success: true, 
+            data: ['racing', 'breeding']
+        };
     }
 
     /**
