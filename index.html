@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2291,6 +2291,11 @@
                     <button id="update-stud-fee-button" class="button" style="height: 42px; margin-bottom: 0; align-self: flex-end; box-sizing: border-box;">Update Stud Fee</button>
                 </div>
             </div>
+            
+            <!-- ZED Champions API Integration -->
+            <script src="zed-auth.js"></script>
+            <script src="zed-api.js"></script>
+            <script src="zed-auth-ui.js"></script>
 
         <script>
         // 1️⃣ Define your color palettes per bloodline.
@@ -2678,7 +2683,8 @@
                     }
                 }
             };
-
+            window.zedApi = ZED_API;
+            
             // Fix API connection issues by improving error handling
             function fixApiConnectionHandling() {
                 // Update the testConnection method in ZED_API:
@@ -7291,9 +7297,9 @@ function handleAddRace(event) {
                 </div>
             </div>
         </div>
-        <!-- ZED Champions API Integration -->
-            <script src="zed-auth.js"></script>
-            <script src="zed-api.js"></script>
-            <script src="zed-auth-ui.js"></script>
+        <script>
+            // expose your inpage API client to the UI
+            window.zedApi = ZED_API;
+        </script>
     </body>
     </html>
