@@ -89,18 +89,7 @@ class ZedApiService {
      * Fetch horse types dynamically from the API
      */
     async fetchHorseTypes() {
-        try {
-            const response = await this.fetchFromApi('/v1/horse-types');
-            if (!response.ok) {
-                console.error(`Error fetching horse types: ${response.status} ${response.statusText}`);
-                return ['racing', 'breeding']; // Fallback to default types
-            }
-            const data = await response.json();
-            return data.types || ['racing', 'breeding']; // Ensure fallback if API response is empty
-        } catch (error) {
-            console.error(`Error fetching horse types: ${error.message}`);
-            return ['racing', 'breeding']; // Fallback to default types
-        }
+        return ['racing', 'breeding']; // Default horse types
     }
 
     /**
