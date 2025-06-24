@@ -2817,7 +2817,7 @@
                     }
                 }
             };
-            window.zedApi = ZED_API;
+            window.zedApi = ZED_API; window.zedApi.apiService = window.zedApi;
             
             function fixApiConnectionHandling() {
             // If ZED_API doesn't have a testConnection method, add one
