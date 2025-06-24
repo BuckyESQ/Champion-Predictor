@@ -2685,99 +2685,119 @@
             };
             window.zedApi = ZED_API;
             
-            // Fix API connection issues by improving error handling
             function fixApiConnectionHandling() {
-                // Update the testConnection method in ZED_API:
+            // If ZED_API doesn't have a testConnection method, add one
+            if (!ZED_API.testConnection) {
                 ZED_API.testConnection = async function() {
                     if (!this.authToken) {
-                        return { success: false, message: "No authentication token set" };
+                        return { success: false, message: "No API token set. Please set your token first." };
                     }
+                    
                     if (this.isTokenExpired()) {
-                        return { success: false, message: "Authentication token has expired" };
+                        return { success: false, message: "Your API token has expired. Please get a new token." };
                     }
+                    
                     try {
-                        const response = await fetch('https://api.zedchampions.com/v1/account', {
+                        const response = await fetch('https://api.zedchampions.com/v1/me', {
                             method: 'GET',
                             headers: {
                                 'Authorization': `Bearer ${this.authToken}`,
                                 'Content-Type': 'application/json'
-                            }
+                            },
+                            timeout: 10000
                         });
                         
                         if (response.ok) {
                             const data = await response.json();
                             return { 
                                 success: true, 
-                                message: `Connection successful! Hello, ${data.username || 'user'}!`,
-                                data: data
+                                message: `Connected successfully. Welcome, ${data.username || 'racer'}!`,
+                                data
                             };
                         } else {
-                            // More detailed error handling
-                            let errorMsg;
-                            try {
-                                // Try to get error details from response
-                                const errorData = await response.json();
-                                errorMsg = errorData.message || errorData.error || `API Error: ${response.status} ${response.statusText}`;
-                            } catch (e) {
-                                // Fallback if can't parse error JSON
-                                errorMsg = `API Error: ${response.status} ${response.statusText}`;
-                            }
-                            
-                            return { success: false, message: errorMsg };
+                            return { success: false, message: `API Error: ${response.status} ${response.statusText}` };
                         }
                     } catch (error) {
-                        console.error("API connection error:", error);
-                        // More user-friendly error message
-                        return { 
-                            success: false, 
-                            message: `Connection error: ${error.message}. Please check your internet connection and ensure ZedChampions API is available.` 
-                        };
-                    }
-                };
-                
-                // Update the showConnectionStatus function to provide more helpful guidance
-                window.showConnectionStatus = function(message, isSuccess) {
-                    const statusEl = document.getElementById('api-connection-status');
-                    if (!statusEl) return;
-                    
-                    statusEl.style.display = 'block';
-                    
-                    // Add troubleshooting tips for errors
-                    if (isSuccess === false && message.includes("Failed to fetch")) {
-                        message += `<br><br><strong>Troubleshooting:</strong>
-                            <ul>
-                                <li>Check your internet connection</li>
-                                <li>Make sure you have the latest API token from ZedChampions</li>
-                                <li>API tokens expire after 24 hours - you may need a new one</li>
-                            </ul>`;
-                    }
-                    
-                    statusEl.innerHTML = message;
-                    
-                    if (isSuccess === true) {
-                        statusEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-                        statusEl.style.color = '#4CAF50';
-                        statusEl.style.padding = '12px';
-                        statusEl.style.borderRadius = '4px';
-                    } else if (isSuccess === false) {
-                        statusEl.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
-                        statusEl.style.color = '#F44336';
-                        statusEl.style.padding = '12px';
-                        statusEl.style.borderRadius = '4px';
-                    } else {
-                        statusEl.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
-                        statusEl.style.color = '#2196F3';
-                        statusEl.style.padding = '12px';
-                        statusEl.style.borderRadius = '4px';
+                        return { success: false, message: `Connection error: ${error.message}` };
                     }
                 };
             }
+    
+    // Better status display function
+    ZED_API.showStatus = function(message, isSuccess, statusEl) {
+        statusEl = statusEl || document.getElementById('test-api-connection-status');
+        if (!statusEl) return;
+        
+        statusEl.style.display = 'block';
+        statusEl.innerHTML = message;
+        
+        if (isSuccess === true) {
+            statusEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+            statusEl.style.color = '#4CAF50';
+            statusEl.style.padding = '12px';
+            statusEl.style.borderRadius = '4px';
+        } else if (isSuccess === false) {
+            statusEl.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+            statusEl.style.color = '#F44336';
+            statusEl.style.padding = '12px';
+            statusEl.style.borderRadius = '4px';
+        } else {
+            statusEl.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+            statusEl.style.color = '#2196F3';
+            statusEl.style.padding = '12px';
+            statusEl.style.borderRadius = '4px';
+        }
+    };
+}
 
-            // Call this during initialization - add this to your document.addEventListener('DOMContentLoaded') handler
-            document.addEventListener('DOMContentLoaded', () => {
-                // After other initialization...
-                fixApiConnectionHandling();
-            });
+// Call this during initialization - add this to your document.addEventListener('DOMContentLoaded') handler
+document.addEventListener('DOMContentLoaded', () => {
+    // After other initialization...
+    fixApiConnectionHandling();
+});
+        
+// Update the showConnectionStatus function to provide more helpful guidance
+window.showConnectionStatus = function(message, isSuccess) {
+    const statusEl = document.getElementById('api-connection-status');
+    if (!statusEl) return;
+    
+    statusEl.style.display = 'block';
+    
+    // Add troubleshooting tips for errors
+    if (isSuccess === false && message.includes("Failed to fetch")) {
+        message += `<br><br><strong>Troubleshooting:</strong>
+            <ul>
+                <li>Check your internet connection</li>
+                <li>Make sure you have the latest API token from ZedChampions</li>
+                <li>API tokens expire after 24 hours - you may need a new one</li>
+            </ul>`;
+    }
+    
+    statusEl.innerHTML = message;
+    
+    if (isSuccess === true) {
+        statusEl.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+        statusEl.style.color = '#4CAF50';
+        statusEl.style.padding = '12px';
+        statusEl.style.borderRadius = '4px';
+    } else if (isSuccess === false) {
+        statusEl.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+        statusEl.style.color = '#F44336';
+        statusEl.style.padding = '12px';
+        statusEl.style.borderRadius = '4px';
+    } else {
+        statusEl.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+        statusEl.style.color = '#2196F3';
+        statusEl.style.padding = '12px';
+        statusEl.style.borderRadius = '4px';
+    }
+};
+
+// Call this during initialization - add this to your document.addEventListener('DOMContentLoaded') handler
+document.addEventListener('DOMContentLoaded', () => {
+    // After other initialization...
+    fixApiConnectionHandling();
+});
                 
         // Add these functions for importing horses
         function importRacingStable() {
