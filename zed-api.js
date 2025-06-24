@@ -193,17 +193,28 @@ class ZedAuthUI {
          * Populate the "Import As" dropdown with horse types dynamically
          */
         async populateHorseTypeOptions() {
-            const horseTypes = await this.apiService.fetchHorseTypes(); // Fetch horse types dynamically from the API
-            const selectElement = document.getElementById('import-horse-type');
-            if (!selectElement) return;
-    
-            selectElement.innerHTML = ''; // Clear existing options
-            horseTypes.forEach(type => {
-                const option = document.createElement('option');
-                option.value = type;
-                option.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Horse`;
-                selectElement.appendChild(option);
-            });
+            try {
+                // Direct reference to window.zedApi instead of this.apiService
+                const result = await window.zedApi.fetchHorseTypes();
+                if (!result.success) {
+                    console.error("Failed to fetch horse types:", result.message);
+                    return;
+                }
+                
+                const horseTypes = result.data;
+                const selectElement = document.getElementById('import-horse-type');
+                if (!selectElement) return;
+
+                selectElement.innerHTML = ''; // Clear existing options
+                horseTypes.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Horse`;
+                    selectElement.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching horse types:", error);
+            }
         }
         /**
          * Create the token input form
