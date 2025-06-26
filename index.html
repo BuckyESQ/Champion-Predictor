@@ -5379,97 +5379,97 @@
             currentlyEditingHorse = null;
         }
         
-function handleAddRace(event) {
-    event.preventDefault();
-    // Get elements
-    const horseSelect = document.getElementById('race-horse');
-    const positionInput = document.getElementById('race-position');
-    const oddsInput = document.getElementById('race-odds');
-    const timeInput = document.getElementById('race-finish-time');
-    const zedChangeInput = document.getElementById('race-zed-change');
-    const ratingChangeInput = document.getElementById('race-rating-change');
-    const cpuSelect = document.getElementById('race-cpu-augment');
-    const ramSelect = document.getElementById('race-ram-augment');
-    const hydraulicSelect = document.getElementById('race-hydraulic-augment');
-    const raceNameInput = document.getElementById('race-name');
-    const raceDateInput = document.getElementById('race-date');
-    const split1Input = document.getElementById('race-split-1');
-    const split2Input = document.getElementById('race-split-2');
-    const split3Input = document.getElementById('race-split-3');
-    const split4Input = document.getElementById('race-split-4');
+            function handleAddRace(event) {
+                event.preventDefault();
+                // Get elements
+                const horseSelect = document.getElementById('race-horse');
+                const positionInput = document.getElementById('race-position');
+                const oddsInput = document.getElementById('race-odds');
+                const timeInput = document.getElementById('race-finish-time');
+                const zedChangeInput = document.getElementById('race-zed-change');
+                const ratingChangeInput = document.getElementById('race-rating-change');
+                const cpuSelect = document.getElementById('race-cpu-augment');
+                const ramSelect = document.getElementById('race-ram-augment');
+                const hydraulicSelect = document.getElementById('race-hydraulic-augment');
+                const raceNameInput = document.getElementById('race-name');
+                const raceDateInput = document.getElementById('race-date');
+                const split1Input = document.getElementById('race-split-1');
+                const split2Input = document.getElementById('race-split-2');
+                const split3Input = document.getElementById('race-split-3');
+                const split4Input = document.getElementById('race-split-4');
 
-    // Prepare data object
-    const raceData = {
-        horseId: horseSelect.value,
-        position: parseInt(positionInput.value),
-        odds: parseFloat(oddsInput.value),
-        finishTime: parseFloat(timeInput.value) || null,
-        zedChange: parseFloat(zedChangeInput.value),
-        ratingChange: ratingChangeInput.value ? parseInt(ratingChangeInput.value) : null,
-        cpuAugment: cpuSelect.value,
-        ramAugment: ramSelect.value,
-        hydraulicAugment: hydraulicSelect.value,
-        raceName: raceNameInput.value.trim(),
-        raceDate: raceDateInput.value || new Date().toISOString().split('T')[0],
-        split1: split1Input.value ? parseFloat(split1Input.value) : null,
-        split2: split2Input.value ? parseFloat(split2Input.value) : null,
-        split3: split3Input.value ? parseFloat(split3Input.value) : null,
-        split4: split4Input.value ? parseFloat(split4Input.value) : null,
-        date: new Date().toISOString()
-    };
+                // Prepare data object
+                const raceData = {
+                    horseId: horseSelect.value,
+                    position: parseInt(positionInput.value),
+                    odds: parseFloat(oddsInput.value),
+                    finishTime: parseFloat(timeInput.value) || null,
+                    zedChange: parseFloat(zedChangeInput.value),
+                    ratingChange: ratingChangeInput.value ? parseInt(ratingChangeInput.value) : null,
+                    cpuAugment: cpuSelect.value,
+                    ramAugment: ramSelect.value,
+                    hydraulicAugment: hydraulicSelect.value,
+                    raceName: raceNameInput.value.trim(),
+                    raceDate: raceDateInput.value || new Date().toISOString().split('T')[0],
+                    split1: split1Input.value ? parseFloat(split1Input.value) : null,
+                    split2: split2Input.value ? parseFloat(split2Input.value) : null,
+                    split3: split3Input.value ? parseFloat(split3Input.value) : null,
+                    split4: split4Input.value ? parseFloat(split4Input.value) : null,
+                    date: new Date().toISOString()
+                };
 
-    // Validation
-    if (!horseSelect.value) { alert("Please select a horse."); return; }
-    if (isNaN(parseInt(positionInput.value)) || parseInt(positionInput.value) < 1) { alert("Please enter a valid finishing place (1 or higher)."); return; }
-    if (isNaN(parseFloat(oddsInput.value)) || parseFloat(oddsInput.value) < 1) { alert("Please enter valid odds (1 or higher)."); return; }
-    if (isNaN(parseFloat(zedChangeInput.value))) { alert("Please enter the $ZED Won/Lost."); return; }
-    if (ratingChangeInput.value && isNaN(parseInt(ratingChangeInput.value))) { alert("Please enter a valid number for the Matchmaking Rating Change, or leave it empty."); return; }
-    
-    // Splits validation (optional, but must be positive if filled)
-    for (let i = 1; i <= 4; i++) {
-        const splitVal = document.getElementById(`race-split-${i}`).value;
-        if (splitVal && (isNaN(parseFloat(splitVal)) || parseFloat(splitVal) < 0)) {
-            alert(`Please enter a valid positive number for Split ${i}, or leave it empty.`);
-            return;
-        }
-    }
+                // Validation
+                if (!horseSelect.value) { alert("Please select a horse."); return; }
+                if (isNaN(parseInt(positionInput.value)) || parseInt(positionInput.value) < 1) { alert("Please enter a valid finishing place (1 or higher)."); return; }
+                if (isNaN(parseFloat(oddsInput.value)) || parseFloat(oddsInput.value) < 1) { alert("Please enter valid odds (1 or higher)."); return; }
+                if (isNaN(parseFloat(zedChangeInput.value))) { alert("Please enter the $ZED Won/Lost."); return; }
+                if (ratingChangeInput.value && isNaN(parseInt(ratingChangeInput.value))) { alert("Please enter a valid number for the Matchmaking Rating Change, or leave it empty."); return; }
+                
+                // Splits validation (optional, but must be positive if filled)
+                for (let i = 1; i <= 4; i++) {
+                    const splitVal = document.getElementById(`race-split-${i}`).value;
+                    if (splitVal && (isNaN(parseFloat(splitVal)) || parseFloat(splitVal) < 0)) {
+                        alert(`Please enter a valid positive number for Split ${i}, or leave it empty.`);
+                        return;
+                    }
+                }
 
-    if (!horses.some(h => h.id === raceData.horseId)) {
-        alert("Selected horse not found. Please add the horse first or refresh.");
-        return;
-    }
+                if (!horses.some(h => h.id === raceData.horseId)) {
+                    alert("Selected horse not found. Please add the horse first or refresh.");
+                    return;
+                }
 
-    if (currentlyEditingRace) {
-        // Update existing race
-        const index = races.findIndex(r => r.id === currentlyEditingRace.id);
-        if (index !== -1) {
-            // Preserve the id and date from the original race
-            raceData.id = currentlyEditingRace.id;
-            raceData.date = currentlyEditingRace.date;
-            races[index] = raceData;
-            console.log("Race updated:", raceData);
-        }
-    } else {
-        // Add new race
-        raceData.id = `race-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-        raceData.date = new Date().toISOString();
-        races.push(raceData);
-        console.log("Race added:", raceData);
-    }
+                if (currentlyEditingRace) {
+                    // Update existing race
+                    const index = races.findIndex(r => r.id === currentlyEditingRace.id);
+                    if (index !== -1) {
+                        // Preserve the id and date from the original race
+                        raceData.id = currentlyEditingRace.id;
+                        raceData.date = currentlyEditingRace.date;
+                        races[index] = raceData;
+                        console.log("Race updated:", raceData);
+                    }
+                } else {
+                    // Add new race
+                    raceData.id = `race-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                    raceData.date = new Date().toISOString();
+                    races.push(raceData);
+                    console.log("Race added:", raceData);
+                }
 
-    saveData();
-    renderRacesTable();
-    renderHorsesTable(); // Re-render horses to update calculated stats
-    updateOverallStats();
-    renderAugmentAnalysis();
-    
-    // Reset form and editing state
-    addRaceForm.reset();
-    horseSelect.value = ""; // Reset dropdown selection
-    const submitButton = addRaceForm.querySelector('button[type="submit"]');
-    submitButton.textContent = 'Record Race';
-    currentlyEditingRace = null;
-}
+                saveData();
+                renderRacesTable();
+                renderHorsesTable(); // Re-render horses to update calculated stats
+                updateOverallStats();
+                renderAugmentAnalysis();
+                
+                // Reset form and editing state
+                addRaceForm.reset();
+                horseSelect.value = ""; // Reset dropdown selection
+                const submitButton = addRaceForm.querySelector('button[type="submit"]');
+                submitButton.textContent = 'Record Race';
+                currentlyEditingRace = null;
+            }
 
             // ...existing code...
             function handleAddBredHorse(event) {
