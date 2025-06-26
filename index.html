@@ -4040,6 +4040,33 @@
             // --- Tab Button/Content Fix ---
             window.tabButtons = Array.from(document.querySelectorAll('.tab-button'));
             window.tabContents = Array.from(document.querySelectorAll('.tab-content'));
+            
+            // If they're not found, create them from your tab-buttons container
+            if (!window.tabButtons.length) {
+                const buttonContainer = document.getElementById('tab-buttons');
+                if (buttonContainer) {
+                    // Create tab buttons if they don't exist
+                    const tabIds = ['racing', 'breeding', 'transactions', 'augments', 'analysis', 'stats', 'import'];
+                    const tabLabels = ['Racing', 'Breeding', 'Transactions', 'Augments', 'Analysis', 'Stats', 'Import'];
+                    
+                    tabIds.forEach((id, index) => {
+                        const button = document.createElement('button');
+                        button.className = 'tab-button';
+                        button.setAttribute('data-tab', id);
+                        button.textContent = tabLabels[index];
+                        buttonContainer.appendChild(button);
+                });
+                
+                // Re-query the buttons after creating them
+                window.tabButtons = Array.from(document.querySelectorAll('.tab-button'));
+            }
+        }
+
+        // Re-query tab contents
+        window.tabContents = Array.from(document.querySelectorAll('.tab-content'));
+
+        console.log('Tab initialization complete:', 
+            {buttons: window.tabButtons.length, contents: window.tabContents.length});
 
             // Assign modal variables after DOM is loaded
             modal = document.getElementById('horse-details-modal');
