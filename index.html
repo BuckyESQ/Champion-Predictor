@@ -3812,65 +3812,64 @@
                     });
                 }
             
-        // --- Bloodline Change Handler ---
-        function onBloodlineChange(bloodId, colorId, traitsId, attrsId) {
-        const bloodEl = document.getElementById(bloodId);
-        const colorEl = document.getElementById(colorId);
-        const traitsEl = document.getElementById(traitsId);
-        const attrsEl = document.getElementById(attrsId);
-
-        // Update color options
-        if (bloodEl && colorEl) {
-            colorEl.innerHTML = '<option value="">--Select Color--</option>';
-            const blood = bloodEl.value;
-            if (blood && breedColorOptions[blood]) {
-            ["normal","rare","super rare"].forEach(rarity => {
-                const group = breedColorOptions[blood][rarity];
-                if (group && group.length) {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = rarity.charAt(0).toUpperCase() + rarity.slice(1);
-                group.forEach(c => {
-                    const o = document.createElement('option');
-                    o.value = c.hex;
-                    o.textContent = `${c.label} (${c.hex})`;
-                    o.title = c.hex;
-                    o.style.backgroundColor = c.hex;
-                    o.setAttribute('data-rarity', rarity);
-                    optgroup.appendChild(o);
-                });
-                colorEl.appendChild(optgroup);
-                }
+    // Fix for bloodline change handler
+    window.onBloodlineChange = function(colorId, traitsId, attrsId) {
+      const colorEl = document.getElementById(colorId);
+      const traitsEl = document.getElementById(traitsId);
+      const attrsEl = document.getElementById(attrsId);
+      
+      // Find the bloodline element
+      const bloodId = colorId.replace('color', 'bloodline');
+      const bloodEl = document.getElementById(bloodId);
+      
+      if (!bloodEl || !colorEl) return;
+      
+      // Get the selected bloodline
+      const bloodline = bloodEl.value;
+      
+      // Update color options
+      colorEl.innerHTML = '<option value="">--Select Color--</option>';
+      
+      if (bloodline && window.breedColorOptions && window.breedColorOptions[bloodline]) {
+        ["normal", "rare", "super rare"].forEach(rarity => {
+          if (window.breedColorOptions[bloodline][rarity]) {
+            window.breedColorOptions[bloodline][rarity].forEach(color => {
+              const option = document.createElement('option');
+              option.value = color.hex;
+              option.textContent = color.label;
+              colorEl.appendChild(option);
             });
-            if (colorEl.options.length > 1) colorEl.selectedIndex = 1;
-            }
-        if (!getColorLabel) {
-        // Fallback if getColorLabel function is missing
-        function getColorLabel(bloodline, hex) {
-            return hex || '';
-        }
-    }    
-        }
-
-        // Update traits
-        if (bloodEl && traitsEl) {
-            traitsEl.innerHTML = '';
-            (bloodlineTraits[bloodEl.value] || []).forEach(t => {
-            const li = document.createElement('li');
-            li.textContent = t;
-            traitsEl.appendChild(li);
-            });
-        }
-
-        // Update attributes
-        if (bloodEl && attrsEl) {
-            attrsEl.innerHTML = '';
-            (bloodlineAttributes[bloodEl.value] || []).forEach(a => {
-            const li = document.createElement('li');
-            li.textContent = a;
-            attrsEl.appendChild(li);
-            });
-        }
-        }
+          }
+        });
+      }
+      
+      // Set the first color option as selected
+      if (colorEl.options.length > 1) {
+        colorEl.selectedIndex = 1;
+      }
+      
+      // Update traits if element exists
+      if (traitsEl && bloodline && window.bloodlineTraits && window.bloodlineTraits[bloodline]) {
+        traitsEl.innerHTML = '';
+        window.bloodlineTraits[bloodline].forEach(trait => {
+          const option = document.createElement('option');
+          option.value = trait;
+          option.textContent = trait;
+          traitsEl.appendChild(option);
+        });
+      }
+      
+      // Update attributes if element exists
+      if (attrsEl && bloodline && window.bloodlineAttributes && window.bloodlineAttributes[bloodline]) {
+        attrsEl.innerHTML = '';
+        window.bloodlineAttributes[bloodline].forEach(attr => {
+          const option = document.createElement('option');
+          option.value = attr;
+          option.textContent = attr;
+          attrsEl.appendChild(option);
+        });
+      }
+    };
         
         // 3️⃣ UI update functions // populate `select` with id=colorSelectId based on bloodline in bloodSelectId
         function populateColorOptions(bloodline) {
