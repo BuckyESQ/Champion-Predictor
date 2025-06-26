@@ -718,6 +718,7 @@ class ZedAuthUI {
           element.style.borderRadius = '4px';
         }
     }
+}
 
 // First create the ZedApiService and assign it to window.zedApi
 window.zedApi = new ZedApiService();
@@ -736,15 +737,25 @@ window.zedApi.apiService = window.zedApi;
 // Remove any duplicate initialization that might appear later in the file
 // DO NOT put `window.zedApi = new ZedApiService();` again after this point
 
-// Initialize the UI when the DOM is ready
-// This event listener waits for the DOM content to be fully loaded before executing.
-// It creates an instance of the ZedAuthUI class and calls its initialize method.
-// Dependencies:
-// - ZedAuthUI class: Handles the UI components for API authentication and interaction.
-// - window.zedApi: An instance of ZedApiService, required for API communication.
-document.addEventListener('DOMContentLoaded', () => {
-    const authUI = new ZedAuthUI();
-    authUI.initialize();
+// Consolidate all initialization into a single DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Champion Predictor initializing...");
+  
+  // Initialize the API and Auth UI
+  const authUI = new ZedAuthUI();
+  authUI.initialize();
+  
+  // Initialize tabs
+  initializeTabs();
+  
+  // Setup event listeners for forms
+  setupEventListeners();
+  
+  // Activate last active tab or default
+  const lastActiveTab = localStorage.getItem('zedTrackerActiveTab') || 'racing';
+  activateTab(lastActiveTab);
+  
+  console.log("Champion Predictor initialized successfully");
 });
 
 // Add missing methods to window.zedApi
@@ -881,11 +892,19 @@ function setupEventListeners() {
 
 // Call this function in DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize the API and Auth UI
+  const authUI = new ZedAuthUI();
+  authUI.initialize();
+  
   // Initialize tabs
   initializeTabs();
   
-  // Setup event listeners
+  // Setup event listeners for forms
   setupEventListeners();
   
-  // Other initialization code...
+  // Activate last active tab or default
+  const lastActiveTab = localStorage.getItem('zedTrackerActiveTab') || 'racing';
+  activateTab(lastActiveTab);
+  
+  console.log("Champion Predictor initialized successfully");
 });
