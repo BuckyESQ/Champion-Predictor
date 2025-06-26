@@ -2439,6 +2439,188 @@
         <script>
         // Add to the beginning of your script section in index.html
         // Replace your broken initializeApiIntegration function with this complete version
+        // Add to your script section
+        function setupHorseSearch() {
+            const searchInput = document.getElementById('horse-search-input');
+            const idInput = document.getElementById('horse-id-input');
+            const searchButton = document.getElementById('horse-search-button');
+            const resultsContainer = document.getElementById('horse-results');
+            
+            if (!searchInput || !idInput || !searchButton || !resultsContainer) return;
+            
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                idInput.value = '';
+                performSearch();
+                }
+            });
+            
+            idInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                searchInput.value = '';
+                performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const nameQuery = searchInput.value.trim();
+                const idQuery = idInput.value.trim();
+                
+                if (!idQuery && (!nameQuery || nameQuery.length < 2)) {
+                alert("Please enter a valid horse ID or a name with at least 2 characters");
+                return;
+                }
+                
+                // Show loading indicator
+                resultsContainer.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="spinner"></div> Searching for horses...
+                </div>
+                `;
+                resultsContainer.style.display = 'block';
+                
+                // Build the API URL
+                let apiUrl = 'https://api.zedchampions.com/v1/';
+                if (idQuery) {
+                apiUrl += `horses/${encodeURIComponent(idQuery)}`;
+                } else {
+                apiUrl += `horses/search?q=${encodeURIComponent(nameQuery)}`;
+                }
+                
+                // Make the API request
+                fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${ZED_API.authToken}`,
+                    'Content-Type': 'application/json'
+                }
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+                })
+                .then(data => {
+                if (idQuery) {
+                    // Single horse result
+                    displaySearchResults([data]); 
+                } else {
+                    // Search results array
+                    displaySearchResults(data.results || []);
+                }
+                })
+                .catch(error => {
+                console.error("Horse search error:", error);
+                resultsContainer.innerHTML = `
+                    <div style="padding: 15px; color: var(--bad-color);">
+                    Error: ${error.message || "Failed to fetch horse data"}
+                    <p>Make sure your API token is valid and you have an active internet connection.</p>
+                    </div>
+                `;
+                });
+            }
+            
+            function displaySearchResults(horses) {
+                if (horses.length === 0) {
+                resultsContainer.innerHTML = '<div style="padding: 15px;">No horses found matching your search criteria.</div>';
+                return;
+                }
+                
+                resultsContainer.innerHTML = '';
+                
+                horses.forEach(horse => {
+                const item = document.createElement('div');
+                item.className = `horse-result-item ${horse.bloodline ? `bloodline-${horse.bloodline.toLowerCase()}` : ''}`;
+                
+                // Generate star ratings
+                const overallStars = generateStarRating(parseFloat(horse.overall_rating));
+                const speedStars = generateStarRating(parseFloat(horse.speed_rating));
+                const sprintStars = generateStarRating(parseFloat(horse.sprint_rating));
+                
+                item.innerHTML = `
+                    <div class="horse-name">${horse.name}
+                    <span class="horse-result-bloodline">| ${horse.bloodline || "Unknown"} | Gen ${horse.genotype ?? "N/A"}</span>
+                    </div>
+                    <div class="horse-details">
+                    <div><strong>Overall:</strong> ${overallStars}</div>
+                    <div><strong>Speed:</strong> ${speedStars}</div>
+                    <div><strong>Sprint:</strong> ${sprintStars}</div>
+                    </div>
+                    <div class="import-actions">
+                    <button class="button import-as-racing" data-horse-id="${horse.id}">Import as Racing Horse</button>
+                    <button class="button import-as-breeding" data-horse-id="${horse.id}">Import as Breeding Horse</button>
+                    </div>
+                `;
+                
+                resultsContainer.appendChild(item);
+                });
+                
+                // Add event listeners for import buttons
+                document.querySelectorAll('.import-as-racing').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const horseId = this.getAttribute('data-horse-id');
+                    importSingleHorseById(horseId, 'racing');
+                });
+                });
+                
+                document.querySelectorAll('.import-as-breeding').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const horseId = this.getAttribute('data-horse-id');
+                    importSingleHorseById(horseId, 'breeding');
+                });
+                });
+            }
+            
+            function generateStarRating(rating) {
+                if (isNaN(rating) || rating === null) return 'N/A';
+                
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                
+                let html = '<span class="star-rating">';
+                
+                // Full stars
+                for (let i = 0; i < fullStars; i++) {
+                html += '<i class="fas fa-star"></i>';
+                }
+                
+                // Half star if needed
+                if (hasHalfStar) {
+                html += '<i class="fas fa-star-half-alt"></i>';
+                }
+                
+                // Empty stars
+                for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="far fa-star"></i>';
+                }
+                
+                html += ` <span class="rating-value">(${rating.toFixed(1)})</span></span>`;
+                return html;
+            }
+            
+            function importSingleHorseById(horseId, type) {
+                document.getElementById('zed-horse-id').value = horseId;
+                document.getElementById('import-horse-type').value = type;
+                
+                // Trigger the import
+                importSingleHorse();
+                
+                // Scroll to the import status
+                document.getElementById('single-import-status').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+                });
+            }
+        }
+
+        // Call this function on page load
+        document.addEventListener('DOMContentLoaded', function() {
+        setupHorseSearch();
+        });
+        
         function initializeApiIntegration() {
         // Create container for the ZED API UI
             const apiContainer = document.getElementById('api-import-container');
