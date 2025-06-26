@@ -3156,8 +3156,8 @@
             const API_CONFIG = {
                 // Production endpoints
                 production: {
-                    baseUrl: "https://api.zedchampions.com/v1",
-                    useProxy: false
+                    baseUrl: "/api/zed", // This will use the server-side proxy in production
+                    useProxy: true
                 },
                 // Development fallbacks with mock data
                 development: {
@@ -3168,65 +3168,71 @@
                 }
             };
 
-            // Configure the ZED_API object to use mock data when API is unavailable (Fix 2 - Part 2)
-            function setupApiFallbacks() {
-            // Override fetch methods with fallbacks for failed connections
-            const originalFetchHorse = window.zedApi.fetchHorse;
-            window.zedApi.fetchHorse = async function(horseId) {
-                try {
-                const result = await originalFetchHorse.call(this, horseId);
-                return result;
-                } catch (error) {
-                console.warn("API connection failed, using mock data:", error);
-                return {
-                    success: true,
-                    data: {
-                    id: horseId || "sample-12345",
-                    name: "Sample Horse",
-                    bloodline: "Nakamoto",
-                    gender: "colt",
-                    color: "#DC143C",
-                    overall_rating: 3.5,
-                    speed_rating: 3.2,
-                    sprint_rating: 3.8,
-                    endurance_rating: 3.3
-                    }
-                };
+            // Add a function to get the current environment API config
+            function getApiConfig() {
+                // In production (Vercel deployment)
+                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    return API_CONFIG.production;
                 }
-            };
+                // In development
+                return API_CONFIG.development;
+            }
 
-            // Add fetchHorseTypes method with fallback
-            window.zedApi.fetchHorseTypes = async function() {
-                try {
-                // Try to use the real API endpoint if available
-                const response = await fetch('https://api.zedchampions.com/v1/horse-types', {
-                    method: 'GET',
-                    headers: {
-                    'Authorization': `Bearer ${this.authToken}`,
-                    'Content-Type': 'application/json'
+            // Then update ZED_API to use the proxy
+            // Add this to setupApiFallbacks function
+            function updateApiEndpoints() {
+                const config = getApiConfig();
+                
+                // Store original methods
+                const originalFetchHorse = ZED_API.fetchHorse;
+                const originalFetchAllHorses = ZED_API.fetchAllHorses;
+                const originalTestConnection = ZED_API.testConnection;
+                
+                // Override with proxy-aware versions
+                ZED_API.fetchHorse = async function(horseId) {
+                    try {
+                    if (config.useProxy) {
+                        const response = await fetch(`${config.baseUrl}/horses/${horseId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.authToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                        });
+                        
+                        if (response.ok) {
+                        const data = await response.json();
+                        return { success: true, data };
+                        } else {
+                        return { success: false, message: `API Error: ${response.status}` };
+                        }
+                    } else {
+                        return await originalFetchHorse.call(this, horseId);
                     }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return { success: true, data: data.types || [] };
-                }
-                } catch (error) {
-                console.warn("API connection failed for horse types, using mock data");
-                }
-                
-                // Return mock data as fallback
-                return {
-                success: true,
-                data: [
-                    { id: "racing", name: "Racing Horse" },
-                    { id: "breeding", name: "Breeding Horse" }
-                ]
-                };
-            };
-        
-            console.log("Added API fallbacks to handle connection issues");
-        }
+                    } catch (error) {
+                    console.warn("API connection failed, using fallback");
+                    // Use the fallback implementation
+                    return {
+                        success: true,
+                        data: {
+                        id: horseId || "sample-12345",
+                        name: "Sample Horse",
+                        bloodline: "Nakamoto",
+                        gender: "colt",
+                        color: "#DC143C",
+                        overall_rating: 3.5,
+                        speed_rating: 3.2,
+                        sprint_rating: 3.8,
+                        endurance_rating: 3.3
+                        }
+                    };
+                    }
+               };
+            
+                console.log("Updated API endpoints to use proxy:", config.useProxy ? "enabled" : "disabled");
+            }
+
+            // Call this function during initialization
+            updateApiEndpoints();
 
             // Call the fallback setup function
             setupApiFallbacks();
