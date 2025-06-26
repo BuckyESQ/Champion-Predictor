@@ -2278,24 +2278,26 @@
                 </div>
             </div>
 
-            <div id="tab-content-import" class="tab-content">
-                <div class="section">
-                    <h2>Import from ZedChampions</h2>
-                    <p>Import your horses directly from your ZedChampions account.</p>
-                    <div id="api-import-container">
-                        <!-- This container will be populated by the ZedAuthUI -->
+            <!-- Add to the beginning of your tab-content-import div -->
+            <div class="section" id="horse-search-container">
+                <h2>Search for Horses</h2>
+                <p>Find a specific horse by name or ID to view detailed statistics and import to your stable.</p>
+                
+                <div class="search-field-group">
+                    <div class="search-row">
+                    <div class="search-input-wrapper">
+                        <label for="horse-search-input">Search by name:</label>
+                        <input class="horse-search-input" id="horse-search-input" placeholder="Enter horse name...">
+                    </div>
+                    <div class="search-input-wrapper">
+                        <label for="horse-id-input">Or by ID:</label>
+                        <input class="horse-id-input" id="horse-id-input" placeholder="Enter horse ID...">
+                    </div>
+                    <button type="button" class="button" id="horse-search-button">Search</button>
                     </div>
                 </div>
                 
-                <div class="section">
-                    <h2>Data Management</h2>
-                    <div style="margin-top: 15px;">
-                        <button id="export-data-button" class="button">Export All Data</button>
-                        <p style="font-size: 0.9em; color: var(--text-muted-color); margin-top: 8px;">
-                            Saves all horses, races, bred records, and augments to a JSON file as a backup.
-                        </p>
-                    </div>
-                </div>
+                <div class="horse-results" id="horse-results"></div>
             </div>
                 
                 <hr style="margin: 2em 0; border-color: var(--border-color);">
