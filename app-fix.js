@@ -120,3 +120,28 @@ function fixApiIntegration() {
     }
   };
 }
+
+// In app-fix.js, add:
+function emergencyReset() {
+  console.log('Performing emergency reset of app state');
+  
+  // Reset all pagination states
+  window.horseTableCurrentPage = 1;
+  window.raceTableCurrentPage = 1;
+  window.breedingHorseTableCurrentPage = 1;
+  window.bredHistoryTableCurrentPage = 1;
+  window.studAuctionTableCurrentPage = 1;
+  window.transactionTableCurrentPage = 1;
+  
+  // Re-render all tables
+  try {
+    if (typeof window.renderHorsesTable === 'function') window.renderHorsesTable();
+    if (typeof window.renderRacesTable === 'function') window.renderRacesTable();
+    if (typeof window.renderBreedingHorsesTable === 'function') window.renderBreedingHorsesTable();
+    if (typeof window.renderBredHorsesTable === 'function') window.renderBredHorsesTable();
+    if (typeof window.renderStudAuctionTable === 'function') window.renderStudAuctionTable();
+    if (typeof window.renderTransactionsTable === 'function') window.renderTransactionsTable();
+  } catch (e) {
+    console.error('Error during table rendering:', e);
+  }
+}
