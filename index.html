@@ -6252,20 +6252,33 @@
              }
         }
 
+                // Fixed activateTab function
         function activateTab(tabId) {
-            console.log(`Attempting to activate tab: ${tabId}`);
-            window.tabButtons.forEach(button => {
-                button.classList.toggle('active', button.dataset.tab === tabId);
-            });
-            window.tabContents.forEach(content => {
-                // Use ID matching for content activation
-                const contentId = `tab-content-${tabId}`;
-                const shouldBeActive = content.id === contentId;
-                console.log(`Checking content div #${content.id}: Should be active? ${shouldBeActive}`);
-                content.classList.toggle('active', shouldBeActive);
-            });
-            console.log(`Activated tab: ${tabId}`);
-            
+          console.log('Activating tab:', tabId);
+          
+          // Get all tab buttons and content divs
+          const tabButtons = document.querySelectorAll('.tab-button');
+          const tabContents = document.querySelectorAll('.tab-content');
+          
+          // Remove active class from all buttons and content divs
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Add active class to selected button and content div
+          const selectedButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+          const selectedContent = document.getElementById(`tab-content-${tabId}`);
+          
+          if (selectedButton) selectedButton.classList.add('active');
+          if (selectedContent) {
+            selectedContent.classList.add('active');
+            console.log(`Activated tab content: tab-content-${tabId}`);
+          } else {
+            console.error(`Tab content not found for: ${tabId}`);
+          }
+          
+          // Store active tab in localStorage
+          localStorage.setItem('zedTrackerActiveTab', tabId);
+        }
             // Render analysis tables if Analysis tab is activated
             if (tabId === 'analysis') {
                 renderBloodlineAnalysis();
