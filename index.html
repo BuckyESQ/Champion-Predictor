@@ -6177,26 +6177,26 @@ function handleAddRace(event) {
         }
 
         function activateTab(tabId) {
-            console.log(`Attempting to activate tab: ${tabId}`); // Corrected syntax
-             tabButtons.forEach(button => {
-                 button.classList.toggle('active', button.dataset.tab === tabId);
-             });
-             tabContents.forEach(content => {
-                  // Use ID matching for content activation
-                 const contentId = `tab-content-${tabId}`;
-                 const shouldBeActive = content.id === contentId;
-                 console.log(`Checking content div #${content.id}: Should be active? ${shouldBeActive}`); // Corrected syntax
-                  content.classList.toggle('active', shouldBeActive);
-             });
-             console.log(`Activated tab: ${tabId}`);
-             
-             // Render analysis tables if Analysis tab is activated
-             if (tabId === 'analysis') {
-                 renderBloodlineAnalysis();
-                 renderIndividualAugmentAnalysis();
-                 renderAugmentPairAnalysis();
-                 renderTripleAugmentAnalysis();
-             }
+            console.log(`Attempting to activate tab: ${tabId}`);
+            window.tabButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.tab === tabId);
+            });
+            window.tabContents.forEach(content => {
+                // Use ID matching for content activation
+                const contentId = `tab-content-${tabId}`;
+                const shouldBeActive = content.id === contentId;
+                console.log(`Checking content div #${content.id}: Should be active? ${shouldBeActive}`);
+                content.classList.toggle('active', shouldBeActive);
+            });
+            console.log(`Activated tab: ${tabId}`);
+            
+            // Render analysis tables if Analysis tab is activated
+            if (tabId === 'analysis') {
+                renderBloodlineAnalysis();
+                renderIndividualAugmentAnalysis();
+                renderAugmentPairAnalysis();
+                renderTripleAugmentAnalysis();
+            }
         }
         
         // --- Modal Handling Functions ---
