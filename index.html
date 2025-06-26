@@ -2620,7 +2620,7 @@
         document.addEventListener('DOMContentLoaded', function() {
         setupHorseSearch();
         });
-        
+
         function initializeApiIntegration() {
         // Create container for the ZED API UI
             const apiContainer = document.getElementById('api-import-container');
@@ -3500,6 +3500,7 @@
                 });
         }
 
+        // Replace your existing importSingleHorse function
         function importSingleHorse() {
             const statusElement = document.getElementById('single-import-status');
             const horseId = document.getElementById('zed-horse-id').value.trim();
@@ -3507,7 +3508,7 @@
             
             // Validate inputs
             if (!horseId) {
-                showImportStatus(statusElement, 'Please enter a horse ID.', false);
+                showImportStatus(statusElement, 'Please enter a horse ID or search for a horse first.', false);
                 return;
             }
             
@@ -3522,75 +3523,107 @@
                 return;
             }
             
-            // Show loading status
-            showImportStatus(statusElement, `Importing horse ${horseId}...`, null);
+            // Show loading status with spinner
+            showImportStatus(statusElement, `<div class="spinner"></div> Importing horse ${horseId}...`, null);
             
             // Fetch the horse data
             ZED_API.fetchHorse(horseId)
                 .then(result => {
-                    if (!result.success) {
-                        showImportStatus(statusElement, `Error: ${result.message}`, false);
-                        return;
-                    }
-                    
-                    const horseData = result.data;
-                    const existingHorse = horses.find(h => h.zedId === horseData.id);
-                    
-                    const processedHorse = {
-                        id: existingHorse?.id || `horse-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-                        name: horseData.name,
-                        bloodline: horseData.bloodline,
-                        color: horseData.color || '#CCCCCC', // Default if color missing
-                        gender: horseData.gender,
-                        stars: horseData.overall_rating || null,
-                        speedStars: horseData.speed_rating || null,
-                        sprintStars: horseData.sprint_rating || null,
-                        enduranceStars: horseData.endurance_rating || null,
-                        initialZedBalance: existingHorse?.initialZedBalance || 0, // Keep existing or default to 0
-                        initialMmRating: existingHorse?.initialMmRating || 1000, // Keep existing or default to 1000
-                        status: importType, // Use selected type
-                        generation: horseData.genotype || 0,
-                        importedFromZed: true,
-                        zedId: horseData.id,
-                        lastUpdated: new Date().toISOString()
-                    };
-                    
-                    if (existingHorse) {
-                        // Update existing horse
-                        Object.assign(existingHorse, processedHorse);
-                        showImportStatus(statusElement, `Updated horse: ${horseData.name}`, true);
-                    } else {
-                        // Add new horse
-                        horses.push(processedHorse);
-                        showImportStatus(statusElement, `Imported new horse: ${horseData.name}`, true);
-                    }
-                    
-                    // Save and update UI
-                    saveData();
-                    
-                    if (importType === 'racing') {
-                        renderHorsesTable();
-                        updateHorseDropdown();
-                        // Switch to Racing tab
-                        activateTab('racing');
-                    } else {
-                        renderBreedingHorsesTable();
-                        updateFoalPredictorDropdowns();
-                        updateStudAuctionSelect();
-                        // Switch to Breeding tab
-                        activateTab('breeding');
-                    }
-                    
-                    updateParentDropdowns();
-                    populateAugmentAnalysisHorseFilter();
-                    
-                    // Clear input field
-                    document.getElementById('zed-horse-id').value = '';
+                if (!result.success) {
+                    showImportStatus(statusElement, `Error: ${result.message}`, false);
+                    return;
+                }
+                
+                const horseData = result.data;
+                const existingHorse = horses.find(h => h.zedId === horseData.id);
+                
+                const processedHorse = {
+                    id: existingHorse?.id || `horse-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                    name: horseData.name || `Horse ${horseData.id.substring(0, 6)}`,
+                    bloodline: horseData.bloodline,
+                    color: horseData.color || '#CCCCCC', // Default if color missing
+                    gender: horseData.gender,
+                    stars: horseData.overall_rating || null,
+                    speedStars: horseData.speed_rating || null,
+                    sprintStars: horseData.sprint_rating || null,
+                    enduranceStars: horseData.endurance_rating || null,
+                    initialZedBalance: existingHorse?.initialZedBalance || 0,
+                    initialMmRating: existingHorse?.initialMmRating || 1000,
+                    status: importType,
+                    generation: horseData.genotype || 0,
+                    importedFromZed: true,
+                    zedId: horseData.id,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                let message = '';
+                
+                if (existingHorse) {
+                    // Update existing horse
+                    Object.assign(existingHorse, processedHorse);
+                    message = `
+                    <div class="import-success">
+                        <h3>Updated Horse: ${horseData.name}</h3>
+                        <div class="horse-preview">
+                        <div class="horse-image" style="background-color:${horseData.color || '#CCCCCC'}"></div>
+                        <div class="horse-details">
+                            <p><strong>Bloodline:</strong> ${horseData.bloodline}</p>
+                            <p><strong>Gender:</strong> ${horseData.gender}</p>
+                            <p><strong>Generation:</strong> ${horseData.genotype || 'N/A'}</p>
+                            <p><strong>Type:</strong> ${importType.charAt(0).toUpperCase() + importType.slice(1)} Horse</p>
+                        </div>
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    // Add new horse
+                    horses.push(processedHorse);
+                    message = `
+                    <div class="import-success">
+                        <h3>Imported New Horse: ${horseData.name}</h3>
+                        <div class="horse-preview">
+                        <div class="horse-image" style="background-color:${horseData.color || '#CCCCCC'}"></div>
+                        <div class="horse-details">
+                            <p><strong>Bloodline:</strong> ${horseData.bloodline}</p>
+                            <p><strong>Gender:</strong> ${horseData.gender}</p>
+                            <p><strong>Generation:</strong> ${horseData.genotype || 'N/A'}</p>
+                            <p><strong>Type:</strong> ${importType.charAt(0).toUpperCase() + importType.slice(1)} Horse</p>
+                        </div>
+                        </div>
+                    </div>
+                    `;
+                }
+                
+                // Save and update UI
+                saveData();
+                
+                if (importType === 'racing') {
+                    renderHorsesTable();
+                    updateHorseDropdown();
+                    // Optionally switch tab
+                    setTimeout(() => activateTab('racing'), 1500);
+                } else {
+                    renderBreedingHorsesTable();
+                    updateFoalPredictorDropdowns();
+                    updateStudAuctionSelect();
+                    // Optionally switch tab
+                    setTimeout(() => activateTab('breeding'), 1500);
+                }
+                
+                updateParentDropdowns();
+                populateAugmentAnalysisHorseFilter();
+                
+                // Show success message with styled preview
+                showImportStatus(statusElement, message, true);
+                
+                // Clear input field
+                document.getElementById('zed-horse-id').value = '';
                 })
                 .catch(error => {
-                    console.error("Import error:", error);
-                    showImportStatus(statusElement, `Error importing horse: ${error.message}`, false);
-                });              
+                console.error("Import error:", error);
+                showImportStatus(statusElement, `Error importing horse: ${error.message}`, false);
+                });
+        }             
                     
                 // Find and enhance the predict button if it exists
                 const predictButton = document.getElementById('predict-foal-btn');
