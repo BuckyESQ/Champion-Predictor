@@ -6278,14 +6278,14 @@
           
           // Store active tab in localStorage
           localStorage.setItem('zedTrackerActiveTab', tabId);
-        }
-            // Render analysis tables if Analysis tab is activated
-            if (tabId === 'analysis') {
-                renderBloodlineAnalysis();
-                renderIndividualAugmentAnalysis();
-                renderAugmentPairAnalysis();
-                renderTripleAugmentAnalysis();
-            }
+          
+          // Render analysis tables if Analysis tab is activated
+          if (tabId === 'analysis') {
+              renderBloodlineAnalysis();
+              renderIndividualAugmentAnalysis();
+              renderAugmentPairAnalysis();
+              renderTripleAugmentAnalysis();
+          }
         }
         
         // --- Modal Handling Functions ---

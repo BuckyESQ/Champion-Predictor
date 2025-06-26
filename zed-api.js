@@ -660,10 +660,6 @@ class ZedAuthUI {
         
         document.getElementById('test-api-connection-btn')?.removeAttribute('disabled');
     }
-    
-    /**
-     * Show status message
-     */
     /**
      * Show status message
      */
@@ -703,30 +699,25 @@ class ZedAuthUI {
         if (!element) return;
         
         element.style.display = 'block';
-        element.className = '';
-        element.textContent = message;
+        element.innerHTML = message; // Use innerHTML instead of textContent
         
         if (isSuccess === true) {
-            element.classList.add('success');
-            element.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
-            element.style.color = '#4CAF50';
-            element.style.padding = '8px';
-            element.style.borderRadius = '4px';
+          element.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+          element.style.color = '#4CAF50';
+          element.style.padding = '8px 12px';
+          element.style.borderRadius = '4px';
         } else if (isSuccess === false) {
-            element.classList.add('error');
-            element.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
-            element.style.color = '#F44336';
-            element.style.padding = '8px';
-            element.style.borderRadius = '4px';
+          element.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+          element.style.color = '#F44336';
+          element.style.padding = '8px 12px';
+          element.style.borderRadius = '4px';
         } else {
-            element.classList.add('info');
-            element.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
-            element.style.color = '#2196F3';
-            element.style.padding = '8px';
-            element.style.borderRadius = '4px';
+          element.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+          element.style.color = '#2196F3';
+          element.style.padding = '8px 12px';
+          element.style.borderRadius = '4px';
         }
     }
-}
 
 // First create the ZedApiService and assign it to window.zedApi
 window.zedApi = new ZedApiService();
@@ -768,15 +759,9 @@ document.addEventListener('DOMContentLoaded', function() {
           data: ['racing', 'breeding']
         };
       };
-      
-      // Create self-reference for compatibility
-      window.zedApi.apiService = window.zedApi;
-      
-      console.log("Added fetchHorseTypes to window.zedApi");
-    } else {
-      console.error("window.zedApi not found!");
+
     }
-  }, 100); // Small delay to ensure scripts are loaded
+  }); // Add closing parenthesis here
 });
 
 // New tab initialization code
