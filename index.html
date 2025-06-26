@@ -33,6 +33,105 @@
             border-radius: 4px;
         }
 
+        /* Add to your style section */
+        .horse-search-container {
+          margin-bottom: 20px;
+        }
+
+        .search-field-group {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 15px;
+        }
+
+        .search-row {
+          display: flex;
+          gap: 10px;
+          align-items: flex-end;
+        }
+
+        .search-input-wrapper {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        .search-input-wrapper label {
+          margin-bottom: 5px;
+          color: var(--text-color);
+        }
+
+        .horse-search-input, .horse-id-input {
+          padding: 8px 12px;
+          border-radius: 4px;
+          border: 1px solid var(--border-color);
+          background-color: var(--input-bg);
+          color: var(--text-color);
+          font-size: 14px;
+          width: 100%;
+        }
+
+        .horse-results {
+          max-height: 400px;
+          overflow-y: auto;
+          display: none;
+          margin-top: 15px;
+          border-radius: 8px;
+          border: 1px solid var(--border-color);
+          background-color: var(--section-bg);
+        }
+
+        .horse-result-item {
+          padding: 12px 15px;
+          border-bottom: 1px solid var(--border-color);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .horse-result-item:hover {
+          background-color: rgba(187, 134, 252, 0.1);
+        }
+
+        .horse-name {
+          font-weight: 700;
+          font-size: 16px;
+        }
+
+        .horse-details {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 10px;
+          margin-top: 8px;
+        }
+
+        .horse-result-bloodline {
+          color: var(--muted-text);
+          margin-left: 10px;
+        }
+
+        .bloodline-nakamoto {
+          border-left: 3px solid rgba(207, 102, 121, 0.8);
+        }
+
+        .bloodline-szabo {
+          border-left: 3px solid rgba(3, 218, 198, 0.8);
+        }
+
+        .bloodline-finney {
+          border-left: 3px solid rgba(187, 134, 252, 0.8);
+        }
+
+        .bloodline-buterin {
+          border-left: 3px solid rgba(255, 235, 59, 0.8);
+        }
+
+        .import-actions {
+          margin-top: 10px;
+          display: flex;
+          gap: 8px;
+        }
+
         /* Add this to your style section */
         .import-section {
           margin-bottom: 30px;
