@@ -486,14 +486,50 @@
         .tab-content {
             display: none;
         }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out; /* Subtle fade in animation */
-        }
         /* Make sure inactive tabs are truly hidden */
         .tab-content:not(.active) {
           display: none !important;
         }
+
+        /* Clear display styles */
+        .tab-content.active {
+          display: block !important;
+          animation: fadeIn 0.3s ease-in-out; /* Subtle fade in animation */
+        }
+
+        /* Fix tab buttons */
+        .tab-button {
+          position: relative;
+          cursor: pointer;
+          padding: 10px 15px;
+          background-color: var(--tab-bg);
+          border: none;
+          color: var(--text-color);
+          transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+          background-color: var(--tab-active-bg);
+          color: var(--link-color);
+          font-weight: bold;
+        }
+
+        /* API connection status */
+        #api-connection-status {
+          margin-top: 10px;
+          padding: 10px;
+          border-radius: 4px;
+          display: none;
+        }
+
+        /* Import status */
+        .import-status {
+          margin-top: 10px;
+          padding: 10px;
+          border-radius: 4px;
+          display: none;
+        }
+
         /* Add animation keyframes */
         @keyframes fadeIn {
             from { opacity: 0.85; }
