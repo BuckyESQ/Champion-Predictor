@@ -778,3 +778,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 100); // Small delay to ensure scripts are loaded
 });
+
+// New tab initialization code
+function initializeTabs() {
+  // Get all tab buttons and content divs directly
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  // Also store them globally for other functions to use
+  window.tabButtons = Array.from(tabButtons);
+  window.tabContents = Array.from(tabContents);
+  
+  // Create tab buttons if they don't exist
+  if (!tabButtons.length) {
+    const buttonContainer = document.getElementById('tab-buttons');
+    if (buttonContainer) {
+      const tabIds = ['racing', 'breeding', 'transactions', 'augments', 'analysis', 'stats', 'import'];
+      const tabLabels = ['Racing', 'Breeding', 'Transactions', 'Augments', 'Analysis', 'Stats', 'Import'];
+      
+      tabIds.forEach((id, index) => {
+        const button = document.createElement('button');
+        button.className = 'tab-button';
+        button.setAttribute('data-tab', id);
+        button.textContent = tabLabels[index];
+        
+        // Add click handler directly when creating buttons
+        button.addEventListener('click', () => {
+          activateTab(id);
+          localStorage.setItem('zedTrackerActiveTab', id);
+        });
+        
+        buttonContainer.appendChild(button);
+      });
+      
+      // Update the global reference after creating buttons
+      window.tabButtons = Array.from(document.querySelectorAll('.tab-button'));
+    }
+  } else {
+    // Add click handlers to existing buttons
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        activateTab(tabId);
+        localStorage.setItem('zedTrackerActiveTab', tabId);
+      });
+    });
+  }
+  
+  // Activate the last active tab or default to racing
+  const lastActiveTab = localStorage.getItem('zedTrackerActiveTab') || 'racing';
+  activateTab(lastActiveTab);
+  
+  console.log('Tab initialization complete:', 
+    {buttons: window.tabButtons.length, contents: window.tabContents.length});
+}
+
+// Simplified tab activation function
+function activateTab(tabId) {
+  console.log(`Attempting to activate tab: ${tabId}`);
+  
+  // Toggle active class on buttons
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabId);
+  });
+  
+  // Toggle active class on content divs
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.toggle('active', content.id === `tab-content-${tabId}`);
+  });
+  
+  console.log(`Activated tab: ${tabId}`);
+  
+  // Special handlers for specific tabs
+  if (tabId === 'analysis') {
+    renderBloodlineAnalysis();
+    renderIndividualAugmentAnalysis();
+    renderAugmentPairAnalysis();
+  }
+}
