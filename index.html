@@ -490,6 +490,10 @@
             display: block;
             animation: fadeIn 0.3s ease-in-out; /* Subtle fade in animation */
         }
+        /* Make sure inactive tabs are truly hidden */
+        .tab-content:not(.active) {
+          display: none !important;
+        }
         /* Add animation keyframes */
         @keyframes fadeIn {
             from { opacity: 0.85; }
