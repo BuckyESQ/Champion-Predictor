@@ -2437,6 +2437,51 @@
             </div>
 
             <!-- Add to the beginning of your tab-content-import div -->
+                        <!-- Add this at the beginning of tab-content-import -->
+            <div id="api-import-container" class="section">
+              <h2>ZED Champions API Authentication</h2>
+              <p>Enter your Bearer token to connect to the ZED Champions API.</p>
+              
+              <div style="margin-top: 15px;">
+                <div class="form-grid" style="grid-template-columns: 1fr auto;">
+                  <textarea id="zed-api-token" placeholder="Enter your ZED Champions API Bearer token" 
+                    style="height: 60px; padding: 10px;" autocomplete="off" data-lpignore="true"></textarea>
+                  <button id="save-api-token-btn" class="button">Save Token</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
+                  <button id="test-api-connection-btn" class="button">Test Connection</button>
+                  <div id="test-api-connection-status" style="flex: 1;"></div>
+                </div>
+              </div>
+              
+              <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h3>Import Horses</h3>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                  <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
+                  <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
+                </div>
+                <div id="import-status" style="margin-top: 10px;"></div>
+                
+                <h4>Import Single Horse</h4>
+                <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-end;">
+                  <div>
+                    <label for="zed-horse-id">Horse ID:</label>
+                    <input type="text" id="zed-horse-id" placeholder="Enter horse ID">
+                  </div>
+                  <div>
+                    <label for="import-horse-type">Import As:</label>
+                    <select id="import-horse-type">
+                      <option value="racing">Racing Horse</option>
+                      <option value="breeding">Breeding Horse</option>
+                    </select>
+                  </div>
+                  <button id="import-single-horse-btn" class="button">Import Horse</button>
+                </div>
+                <div id="single-import-status" class="import-status"></div>
+              </div>
+            </div>
+            <!-- Horse Search Section -->
             <div class="section" id="horse-search-container">
                 <h2>Search for Horses</h2>
                 <p>Find a specific horse by name or ID to view detailed statistics and import to your stable.</p>
