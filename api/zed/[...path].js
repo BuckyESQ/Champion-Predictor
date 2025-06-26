@@ -1,3 +1,4 @@
+// This is the server-side proxy endpoint that should be deployed on Vercel
 // filepath: /workspaces/Champion-Predictor/api/zed/[...path].js
 export default async function handler(req, res) {
   const { path } = req.query;
