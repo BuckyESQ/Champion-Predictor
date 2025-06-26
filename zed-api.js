@@ -856,3 +856,51 @@ function activateTab(tabId) {
     renderAugmentPairAnalysis();
   }
 }
+
+function setupEventListeners() {
+  console.log("Setting up event listeners...");
+  
+  // Fix the "Add Horse" form submission
+  const addHorseForm = document.getElementById('add-horse-form');
+  if (addHorseForm) {
+    console.log("Found add-horse-form, attaching event listener");
+    addHorseForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      handleAddHorse(event);
+    });
+  } else {
+    console.error("Could not find add-horse-form element");
+  }
+  
+  // Other event listeners...
+  // Add race form
+  const addRaceForm = document.getElementById('add-race-form');
+  if (addRaceForm) {
+    addRaceForm.addEventListener('submit', handleAddRace);
+  }
+  
+  // Add bred horse form
+  const addBredHorseForm = document.getElementById('add-bred-horse-form');
+  if (addBredHorseForm) {
+    addBredHorseForm.addEventListener('submit', handleAddBredHorse);
+  }
+  
+  // Add breeding horse form
+  const addBreedingHorseForm = document.getElementById('add-breeding-horse-form');
+  if (addBreedingHorseForm) {
+    addBreedingHorseForm.addEventListener('submit', handleAddBreedingHorse);
+  }
+  
+  console.log("Event listeners setup complete");
+}
+
+// Call this function in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize tabs
+  initializeTabs();
+  
+  // Setup event listeners
+  setupEventListeners();
+  
+  // Other initialization code...
+});
