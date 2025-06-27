@@ -6,7 +6,7 @@
             this.useProxy = !host.includes('stablefields.com');
             this.apiBase = dev
             ? 'http://localhost:3000/zed'
-            : 'https://your-vercel-deployment-url/api/zed';
+            : 'https://v0-new-project-md4jq9n7i2p.vercel.app/api/zed';
         }
 
         async fetchFromApi(path, method = 'GET', body = null) {
