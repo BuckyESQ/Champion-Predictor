@@ -79,9 +79,11 @@ class ZedApiService {
     this.useProxy = true;
     
     // API base URL - adjust for your deployment
-    this.apiBase = isDev 
-      ? 'http://localhost:3000/api/zed' 
-      : '/api/zed';
+    // OLD:
+// this.apiBase = '/api/zed';
+
+// NEW:
+    this.apiBase = 'https://v0-new-project-md4jq9n7i2p.vercel.app/api/zed';
       
     console.log(`API client initialized. Proxy: ${this.useProxy ? 'enabled' : 'disabled'}`);
   }
