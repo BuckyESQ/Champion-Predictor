@@ -1,4 +1,3 @@
--build/import-init.js
 document.addEventListener('DOMContentLoaded', function() {
   // Set up API token form
   const saveTokenBtn = document.getElementById('save-api-token-btn');
@@ -41,10 +40,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  if (importRacingBtn) {
-    importRacingBtn.addEventListener('click', async function() {
-      const statusEl = document.getElementById('import-status');
-      if (!window.zedAuth.getToken()) {
-        window.showImportStatus(statusEl, 'No API token set. Please set your token first.', false);
-        return;
-      }
+    if (importRacingBtn) {
+      importRacingBtn.addEventListener('click', async function() {
+        const statusEl = document.getElementById('import-status');
+        if (!window.zedAuth.getToken()) {
+          window.showImportStatus(statusEl, 'No API token set. Please set your token first.', false);
+          return;
+        }
+      });
+    }
+  });
