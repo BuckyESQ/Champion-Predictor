@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>StableFields ZED Champions Tracker</title>
+  <meta name="description" content="Track and analyze your ZED Champions horses, races, and breeding data">
+  <meta http-equiv="refresh" content="5;url=https://v0-new-project-md4jq9n7i2p.vercel.app">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { 
+      color: #3498db; 
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .logo {
+      margin-bottom: 20px;
+      max-width: 150px;
+    }
+    .button {
+      display: inline-block;
+      padding: 15px 25px;
+      background: #2e86c1;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 18px;
+      margin-top: 30px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background: #1a5276;
+    }
+    .countdown {
+      margin-top: 30px;
+      font-style: italic;
+      color: #aaa;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 40px 0;
+      gap: 20px;
+    }
+    .feature {
+      flex: 1 1 200px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .feature h3 {
+      color: #3498db;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Add your logo here if you have one -->
+    <!-- <img src="logo.png" alt="StableFields logo" class="logo"> -->
+    
+    <h1>StableFields ZED Champions Tracker</h1>
+    <p>Your complete management tool for ZED Champions horses, races, and breeding.</p>
+    
+    <div class="features">
+      <div class="feature">
+        <h3>Racing Management</h3>
+        <p>Track race performance, earnings, and build a winning strategy.</p>
+      </div>
+      <div class="feature">
+        <h3>Breeding Tools</h3>
+        <p>Optimize your breeding program with comprehensive tracking tools.</p>
+      </div>
+      <div class="feature">
+        <h3>Data Import</h3>
+        <p>Import your stable directly from the ZED Champions API.</p>
+      </div>
+    </div>
+    
+    <p>You'll be redirected to the app in 5 seconds, or click the button below:</p>
+    <a href="https://v0-new-project-md4jq9n7i2p.vercel.app" class="button">Launch Champion Predictor →</a>
+    
+    <div class="countdown">
+      <p id="timer">Redirecting in 5 seconds...</p>
+    </div>
+  </div>
+  
+  <script>
+    // Countdown timer
+    let seconds = 5;
+    const timerElement = document.getElementById('timer');
+    const countdown = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(countdown);
+      } else {
+        timerElement.textContent = `Redirecting in ${seconds} second${seconds === 1 ? '' : 's'}...`;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
