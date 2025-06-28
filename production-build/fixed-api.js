@@ -72,18 +72,14 @@ class ZedAuthManager {
 class ZedApiService {
   constructor(authManager) {
     this.authManager = authManager;
+    
+    // Dynamic API base URL that works across all environments
     const host = window.location.hostname;
     const isDev = host === 'localhost' || host === '127.0.0.1';
     
-    // Use proxy by default
-    this.useProxy = true;
-    
-    // API base URL - adjust for your deployment
-    // OLD:
-// this.apiBase = '/api/zed';
-
-// NEW:
-    this.apiBase = 'https://v0-new-project-md4jq9n7i2p.vercel.app/api/zed';
+    this.apiBase = isDev 
+      ? 'http://localhost:3000/api/zed' 
+      : '/api/zed';
       
     console.log(`API client initialized. Proxy: ${this.useProxy ? 'enabled' : 'disabled'}`);
   }
@@ -687,26 +683,26 @@ window.showImportStatus = function(element, message, isSuccess) {
     element.style.borderRadius = '4px';
   }
 };
-    // auto-update on load if we have a token, otherwise go to Import tab
-    document.addEventListener('DOMContentLoaded', () => {
-      const authUI = window.zedAuthUI;
-      // if no token, show Import tab and let user paste one
-      if (!zedAuth.getToken() || zedAuth.isTokenExpired()) {
-        activateTab('import');
-        console.info('Please enter your Bearer token to update today’s data.');
-        return;
-      }
-      // otherwise immediately re-import both stables
-      console.info('Token found – auto-importing Racing & Breeding stables…');
-      // we’ll wait until our UI is fully initialized
-      setTimeout(async () => {
-        try {
-          await authUI.handleImportRacingStable();
-          await authUI.handleImportBreedingStable();
-          console.info('✅ Racing and Breeding stables updated.');
-        } catch (e) {
-          console.error('Auto-import error:', e);
-          activateTab('import');
-        }
-      }, 200);
-    });
+// auto-update on load if we have a token, otherwise go to Import tab
+document.addEventListener('DOMContentLoaded', () => {
+  const authUI = window.zedAuthUI;
+  // if no token, show Import tab and let user paste one
+  if (!zedAuth.getToken() || zedAuth.isTokenExpired()) {
+    activateTab('import');
+    console.info('Please enter your Bearer token to update today’s data.');
+    return;
+  }
+  // otherwise immediately re-import both stables
+  console.info('Token found – auto-importing Racing & Breeding stables…');
+  // we’ll wait until our UI is fully initialized
+  setTimeout(async () => {
+    try {
+      await authUI.handleImportRacingStable();
+      await authUI.handleImportBreedingStable();
+      console.info('✅ Racing and Breeding stables updated.');
+    } catch (e) {
+      console.error('Auto-import error:', e);
+      activateTab('import');
+    }
+  }, 200);
+});
