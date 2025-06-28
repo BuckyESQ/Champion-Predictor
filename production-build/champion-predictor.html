@@ -96,6 +96,22 @@
     </div>
   </div>
   
+  <script src="scripts.js"></script>
+  <script src="tabs-fix.js"></script>
+  
+  <!-- Emergency reset button -->
+  <button id="emergency-reset-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
+    Reset App
+  </button>
+  
+  <script>
+    document.getElementById('emergency-reset-btn').addEventListener('click', function() {
+      if (confirm('This will reset the application state. Continue?')) {
+        window.location.reload();
+      }
+    });
+  </script>
+  
   <script>
     // Countdown timer
     let seconds = 5;
