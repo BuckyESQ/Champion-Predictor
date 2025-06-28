@@ -687,3 +687,26 @@ window.showImportStatus = function(element, message, isSuccess) {
     element.style.borderRadius = '4px';
   }
 };
+    // auto-update on load if we have a token, otherwise go to Import tab
+    document.addEventListener('DOMContentLoaded', () => {
+      const authUI = window.zedAuthUI;
+      // if no token, show Import tab and let user paste one
+      if (!zedAuth.getToken() || zedAuth.isTokenExpired()) {
+        activateTab('import');
+        console.info('Please enter your Bearer token to update today’s data.');
+        return;
+      }
+      // otherwise immediately re-import both stables
+      console.info('Token found – auto-importing Racing & Breeding stables…');
+      // we’ll wait until our UI is fully initialized
+      setTimeout(async () => {
+        try {
+          await authUI.handleImportRacingStable();
+          await authUI.handleImportBreedingStable();
+          console.info('✅ Racing and Breeding stables updated.');
+        } catch (e) {
+          console.error('Auto-import error:', e);
+          activateTab('import');
+        }
+      }, 200);
+    });
