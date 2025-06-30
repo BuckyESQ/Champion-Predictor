@@ -1,13 +1,12 @@
-const https = require('https');
-const url = require('url');
+import https from 'https';
+import { parse } from 'url';
 
-module.exports = async (req, res) => {
-  // Extract the path from the URL
-  const urlPath = req.url || '';
-  const segments = urlPath.split('/');
-  // Remove 'api', 'zed' and any empty segments
-  const pathSegments = segments.filter(s => s && s !== 'api' && s !== 'zed');
-  const apiPath = pathSegments.join('/');
+export default async function handler(req, res) {
+  // Extract path from request
+  const path = req.query.path || [];
+  const apiPath = Array.isArray(path) ? path.join('/') : path;
+
+  console.log('API proxy request for:', apiPath);
   
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -20,19 +19,20 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
-  // Clean up horse IDs from URLs
-  let cleanApiPath = apiPath;
-  if (cleanApiPath.startsWith('horses/') && cleanApiPath.includes('app.zedchampions.com/horse/')) {
-    const match = cleanApiPath.match(/horses\/.*\/horse\/([^\/]+)/);
-    if (match && match[1]) {
-      cleanApiPath = `horses/${match[1]}`;
+  try {
+    // Clean up horse IDs from URLs
+    let cleanApiPath = apiPath;
+    if (cleanApiPath.includes('horses/') && cleanApiPath.includes('app.zedchampions.com/horse/')) {
+      const match = cleanApiPath.match(/horses\/.*\/horse\/([^\/]+)/i);
+      if (match && match[1]) {
+        cleanApiPath = `horses/${match[1]}`;
+      }
     }
-  }
 
-  const apiUrl = `https://api.zedchampions.com/v1/${cleanApiPath}`;
-  
-  // Forward the request to the ZED Champions API
-  return new Promise((resolve) => {
+    const apiUrl = `https://api.zedchampions.com/v1/${cleanApiPath}`;
+    console.log('Proxying to:', apiUrl);
+    
+    // Headers for the ZED API request
     const headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -42,46 +42,29 @@ module.exports = async (req, res) => {
     if (req.headers.authorization) {
       headers.Authorization = req.headers.authorization;
     }
-    
-    const options = {
+
+    // Make the request to ZED API
+    const response = await fetch(apiUrl, {
       method: req.method,
-      headers: headers
-    };
-    
-    const proxyReq = https.request(apiUrl, options, (proxyRes) => {
-      let data = '';
-      
-      proxyRes.on('data', (chunk) => {
-        data += chunk;
-      });
-      
-      proxyRes.on('end', () => {
-        try {
-          // Try to parse as JSON
-          const jsonData = JSON.parse(data);
-          res.status(proxyRes.statusCode).json(jsonData);
-        } catch (e) {
-          // Return as plain text if not valid JSON
-          res.status(proxyRes.statusCode).send(data);
-        }
-        resolve();
-      });
+      headers: headers,
+      body: req.method !== 'GET' && req.method !== 'HEAD' && req.body ? 
+        JSON.stringify(req.body) : undefined
     });
-    
-    proxyReq.on('error', (error) => {
-      res.status(500).json({
-        error: error.message,
-        url: apiUrl
-      });
-      resolve();
-    });
-    
-    // Add body for non-GET requests
-    if (req.body && req.method !== 'GET' && req.method !== 'HEAD') {
-      const bodyData = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-      proxyReq.write(bodyData);
+
+    // Get response data
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      return res.status(response.status).json(data);
+    } else {
+      const text = await response.text();
+      return res.status(response.status).send(text);
     }
-    
-    proxyReq.end();
-  });
-};
+  } catch (error) {
+    console.error('API proxy error:', error);
+    return res.status(500).json({ 
+      error: error.message,
+      detail: "Error connecting to ZED Champions API"
+    });
+  }
+}
