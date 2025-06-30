@@ -86,6 +86,19 @@
     .featured-app a:hover {
       background: #d35400;
     }
+    /* Emergency Reset Button styles */
+    #emergency-reset-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px;
+      background: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
@@ -124,6 +137,11 @@
       <p id="timer">Redirecting in 5 seconds...</p>
     </div>
   </div>
+  
+  <!-- Emergency Reset Button (always visible) -->
+  <button id="emergency-reset-btn">
+    Reset App
+  </button>
   
   <script>
     // Countdown timer
