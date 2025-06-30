@@ -80,6 +80,9 @@
             <button id="test-api-options" class="button">Test OPTIONS Request</button>
             <button id="test-api-get" class="button">Test GET Request</button>
             <button id="test-api-post" class="button">Test POST Request</button>
+            <button id="test-api-me" class="button">Test /me</button>
+            <button id="test-api-stable" class="button">Test /stable/racing</button>
+            <button id="test-api-horse" class="button">Test Horse by ID</button>
         </div>
         <div id="api-result" class="result">Click a button to test API connectivity.</div>
     </div>
@@ -259,6 +262,109 @@
                 }, null, 2);
             }
         });
+        
+        document.getElementById('test-api-me').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing /me endpoint...';
+            
+            try {
+              const response = await fetch('/api/zed/me', {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
+          
+          document.getElementById('test-api-stable').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing /stable/racing endpoint...';
+            
+            try {
+              const response = await fetch('/api/zed/stable/racing', {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data: typeof data === 'object' ? data : { text: data }
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
+          
+          document.getElementById('test-api-horse').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            const horseId = prompt('Enter a horse ID:');
+            
+            if (!horseId) {
+              result.innerHTML = 'Horse ID is required';
+              return;
+            }
+            
+            result.innerHTML = `Testing /horses/${horseId} endpoint...`;
+            
+            try {
+              const response = await fetch(`/api/zed/horses/${horseId}`, {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
         
         // App Data Checks
         document.getElementById('check-localstorage').addEventListener('click', function() {
