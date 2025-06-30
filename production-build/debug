@@ -1,4 +1,4 @@
-.html
+html
 
 // Add this in your debug.html script section
 document.getElementById('test-api-me').addEventListener('click', async function() {
