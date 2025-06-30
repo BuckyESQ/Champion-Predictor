@@ -6,7 +6,7 @@
   <meta http-equiv="refresh" content="5;url=https://v0-new-project-md4jq9n7i2p.vercel.app">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       text-align: center;
       padding: 50px 20px;
       background: #1a1a1a;
@@ -63,42 +63,10 @@
       color: #3498db;
       margin-top: 0;
     }
-    .featured-app {
-      margin-top: 40px;
-      padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-    }
-    .featured-app h3 {
-      color: #e67e22;
-      margin-top: 0;
-    }
-    .featured-app a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #e67e22;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-    .featured-app a:hover {
-      background: #d35400;
-    }
-    #emergency-reset-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px;
-      background: #ff5722;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 1000;
-    }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -120,12 +88,6 @@
       </div>
     </div>
     
-    <div class="featured-app">
-      <h3>New: ZED Champions Tracker</h3>
-      <p>Track and analyze your ZED horses with our new tool!</p>
-      <a href="https://v0-new-project-md4jq9n7i2p.vercel.app">Try it now →</a>
-    </div>
-    
     <p>You'll be redirected to the app in 5 seconds, or click the button below:</p>
     <a href="https://v0-new-project-md4jq9n7i2p.vercel.app" class="button">Launch Champion Predictor →</a>
     
@@ -134,18 +96,7 @@
     </div>
   </div>
   
-  <!-- Emergency Reset Button -->
-  <button id="emergency-reset-btn">
-    Reset App
-  </button>
-  
   <script>
-    document.getElementById('emergency-reset-btn').addEventListener('click', function() {
-      if (confirm('This will reset the application state. Continue?')) {
-        window.location.reload();
-      }
-    });
-    
     // Countdown timer
     let secondsLeft = 5;
     const timerEl = document.getElementById('timer');
