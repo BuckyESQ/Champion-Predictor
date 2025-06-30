@@ -263,6 +263,36 @@ function showStatus(element, message, isSuccess = null) {
   element.style.marginTop = '10px';
 }
 
+/**
+ * Displays import status messages with appropriate styling
+ */
+function showImportStatus(element, message, isSuccess = null) {
+  if (!element) return;
+  
+  element.style.display = 'block';
+  element.innerHTML = message;
+  
+  if (isSuccess === true) {
+    element.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+    element.style.color = '#4CAF50';
+    element.style.padding = '10px 15px';
+    element.style.borderRadius = '4px';
+    element.style.marginTop = '10px';
+  } else if (isSuccess === false) {
+    element.style.backgroundColor = 'rgba(244, 67, 54, 0.2)';
+    element.style.color = '#F44336';
+    element.style.padding = '10px 15px';
+    element.style.borderRadius = '4px';
+    element.style.marginTop = '10px';
+  } else {
+    element.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+    element.style.color = '#2196F3';
+    element.style.padding = '10px 15px';
+    element.style.borderRadius = '4px';
+    element.style.marginTop = '10px';
+  }
+}
+
 function saveData() {
   localStorage.setItem('horses', JSON.stringify(window.horses || []));
   localStorage.setItem('races', JSON.stringify(window.races || []));
@@ -733,3 +763,4 @@ window.zedApi = zedApi;
 window.activateTab = activateTab;
 window.showStatus = showStatus;
 window.saveData = saveData;
+window.showImportStatus = showImportStatus;
