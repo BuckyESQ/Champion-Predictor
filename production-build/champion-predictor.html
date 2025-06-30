@@ -86,7 +86,6 @@
     .featured-app a:hover {
       background: #d35400;
     }
-    /* Emergency Reset Button styles */
     #emergency-reset-btn {
       position: fixed;
       bottom: 20px;
@@ -103,9 +102,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Add your logo here if you have one -->
-    <!-- <img src="logo.png" alt="StableFields logo" class="logo"> -->
-    
     <h1>StableFields ZED Champions Tracker</h1>
     <p>Your complete management tool for ZED Champions horses, races, and breeding.</p>
     
@@ -138,16 +134,11 @@
     </div>
   </div>
   
-  <!-- Emergency Reset Button (always visible) -->
+  <!-- Emergency Reset Button -->
   <button id="emergency-reset-btn">
     Reset App
   </button>
   
-  <!-- Consolidated script file -->
-  <script src="all-scripts.js"></script>
-  <script src="tabs-init.js"></script>
-  
-  <!-- Emergency reset script -->
   <script>
     document.getElementById('emergency-reset-btn').addEventListener('click', function() {
       if (confirm('This will reset the application state. Continue?')) {
@@ -155,55 +146,16 @@
       }
     });
     
-    // Add CSS fix for tab display
-    document.head.insertAdjacentHTML('beforeend', `
-      <style>
-        /* Make sure inactive tabs are truly hidden */
-        .tab-content:not(.active) {
-          display: none !important;
-        }
-        
-        /* Clear display styles */
-        .tab-content.active {
-          display: block !important;
-        }
-        
-        /* Fix tab buttons */
-        .tab-button {
-          position: relative;
-          cursor: pointer;
-          padding: 10px 15px;
-          background-color: var(--tab-bg, #2c3e50);
-          border: none;
-          color: var(--text-color, #ffffff);
-          transition: all 0.2s ease;
-        }
-        
-        .tab-button.active {
-          background-color: var(--tab-active-bg, #34495e);
-          color: var(--link-color, #3498db);
-          font-weight: bold;
-        }
-        
-        /* API connection status */
-        #api-connection-status,
-        #test-api-connection-status,
-        #import-status,
-        #single-import-status {
-          margin-top: 10px;
-          padding: 10px;
-          border-radius: 4px;
-          display: none;
-        }
-        
-        .import-status {
-          margin-top: 10px;
-          padding: 10px;
-          border-radius: 4px;
-          display: none;
-        }
-      </style>
-    `);
+    // Countdown timer
+    let secondsLeft = 5;
+    const timerEl = document.getElementById('timer');
+    const countdownInterval = setInterval(function() {
+      secondsLeft--;
+      timerEl.textContent = `Redirecting in ${secondsLeft} second${secondsLeft !== 1 ? 's' : ''}...`;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
   </script>
 </body>
 </html>
