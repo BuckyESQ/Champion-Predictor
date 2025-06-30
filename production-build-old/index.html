@@ -4,39 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StableFields ZED Champions Tracker</title>
-    <meta name="description" content="Track your ZED Champions horses, races, and breeding operations with this comprehensive management tool.">
-    <meta name="keywords" content="ZED Champions, horse tracker, racing tracker, breeding tracker">
-    <meta property="og:title" content="StableFields ZED Champions Tracker">
-    <meta property="og:description" content="Complete management tool for ZED Champions players">
-    <meta property="og:image" content="https://stablefields.com/path/to/preview-image.jpg">
-    <meta property="og:url" content="https://stablefields.com/zed-tracker/">
-    <meta name="twitter:card" content="summary_large_image">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
-        /* Basic Reset & Variables */
         :root {
             --primary-color: #2e86c1;
             --secondary-color: #3498db;
             --background-color: #1a1a1a;
             --text-color: #f0f0f0;
-            --text-muted-color: #a0a0a0;
             --border-color: #444;
             --success-color: #4CAF50;
             --error-color: #F44336;
             --tab-bg: #2c3e50;
             --tab-active-bg: #34495e;
-            --section-bg: #252525;
-            --title-font: 'Orbitron', sans-serif;
-            --body-font: 'Inter', sans-serif;
         }
         
         body {
-            font-family: var(--body-font);
+            font-family: 'Inter', sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             margin: 0;
@@ -45,16 +27,15 @@
         }
         
         h1, h2, h3, h4 {
-            font-family: var(--title-font);
+            font-family: 'Orbitron', sans-serif;
             color: var(--primary-color);
         }
         
         .section {
-            background-color: var(--section-bg);
+            background-color: rgba(255,255,255,0.05);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         }
         
         .button {
@@ -71,7 +52,6 @@
             background-color: var(--secondary-color);
         }
         
-        /* Tabs */
         .tab-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -86,7 +66,6 @@
             padding: 10px 15px;
             cursor: pointer;
             border-radius: 4px 4px 0 0;
-            transition: all 0.2s ease;
         }
         
         .tab-button.active {
@@ -100,15 +79,6 @@
         
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        /* Forms */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
         }
         
         input, select, textarea {
@@ -118,91 +88,42 @@
             padding: 8px 12px;
             border-radius: 4px;
             width: 100%;
-            box-sizing: border-box;
         }
         
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--text-muted-color);
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        
-        /* Tables */
-        table {
+
+        #horses-table, #breeding-horses-table, #transactions-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
-        
-        th, td {
+
+        #horses-table th, #horses-table td,
+        #breeding-horses-table th, #breeding-horses-table td, 
+        #transactions-table th, #transactions-table td {
             padding: 8px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-        
-        th {
+
+        #horses-table th, #breeding-horses-table th, #transactions-table th {
             background-color: rgba(0,0,0,0.2);
         }
-        
-        tbody tr:hover {
-            background-color: rgba(255,255,255,0.05);
-        }
 
-        /* Import UI styles */
-        .import-status {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        #emergency-reset-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px;
-            background: #ff5722;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        /* Welcome Banner */
-        #welcome-banner {
-            background-color: rgba(76, 175, 80, 0.1); 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 20px;
-        }
-        
-        /* Animation keyframes */
-        @keyframes fadeIn {
-            from { opacity: 0.85; }
-            to { opacity: 1; }
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .tab-buttons {
-                flex-direction: column;
-            }
+        /* Add hover effect for rows */
+        #horses-table tbody tr:hover, 
+        #breeding-horses-table tbody tr:hover,
+        #transactions-table tbody tr:hover {
+            background-color: rgba(255,255,255,0.05);
         }
     </style>
 </head>
 <body>
-    <div id="welcome-banner" class="section">
-        <h2>Welcome to StableFields ZED Champions Tracker</h2>
-        <p>This tool helps you track your ZED Champions horses, races, breeding, and more. Get started by entering your data or importing directly from the ZED Champions API.</p>
-        <p><a href="#tab-content-import" onclick="activateTab('import'); return false;" style="font-weight: bold;">Go to Import Tab</a> to quickly import your horses from ZED Champions.</p>
-    </div>
-
     <h1>ZED Champions Tracker</h1>
     
     <div id="tab-buttons" class="tab-buttons">
@@ -266,7 +187,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="horses-table-body"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -325,7 +246,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="breeding-horses-table-body"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -381,7 +302,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="transactions-table-body"></tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -390,53 +311,13 @@
         <!-- Import Tab Content -->
         <div id="tab-content-import" class="tab-content">
             <div id="api-import-container" class="section">
-                <h2>ZED Champions API Authentication</h2>
-                <p>Enter your API token to import horses directly from ZED Champions.</p>
-                
-                <div style="margin-top: 15px;">
-                    <div class="form-grid" style="grid-template-columns: 1fr auto;">
-                        <textarea id="zed-api-token" placeholder="Enter your ZED Champions API Bearer token" 
-                          style="height: 60px; padding: 10px;" autocomplete="off"></textarea>
-                        <button id="save-api-token-btn" class="button">Save Token</button>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
-                        <button id="test-api-connection-btn" class="button">Test Connection</button>
-                        <div id="test-api-connection-status" style="flex: 1;"></div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                    <h3>Import Horses</h3>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
-                        <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
-                    </div>
-                    <div id="import-status" style="margin-top: 10px;"></div>
-                    
-                    <h4>Import Single Horse</h4>
-                    <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-end;">
-                        <div>
-                            <label for="zed-horse-id">Horse ID:</label>
-                            <input type="text" id="zed-horse-id" placeholder="Enter horse ID">
-                        </div>
-                        <div>
-                            <label for="import-horse-type">Import As:</label>
-                            <select id="import-horse-type">
-                                <option value="racing">Racing Horse</option>
-                                <option value="breeding">Breeding Horse</option>
-                            </select>
-                        </div>
-                        <button id="import-single-horse-btn" class="button">Import Horse</button>
-                    </div>
-                    <div id="single-import-status" class="import-status"></div>
-                </div>
+                <!-- API Import UI will be injected here -->
             </div>
         </div>
     </div>
     
     <!-- Emergency reset button -->
-    <button id="emergency-reset-btn">
+    <button id="emergency-reset-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
         Reset App
     </button>
     
