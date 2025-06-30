@@ -1,14 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: '/api/zed/:path*',
-        destination: '/api/zed/:path*'
-      }
-    ];
-  }
+  poweredByHeader: false
 };
 
 module.exports = nextConfig;
