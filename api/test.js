@@ -1,11 +1,9 @@
 module.exports = (req, res) => {
-  res.json({
+  res.status(200).json({
     success: true,
-    message: "API test endpoint is working!",
-    timestamp: new Date().toISOString(),
-    method: req.method,
-    query: req.query,
+    message: "API test endpoint working!",
     path: req.url,
-    headers: req.headers
+    method: req.method,
+    timestamp: new Date().toISOString()
   });
 };
