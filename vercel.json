@@ -1,13 +1,7 @@
 {
   "version": 2,
-  "functions": {
-    "api/zed/[...path].js": {
-      "runtime": "nodejs18.x",
-      "memory": 1024
-    }
-  },
-  "routes": [
-    { "src": "/api/zed/(.*)", "dest": "/api/zed/[...path].js" }
+  "rewrites": [
+    { "source": "/api/zed/(.*)", "destination": "/api/zed/[...path]" }
   ],
   "headers": [
     {
