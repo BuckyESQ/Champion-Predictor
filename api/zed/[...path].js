@@ -1,4 +1,3 @@
-// This is a Vercel serverless function using CommonJS syntax
 const https = require('https');
 
 module.exports = async (req, res) => {
@@ -29,9 +28,13 @@ module.exports = async (req, res) => {
   
   return new Promise((resolve) => {
     // Create options for the HTTPS request
-    const options = new URL(apiUrl);
-    options.method = req.method;
-    options.headers = headers;
+    const urlObj = new URL(apiUrl);
+    const options = {
+      hostname: urlObj.hostname,
+      path: urlObj.pathname + urlObj.search,
+      method: req.method,
+      headers: headers
+    };
     
     const proxyReq = https.request(options, (proxyRes) => {
       let responseBody = '';

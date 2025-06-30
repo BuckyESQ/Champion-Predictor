@@ -1,7 +1,8 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/api/zed/(.*)", "destination": "/api/zed/[...path]" }
+  "routes": [
+    { "src": "/api/zed/(.*)", "dest": "/api/zed/[...path].js" },
+    { "src": "/api/test", "dest": "/api/test.js" }
   ],
   "headers": [
     {
