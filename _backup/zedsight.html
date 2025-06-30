@@ -1,0 +1,3460 @@
+
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>ZedSight - Zed Champions Analytics & Horse Performance Data</title>
+<link rel=icon href="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20stroke%3D%22%2303dac6%22%20stroke-width%3D%222%22%3E%3Cpolyline%20points%3D%222%2C14%206%2C8%2010%2C10%2014%2C4%22%2F%3E%3C%2Fsvg%3E">
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Exo+2:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Segoe+UI&display=swap" rel=stylesheet>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin=anonymous referrerpolicy=no-referrer>
+<script src=https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/date-fns@2.30.0/dist/date-fns.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js></script>
+<link rel="stylesheet" href="index-mobile.css">
+<style>:root{--bg-color:#121212;--card-bg:#1e1e1e;--text-color:#e0e0e0;--muted-text:#a0a0a0;--border-color:#333;--highlight-color:#bb86fc;--second-highlight:#03dac6;--bad-color:#cf6679;--good-color:#4ecca3;--gx-color:#4caf50;--crimson-color:#f44336;--midnight-color:#3f51b5;--darklight-color:#ff9800;--void-color:#9c27b0;--rating-under25-color:#ff6d00;--rating-25-color:#ffab00;--rating-30-color:#ffca28;--rating-35-color:#43a047;--rating-40-color:#00acc1;--rating-45plus-color:#9c27b0}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:var(--bg-color);color:var(--text-color);margin:0;padding:0;line-height:1.6}.container{max-width:1200px;margin:0 auto;padding:20px}header{background-color:var(--card-bg);padding:20px;border-radius:8px;margin-bottom:30px;border-left:4px solid var(--highlight-color);text-align:center}h1{font-family:Audiowide,sans-serif;color:var(--highlight-color);margin-top:0}h2,h3{font-family:'Roboto Condensed',sans-serif;color:var(--highlight-color);margin-top:0}.timestamp{color:var(--muted-text);font-size:.9rem}section{background-color:var(--card-bg);padding:25px;border-radius:8px;margin-bottom:30px;border-left:4px solid var(--second-highlight)}.global-filter-container{background-color:var(--card-bg);padding:20px;border-radius:8px;margin-bottom:30px;border-left:4px solid var(--second-highlight)}.filter-label{margin-bottom:5px;font-weight:700;color:var(--text-color)}.bloodline-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}.bloodline-filter{padding:6px 12px;border-radius:4px;cursor:pointer;background-color:#2a2a2a;transition:all .2s ease;user-select:none}.bloodline-filter.active{background-color:var(--highlight-color);color:#000;font-weight:700}.bloodline-nakamoto{border-left:3px solid #cf6679}.bloodline-szabo{border-left:3px solid #03dac6}.bloodline-finney{border-left:3px solid #bb86fc}.bloodline-buterin{border-left:3px solid #ffeb3b}.rating-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}.rating-filter{padding:6px 12px;border-radius:4px;cursor:pointer;background-color:#2a2a2a;transition:all .2s ease;user-select:none}.rating-filter.active{background-color:var(--highlight-color);color:#000;font-weight:700}.rating-under_2-5{border-left:3px solid var(--rating-under25-color)}.rating-2-5{border-left:3px solid var(--rating-25-color)}.rating-3-0{border-left:3px solid var(--rating-30-color)}.rating-3-5{border-left:3px solid var(--rating-35-color)}.rating-4-0{border-left:3px solid var(--rating-40-color)}.rating-4-5plus{border-left:3px solid var(--rating-45plus-color)}.speed-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}.speed-filter{padding:6px 12px;border-radius:4px;cursor:pointer;background-color:#2a2a2a;transition:all .2s ease;user-select:none}.speed-filter.active{background-color:var(--highlight-color);color:#000;font-weight:700}.speed-under_2-5{border-left:3px solid var(--rating-under25-color)}.speed-2-5{border-left:3px solid var(--rating-25-color)}.speed-3-0{border-left:3px solid var(--rating-30-color)}.speed-3-5{border-left:3px solid var(--rating-35-color)}.speed-4-0{border-left:3px solid var(--rating-40-color)}.speed-4-5plus{border-left:3px solid var(--rating-45plus-color)}.sprint-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}.sprint-filter{padding:6px 12px;border-radius:4px;cursor:pointer;background-color:#2a2a2a;transition:all .2s ease;user-select:none}.sprint-filter.active{background-color:var(--highlight-color);color:#000;font-weight:700}.sprint-under_2-5{border-left:3px solid var(--rating-under25-color)}.sprint-2-5{border-left:3px solid var(--rating-25-color)}.sprint-3-0{border-left:3px solid var(--rating-30-color)}.sprint-3-5{border-left:3px solid var(--rating-35-color)}.sprint-4-0{border-left:3px solid var(--rating-40-color)}.sprint-4-5plus{border-left:3px solid var(--rating-45plus-color)}.size-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}.size-filter{padding:6px 12px;border-radius:4px;cursor:pointer;background-color:#2a2a2a;transition:all .2s ease;user-select:none}.size-filter.active{background-color:var(--highlight-color);color:#000;font-weight:700}.loading{display:none;text-align:center;padding:20px;font-style:italic}.spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:var(--highlight-color);animation:spin 1s ease-in-out infinite;margin-right:10px}@keyframes spin{to{transform:rotate(360deg)}}table{width:100%;border-collapse:collapse;margin:20px 0;font-size:.9em}th{background-color:#2a2a2a;color:var(--highlight-color);padding:12px 15px;text-align:center;position:sticky;top:0;z-index:10;cursor:pointer}th.sortable{cursor:pointer;position:relative;padding-right:20px}th.sortable:hover{background-color:#333}th.sortable::after{content:'↕';position:absolute;right:6px;top:50%;transform:translateY(-50%);color:var(--muted-text);opacity:.6}th.sortable.sort-asc::after{content:'↑';color:var(--highlight-color);opacity:1}th.sortable.sort-desc::after{content:'↓';color:var(--highlight-color);opacity:1}td{padding:10px 15px;border-bottom:1px solid var(--border-color)}tr:hover{background-color:#2a2a2a}#race-history-table{table-layout:auto;width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border-color);border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1)}#race-history-table thead{background-color:#292929;position:sticky;top:0;z-index:10}#race-history-table th{text-align:left;font-weight:600;border-bottom:2px solid var(--border-color);padding:8px 6px;font-size:.85em;color:var(--highlight-color)}#race-history-table tbody tr{transition:background-color .15s ease}#race-history-table tbody tr:hover{background-color:rgba(50,50,50,.5)!important}#race-history{max-height:600px;overflow-y:auto;overflow-x:auto;border-radius:6px;border:1px solid var(--border-color);margin-bottom:15px}#race-history-table td,#race-history-table th{padding:5px 6px;font-size:.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#race-history-table td:nth-child(10),#race-history-table td:nth-child(11),#race-history-table td:nth-child(3),#race-history-table td:nth-child(4),#race-history-table td:nth-child(5),#race-history-table td:nth-child(6),#race-history-table td:nth-child(7),#race-history-table td:nth-child(8),#race-history-table td:nth-child(9){font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;text-align:left}#race-history-table th:first-child{min-width:120px;max-width:180px}#race-history-table td:first-child{white-space:normal;max-width:180px}#race-history-table td:nth-child(2),#race-history-table th:nth-child(2){min-width:70px}#race-history-table td:nth-child(3),#race-history-table th:nth-child(3){min-width:30px;max-width:40px}#race-history-table td:nth-child(4),#race-history-table th:nth-child(4){min-width:50px;max-width:70px}#race-history-table td:nth-child(5),#race-history-table th:nth-child(5){min-width:40px;max-width:50px}#race-history-table td:nth-child(6),#race-history-table td:nth-child(7),#race-history-table td:nth-child(8),#race-history-table th:nth-child(6),#race-history-table th:nth-child(7),#race-history-table th:nth-child(8){min-width:60px;max-width:80px}#race-history-table td:nth-child(10),#race-history-table td:nth-child(11),#race-history-table td:nth-child(9),#race-history-table th:nth-child(10),#race-history-table th:nth-child(11),#race-history-table th:nth-child(9){min-width:50px;max-width:70px}#race-history-table td:nth-child(12),#race-history-table th:nth-child(12){min-width:120px;max-width:180px;white-space:normal}#race-history-table tbody tr:nth-child(odd){background-color:rgba(30,30,30,.5)}.augment-cell{padding:8px 12px;border-radius:4px;font-weight:500}.augment-empty{color:var(--muted-text);font-style:italic}.augment-gx{color:var(--gx-color);border-left:3px solid var(--gx-color);background-color:rgba(76,175,80,.15)}.augment-crimson{color:var(--crimson-color);border-left:3px solid var(--crimson-color);background-color:rgba(244,67,54,.15)}.augment-midnight{color:#6573c3;border-left:3px solid var(--midnight-color);background-color:rgba(63,81,181,.15)}.augment-darklight{color:var(--darklight-color);border-left:3px solid var(--darklight-color);background-color:rgba(255,152,0,.15)}.augment-void{color:var(--void-color);border-left:3px solid var(--void-color);background-color:rgba(156,39,176,.15)}.value-good{color:var(--good-color);font-weight:700}.value-bad{color:var(--bad-color);font-weight:700}.no-data-message{text-align:center;padding:30px;font-style:italic;color:var(--muted-text)}footer{text-align:center;padding:20px;margin-top:50px;border-top:1px solid var(--border-color);color:var(--muted-text);font-size:.9em}.donation-info{margin-top:15px;padding-top:15px}.donation-address{font-family:'Courier New',Courier,monospace;background-color:#2a2a2a;padding:2px 6px;border-radius:3px;word-break:break-all;color:var(--text-color)}.donation-network{font-size:.9em;margin-left:5px;color:var(--muted-text)}@media (max-width:768px){.bloodline-filters,.rating-filters,.size-filters,.speed-filters{flex-direction:column}table{display:block;overflow-x:auto}}.horse-search-container{background-color:var(--card-bg);padding:20px;border-radius:8px;margin-bottom:30px;border-left:4px solid #ff9800}.horse-search-form{display:flex;gap:10px;margin-bottom:15px;align-items:center}.search-field-group{display:flex;flex:1;gap:10px}.search-label{font-weight:700;color:var(--muted-text);display:flex;align-items:center}.horse-search-input{width:300px;flex:none;padding:8px 12px;border-radius:4px;border:1px solid var(--border-color);background-color:#2a2a2a;color:var(--text-color)}.horse-id-input{flex:1;margin-right:15px;padding:8px 12px;border-radius:4px;border:1px solid var(--border-color);background-color:#2a2a2a;color:var(--text-color)}.horse-search-button{padding:8px 16px;border-radius:4px;border:none;background-color:#ff9800;color:#000;font-weight:700;cursor:pointer;transition:all .2s ease}.horse-search-button:hover{background-color:#ffb74d}.horse-results{max-height:300px;overflow-y:auto;display:none;padding:5px 0;margin-top:10px}.horse-result-item{padding:12px 15px;border-radius:4px;margin-bottom:8px;margin-left:5px;margin-right:0;background-color:#2a2a2a;border-left:3px solid #444;cursor:pointer;display:block;max-width:600px;transition:all .2s ease}.horse-result-item:hover{background-color:#333;transform:translateY(-1px);box-shadow:0 2px 5px rgba(0,0,0,.2);border-left:3px solid var(--highlight-color)}.horse-result-item.bloodline-nakamoto{border-left:3px solid rgba(207,102,121,.5)}.horse-result-item.bloodline-szabo{border-left:3px solid rgba(3,218,198,.5)}.horse-result-item.bloodline-finney{border-left:3px solid rgba(187,134,252,.5)}.horse-result-item.bloodline-buterin{border-left:3px solid rgba(255,235,59,.5)}.horse-result-item.bloodline-nakamoto:hover{border-left:3px solid #cf6679;background-color:rgba(207,102,121,.15)}.horse-result-item.bloodline-szabo:hover{border-left:3px solid #03dac6;background-color:rgba(3,218,198,.15)}.horse-result-item.bloodline-finney:hover{border-left:3px solid #bb86fc;background-color:rgba(187,134,252,.15)}.horse-result-item.bloodline-buterin:hover{border-left:3px solid #ffeb3b;background-color:rgba(255,235,59,.15)}.horse-name{font-weight:700}.horse-details{color:var(--muted-text);font-size:.9em}.horse-stats-container{display:none;background-color:var(--card-bg);padding:25px;border-radius:8px;margin-bottom:30px;border-left:4px solid #ff9800;max-width:100%;overflow-x:hidden}.horse-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.horse-name-title{font-size:1.5rem;font-weight:700;margin:0}.horse-details-box{display:grid;grid-template-columns:repeat(5,1fr);gap:15px;margin-bottom:20px;background-color:#262626;padding:18px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.2)}.horse-detail-item{padding:10px;border-radius:6px;background-color:#1e1e1e;transition:all .2s ease}.horse-detail-item:hover{background-color:#2c2c2c;transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,.2)}.detail-label{color:var(--muted-text);margin-bottom:8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;font-weight:500}.detail-value{font-size:1.25rem;font-weight:700;line-height:1.2}.rating-indicator{display:flex;align-items:center;margin-top:5px}.rating-bar{height:4px;background-color:#3a3a3a;border-radius:2px;flex-grow:1;overflow:hidden;margin-top:5px}.rating-fill{height:100%;background-color:var(--highlight-color)}.rating-fill.r-2-5{width:50%;background-color:var(--rating-25-color)}.rating-fill.r-3-0{width:60%;background-color:var(--rating-30-color)}.rating-fill.r-3-5{width:70%;background-color:var(--rating-35-color)}.rating-fill.r-4-0{width:80%;background-color:var(--rating-40-color)}.rating-fill.r-4-5{width:90%;background-color:var(--rating-45plus-color)}.rating-fill.r-5-0{width:100%;background-color:var(--rating-45plus-color)}.metric-group{display:flex;flex-direction:column;grid-column:span 2}.metric-row{display:flex;justify-content:space-between}.value-win{color:var(--good-color)}.value-loss{color:var(--bad-color)}.financial-value{position:relative;padding-right:5px}.missing-races-disclaimer{margin-top:15px;color:var(--muted-text);font-style:italic;font-size:.85em;text-align:center;padding:8px;background-color:rgba(0,0,0,.2);border-radius:4px}@media (max-width:1100px){.horse-details-box{grid-template-columns:repeat(3,1fr)}}@media (max-width:768px){.horse-details-box{grid-template-columns:repeat(2,1fr)}}@media (max-width:480px){.horse-details-box{grid-template-columns:1fr}}.detail-icon{margin-right:4px;opacity:.7}.financial-value.positive{color:var(--good-color)}.financial-value.negative{color:var(--bad-color)}.horse-stats-container{border-top:3px solid var(--highlight-color)}.tabs{border-bottom:1px solid var(--border-color);margin-bottom:15px;display:flex;gap:2px}.tab{padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s ease;border-radius:4px 4px 0 0}.tab:hover{background-color:rgba(60,60,60,.5)}.tab.active{border-bottom:2px solid var(--highlight-color);background-color:rgba(60,60,60,.3);color:var(--highlight-color);font-weight:700}.tab-content{display:none}.tab-content.active{display:block}.close-horse-btn{background-color:#444;color:#fff;border:none;padding:5px 15px;border-radius:4px;cursor:pointer;transition:background-color .2s}.close-horse-btn:hover{background-color:#666}.horse-data-column{background-color:rgba(187,134,252,.1)!important;border-left:2px solid rgba(187,134,252,.5);font-weight:600;text-align:center;border-bottom:none!important}.pagination-controls{margin-top:20px;text-align:center}.pagination-btn{padding:8px 15px;background-color:#2a2a2a;border:1px solid var(--border-color);border-radius:4px;color:var(--text-color);cursor:pointer;transition:all .2s ease}.pagination-btn:hover:not(:disabled){background-color:var(--highlight-color);color:#000}.pagination-btn:disabled{opacity:.5;cursor:not-allowed}#page-indicator{display:inline-block;margin:0 15px;color:var(--muted-text)}#load-data-btn{background-color:var(--highlight-color);color:#000;font-weight:700;padding:10px 20px;font-size:1.1em}#load-data-btn:hover{background-color:#c49fff}#race-history{overflow-x:auto;padding-bottom:10px}#race-history-table th:nth-child(10),#race-history-table th:nth-child(11),#race-history-table th:nth-child(3),#race-history-table th:nth-child(4),#race-history-table th:nth-child(5),#race-history-table th:nth-child(6),#race-history-table th:nth-child(7),#race-history-table th:nth-child(8),#race-history-table th:nth-child(9){text-align:center}#race-history-table td:nth-child(10),#race-history-table td:nth-child(11),#race-history-table td:nth-child(3),#race-history-table td:nth-child(4),#race-history-table td:nth-child(5),#race-history-table td:nth-child(6),#race-history-table td:nth-child(7),#race-history-table td:nth-child(8),#race-history-table td:nth-child(9){text-align:center}#race-history-table td,#race-history-table th{text-align:left!important;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif!important}.missing-races-disclaimer{margin-top:10px;color:var(--muted-text);font-style:italic;font-size:.9em;text-align:center;padding:5px;border-top:1px dotted var(--border-color)}.numeric-value{font-weight:500;text-align:center}.value-good{color:var(--good-color);font-weight:700}.value-bad{color:var(--bad-color);font-weight:700}.horse-data-column{background-color:rgba(187,134,252,.1)!important;border-left:2px solid rgba(187,134,252,.5);font-weight:600;text-align:center;border-bottom:none!important}#results-table td.horse-odds-cell,#results-table td.horse-sample-cell,#results-table th.horse-data-column{text-align:center!important;border-bottom:1px solid var(--border-color)!important;background-color:rgba(187,134,252,.1)!important;padding:10px 15px!important}.horse-odds-cell,.horse-sample-cell{background-color:rgba(187, 134, 252, 0.1)!important;text-align:center!important;font-weight:600!important;padding:10px 15px!important;vertical-align:middle!important}.horse-odds-cell>*,.horse-sample-cell>*{background-color:transparent!important}.column-filter-container{display:flex;flex-direction:column;gap:5px;margin-top:5px}.column-filter-select{background-color:#333;color:var(--text-color);border:1px solid var(--border-color);border-radius:4px;padding:3px 6px;font-size:.8em;max-width:100%;min-width:100px}.column-filter-select option{background-color:#333;color:var(--text-color);padding:4px}.column-filter-buttons{display:flex;gap:5px;margin-top:2px}.column-filter-apply,.column-filter-clear{background-color:#444;color:var(--text-color);border:none;border-radius:3px;padding:2px 6px;font-size:.7em;cursor:pointer;transition:background-color .2s}.column-filter-apply{background-color:var(--highlight-color);color:#000}.column-filter-apply:hover{background-color:#d0b0ff}.column-filter-clear:hover{background-color:#555}th.filtered::after{content:'🔍';margin-left:5px;color:var(--highlight-color)}th.filtered.sortable::after{content:'🔍';right:18px}th.filtered.sortable.sort-asc::after,th.filtered.sortable.sort-desc::after{content:'🔍';right:18px}.filter-button{background:0 0;border:none;color:var(--muted-text);cursor:pointer;font-size:.9em;margin-left:5px;padding:0 3px;opacity:.7;line-height:1}.filter-button:hover{opacity:1;color:var(--highlight-color)}th.filtered .filter-button{color:var(--highlight-color);opacity:1;font-weight:700}.filter-popover{display:none;position:absolute;background-color:#2a2a2a;border:1px solid var(--border-color);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.3);padding:15px;z-index:100;min-width:200px;max-height:300px;overflow-y:auto;margin-top:5px}.filter-popover-content{display:flex;flex-direction:column;gap:8px}.filter-popover-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-color)}.filter-popover-header label{font-size:.9em;display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none}.filter-popover-options{display:flex;flex-direction:column;gap:5px}.filter-popover-options label{display:flex;align-items:center;gap:8px;font-size:.95em;cursor:pointer;padding:3px 0;user-select:none}.filter-popover-options input[type=checkbox]{cursor:pointer;accent-color:var(--highlight-color)}.filter-popover-buttons{display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color)}.filter-popover-buttons button{padding:5px 12px;border-radius:3px;border:none;cursor:pointer;font-size:.9em;transition:background-color .2s}.filter-apply-btn{background-color:var(--highlight-color);color:#000;font-weight:700}.filter-apply-btn:hover{background-color:#d0b0ff}.filter-clear-btn{background-color:#444;color:var(--text-color)}.filter-clear-btn:hover{background-color:#555}th>div.header-content-wrapper{display:flex;justify-content:space-between;align-items:center;width:100%;position:relative}.header-content-wrapper>div:first-child{padding:5px 0;flex-grow:1;text-align:center}filterable-header .header-content-wrapper{cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;height:100%;padding:0 6px}th.filtered{background-color:rgba(187,134,252,.3)!important;border-top:2px solid var(--highlight-color)}th.filtered::after{content:none!important}.star-rating{display:inline-block;color:gold;font-size:1em;margin:0 2px}.star-rating .fa-star-half-alt{color:#cd7f32}.star-rating .far.fa-star{color:var(--muted-text)}.rating-text-value{font-size:.9em;color:var(--muted-text);margin-left:5px}.rating-na{display:inline-block;color:var(--muted-text);font-size:1em;margin:0 2px}.horse-result-item .horse-name{font-family:'Exo 2',sans-serif;font-weight:600}.horse-result-bloodline{color:var(--muted-text);font-size:.9em;font-weight:400;margin-left:8px}.chart-container{position:relative;height:400px;width:100%;margin-top:20px;background-color:#262626;padding:15px;border-radius:8px}
+
+/* Horse Augments Table Styling */
+#horse-augments-table td:nth-child(4),
+#horse-augments-table td:nth-child(5),
+#horse-augments-table td:nth-child(6),
+#horse-augments-table td:nth-child(7),
+#horse-augments-table td:nth-child(8),
+#horse-augments-table td:nth-child(9) {
+  text-align: center;
+}
+
+#horse-augments-table td:nth-child(1),
+#horse-augments-table td:nth-child(2),
+#horse-augments-table td:nth-child(3) {
+  text-align: left;
+}
+
+#results-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+#results-table th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #2a2a2a; /* Ensure background color is applied */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15); /* Add subtle shadow for visual separation */
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  header {
+    padding: 15px 10px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  section, .global-filter-container, .horse-search-container, .horse-stats-container {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  /* Filter adjustments */
+  .bloodline-filters, .rating-filters, .speed-filters, .sprint-filters, .size-filters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+  
+  /* Search form fixes */
+  .horse-search-form {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .search-field-group {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  
+  .search-label {
+    margin-bottom: 4px;
+    display: block;
+  }
+  
+  .horse-search-input, .horse-id-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 0;
+    padding: 8px 10px;
+  }
+  
+  .horse-search-button {
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  /* Horse details adjustments */
+  .horse-details-box {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Touch-friendly interactive elements */
+  .horse-search-button, 
+  .pagination-btn, 
+  #load-data-btn, 
+  .filter-apply-btn, 
+  .filter-clear-btn,
+  .close-horse-btn {
+    padding: 10px 15px;
+    min-height: 44px; /* Minimum touch target size */
+  }
+}
+
+@media (max-width: 480px) {
+  .bloodline-filters, .rating-filters, .speed-filters, .sprint-filters, .size-filters {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .horse-details-box {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Adjust pagination controls */
+  .pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #page-indicator {
+    font-size: 0.85rem;
+  }
+}
+
+/* Add new styles for trigger indicators */
+.trigger-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.trigger-badge.high {
+  background-color: var(--good-color);
+}
+
+.trigger-badge.medium {
+  background-color: var(--rating-30-color);
+}
+
+.trigger-badge.low {
+  background-color: var(--bad-color);
+}
+
+.trigger-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 3px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.trigger-icon.triggered-true {
+  background-color: var(--good-color);
+  box-shadow: 0 0 5px var(--good-color);
+}
+
+.trigger-icon.triggered-false {
+  background-color: var(--bad-color);
+}
+
+.trigger-icon.triggered-null {
+  display: none;
+}
+
+/* Hide Chart.js legend for finish time chart robustly */
+#finish-time-chart + ul, #finish-time-chart ~ ul, .chart-container > ul { display: none !important; }
+
+.nav-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--second-highlight);
+  color: #121212;
+  font-weight: 700;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 1.08em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.18s, color 0.18s;
+}
+.nav-btn:hover {
+  background: #25f4ee;
+  color: #121212;
+  text-decoration: underline;
+}
+.nav-btn-topright {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 10;
+}
+@media (max-width: 600px) {
+  .nav-btn-topright {
+    top: 10px;
+    right: 10px;
+    padding: 8px 14px;
+    font-size: 0.98em;
+  }
+}
+.nav-btn-mobile {
+  display: none;
+  margin: 18px auto 0 auto;
+  max-width: 320px;
+  width: auto;
+  text-align: center;
+}
+@media (max-width: 600px) {
+  .nav-btn-topright {
+    display: none;
+  }
+  .nav-btn-mobile {
+    display: inline-block;
+    font-size: 1.05em;
+    padding: 10px 24px;
+    margin: 18px auto 0 auto;
+    max-width: 320px;
+    width: auto;
+  }
+}
+
+.cond-btn {
+  background: #23232a;
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 999px;
+  padding: 7px 18px;
+  font-size: 1em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  letter-spacing: 0.01em;
+}
+.cond-btn:not(.active):hover {
+  background: #29293a;
+  color: var(--highlight-color);
+  border-color: var(--highlight-color);
+}
+.cond-btn.active {
+  background: var(--highlight-color);
+  color: #181818;
+  border-color: var(--highlight-color);
+  box-shadow: 0 2px 8px rgba(187,134,252,0.13);
+  font-weight: 700;
+}
+#conditional-augment-btn-group {
+  gap: 8px;
+}
+
+/* QPos color coding for scheduled tab (matches auctions page) */
+.qpos-worst { color: #ff6b6b; }
+.qpos-below-avg { color: #feca57; }
+.qpos-avg { color: #1dd1a1; }
+.qpos-above-avg { color: #2a7bf6; }
+.qpos-best { color: #6c5ce7; }
+
+/* Add to <style> section: */
+.qpos-inline-group {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: var(--highlight-color) var(--card-bg);
+}
+.tabs .tab {
+  flex: 0 0 auto;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-control-btn {
+  background: #2a2a2a;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.9em;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-control-btn:hover {
+  background: var(--highlight-color);
+  color: #000;
+  border-color: var(--highlight-color);
+}
+
+.filter-control-btn.active {
+  background: var(--second-highlight);
+  color: #000;
+  border-color: var(--second-highlight);
+  font-weight: 600;
+}
+
+.filter-control-btn i {
+  font-size: 0.85em;
+}
+
+/* Mobile line break for horse bloodline/gen info */
+.mobile-line-break {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-line-break {
+    display: block;
+  }
+}
+</style>
+</head>
+<body>
+<div class=container>
+<header style="position: relative;">
+<h1>ZedSight</h1>
+<p class=tagline>Strategic Augment Analysis for Zed Champions</p>
+<p class=timestamp>Analyze horse configurations & population-wide augment performance.</p>
+<a href="/auctions" class="nav-btn nav-btn-topright">Auctions with Ratings</a>
+</header>
+<a href="/auctions" class="nav-btn nav-btn-mobile">Auctions with Ratings</a>
+<div class=horse-search-container>
+<h3>Search by Horse</h3>
+<p>Enter a horse name or ID to view detailed statistics and set its matching filters.</p>
+<div class=horse-search-form>
+<div class=search-field-group>
+<span class=search-label>Name:</span>
+<input class=horse-search-input id=horse-search-input placeholder="Enter horse name...">
+<span class=search-label>OR ID:</span>
+<input class=horse-id-input id=horse-id-input placeholder="Enter horse ID...">
+</div>
+<button type=button class=horse-search-button id=horse-search-button>Search</button>
+</div>
+<div class=horse-results id=horse-results>
+</div>
+</div>
+<section id=horse-stats class=horse-stats-container>
+<div class=horse-header>
+<h2 class=horse-name-title id=horse-name-display>Horse Name</h2>
+<button class=close-horse-btn id=close-horse-btn>Close</button>
+</div>
+<div class=horse-details-box>
+<div class=horse-detail-item>
+<div class=detail-label>MM Points</div>
+<div class=detail-value id=horse-mm-points>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Current Balance</div>
+<div class=detail-value id=horse-current-balance>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Total P/L</div>
+<div class=detail-value id=horse-total-pl>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Avg Quarter Positions</div>
+<div class=detail-value id=horse-quarter-positions>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Quarter Rank</div>
+<div class=detail-value id=horse-quarter-ranks>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Overall Rating</div>
+<div class=detail-value id=horse-overall-rating>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Speed Rating</div>
+<div class=detail-value id=horse-speed-rating>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Sprint Rating</div>
+<div class=detail-value id=horse-sprint-rating>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Endurance Rating</div>
+<div class=detail-value id=horse-endurance-rating>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Captured Races</div>
+<div class=detail-value id=horse-captured-races>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Win Rate</div>
+<div class="detail-value value-win" id=horse-win-rate>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Avg Position</div>
+<div class=detail-value id=horse-avg-pos>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Avg Odds</div>
+<div class=detail-value id=horse-avg-odds>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Avg Finish Time</div>
+<div class=detail-value id=horse-avg-time>-</div>
+</div>
+<div class=horse-detail-item>
+<div class=detail-label>Best Finish Time</div>
+<div class=detail-value id=horse-best-time>-</div>
+</div>
+</div>
+<div class=missing-races-disclaimer>
+Note: Some races may be missing from this data.
+</div>
+<div class=tabs>
+<div class="tab active" data-tab=augment-combos>Augment Combinations</div>
+<div class=tab data-tab=race-history>Race History</div>
+<div class=tab data-tab=balance-graph>Balance Graph</div>
+<div class=tab data-tab=finish-time-trend>Finish Time Trend</div>
+<div class=tab data-tab=finish-distribution>Placements</div>
+<!-- Scheduled tab, hidden by default -->
+<div class="tab" data-tab="scheduled" id="scheduled-tab" style="display:none;">Scheduled</div>
+</div>
+<div class="tab-content active" id=augment-combos>
+<table id=horse-augments-table class=augment-table>
+<thead>
+<tr>
+<th>CPU Slot</th>
+<th>RAM Slot</th>
+<th>Hydraulic Slot</th>
+<th>Avg Position</th>
+<th>Avg Odds</th>
+<th>Avg Time</th>
+<th>Avg Points</th>
+<th>Win %</th>
+<th>Races</th>
+</tr>
+</thead>
+<tbody id=horse-augments-body>
+</tbody>
+</table>
+<div id=horse-no-augments class=no-data-message style=display:none>
+No augment combinations found for this horse.
+</div>
+</div>
+<div class=tab-content id=race-history>
+<table id=race-history-table class=augment-table>
+<thead>
+<tr>
+<th>Race</th>
+<th>Date</th>
+<th>Pos</th>
+<th>QPos</th>
+<th>Time</th>
+<th>Odds</th>
+<th>Start Bal</th>
+<th>P/L</th>
+<th>End Bal</th>
+<th>Start Pts</th>
+<th>Pts +/-</th>
+<th>End Pts</th>
+<th>Augments</th>
+</tr>
+</thead>
+<tbody id=race-history-body>
+</tbody>
+</table>
+<div id=horse-no-races class=no-data-message style=display:none>
+No race history found for this horse.
+</div>
+<div id=race-history-pagination class=pagination-controls style=display:none;margin-top:15px;text-align:center>
+<button id=prev-page-btn class=pagination-btn disabled>&laquo; Previous</button>
+<span id=page-indicator style="margin:0 15px">Page <span id=current-page>1</span> of <span id=total-pages>1</span></span>
+<button id=next-page-btn class=pagination-btn>Next &raquo;</button>
+</div>
+</div>
+<div class=tab-content id=balance-graph>
+<div class=chart-container>
+<canvas id=balance-chart></canvas>
+</div>
+</div>
+<div class="tab-content" id="finish-time-trend" style="display:none;">
+  <div class="chart-container">
+    <div id="finish-time-info-container" style="display: flex; align-items: center; margin-bottom: 10px; margin-left: 8px;">
+      <span id="finish-time-info-icon" style="display: inline-flex; align-items: center; cursor: pointer; color: #bb86fc; font-size: 1.2em;">
+        <i class="fas fa-info-circle"></i>
+        <span style="margin-left: 8px; font-size: 1em; color: var(--muted-text);">Finish Time Trend Info</span>
+      </span>
+      <div id="finish-time-info-tooltip" style="display: none; position: absolute; left: 40px; top: 40px; background: rgba(30,30,30,0.97); color: #fff; padding: 16px 22px; border-radius: 8px; font-size: 1.05em; box-shadow: 0 2px 8px rgba(0,0,0,0.25); z-index: 9999; max-width: 420px; min-width: 320px;">
+        <b>Finish Time Trend Legend</b><br><br>
+        <span style="color:#03dac6; font-weight:bold;">■ Finish Time:</span> The horse's finish time in each race.<br><br>
+        <span style="color:#bb86fc; font-weight:bold;">■ Moving Avg (5 races):</span> The moving average of the horse's finish time over the last 5 races.<br><br>
+        <span style="color:#ff9800; font-weight:bold;">■ Global Avg (Filtered):</span> Average finish time for all horses matching the current filters.<br><br>
+        <span style="color:#4ecca3; font-weight:bold;">■ MM Points Avg (±10):</span> Average finish time for horses with Matchmaking Points within ±10 of this horse's current MM Points.
+      </div>
+    </div>
+    <canvas id="finish-time-chart"></canvas>
+  </div>
+</div>
+<div class="tab-content" id="finish-distribution" style="display:none;">
+  <div class="chart-container">
+    <canvas id="finish-distribution-chart"></canvas>
+  </div>
+</div>
+<!-- Scheduled tab content -->
+<div class="tab-content" id="scheduled" style="display:none;">
+  <div id="scheduled-race-container"></div>
+</div>
+</section>
+<div class=global-filter-container>
+<h3>Data Filters</h3>
+<p class=filter-explanation>Apply exact match filters. Results will meet ALL selected criteria.</p>
+<div class=filter-label>Filter by bloodline:</div>
+<div class=bloodline-filters>
+<div class="bloodline-filter active" data-filter=bloodline data-value=all>All Bloodlines</div>
+<div class="bloodline-filter bloodline-nakamoto" data-filter=bloodline data-value=nakamoto>Nakamoto</div>
+<div class="bloodline-filter bloodline-szabo" data-filter=bloodline data-value=szabo>Szabo</div>
+<div class="bloodline-filter bloodline-finney" data-filter=bloodline data-value=finney>Finney</div>
+<div class="bloodline-filter bloodline-buterin" data-filter=bloodline data-value=buterin>Buterin</div>
+</div>
+<div class=filter-label>Filter by overall stars:</div>
+<div class=rating-filters>
+<div class="rating-filter active" data-filter=rating data-value=all>All Ratings</div>
+<div class="rating-filter rating-under_2-5" data-filter=rating data-value="<2.5">&lt;2.5</div>
+<div class="rating-filter rating-2-5" data-filter=rating data-value=2.5>2.5</div>
+<div class="rating-filter rating-3-0" data-filter=rating data-value=3.0>3.0</div>
+<div class="rating-filter rating-3-5" data-filter=rating data-value=3.5>3.5</div>
+<div class="rating-filter rating-4-0" data-filter=rating data-value=4.0>4.0</div>
+<div class="rating-filter rating-4-5plus" data-filter=rating data-value=4.5+>4.5+</div>
+</div>
+<div class=filter-label>Filter by speed rating:</div>
+<div class=speed-filters>
+<div class="speed-filter active" data-filter=speed data-value=all>All Speeds</div>
+<div class="speed-filter speed-under_2-5" data-filter=speed data-value="<2.5">&lt;2.5</div>
+<div class="speed-filter speed-2-5" data-filter=speed data-value=2.5>2.5</div>
+<div class="speed-filter speed-3-0" data-filter=speed data-value=3.0>3.0</div>
+<div class="speed-filter speed-3-5" data-filter=speed data-value=3.5>3.5</div>
+<div class="speed-filter speed-4-0" data-filter=speed data-value=4.0>4.0</div>
+<div class="speed-filter speed-4-5plus" data-filter=speed data-value=4.5+>4.5+</div>
+</div>
+<div class=filter-label>Filter by sprint rating:</div>
+<div class=sprint-filters>
+<div class="sprint-filter active" data-filter=sprint data-value=all>All Sprints</div>
+<div class="sprint-filter sprint-under_2-5" data-filter=sprint data-value="<2.5">&lt;2.5</div>
+<div class="sprint-filter sprint-2-5" data-filter=sprint data-value=2.5>2.5</div>
+<div class="sprint-filter sprint-3-0" data-filter=sprint data-value=3.0>3.0</div>
+<div class="sprint-filter sprint-3-5" data-filter=sprint data-value=3.5>3.5</div>
+<div class="sprint-filter sprint-4-0" data-filter=sprint data-value=4.0>4.0</div>
+<div class="sprint-filter sprint-4-5plus" data-filter=sprint data-value=4.5+>4.5+</div>
+</div>
+<div class=filter-label>Augment combination size:</div>
+<div class=size-filters>
+<div class="size-filter active" data-filter=size data-value=1>Singles</div>
+<div class=size-filter data-filter=size data-value=2>Pairs</div>
+<div class=size-filter data-filter=size data-value=3>Triples</div>
+</div>
+<!-- Conditional Augment Filter (Triples only) -->
+<div id="conditional-augment-filter-container" style="display:none; margin-top:10px;">
+  <label style="font-weight:600; color:var(--text-color); margin-right:8px;">Number of Conditional Augments:</label>
+  <div id="conditional-augment-btn-group" style="display:inline-flex; gap:6px;">
+    <button type="button" class="cond-btn active" data-value="any">Any</button>
+    <button type="button" class="cond-btn" data-value="0">0</button>
+    <button type="button" class="cond-btn" data-value="1">1</button>
+    <button type="button" class="cond-btn" data-value="2">2</button>
+    <button type="button" class="cond-btn" data-value="3">3</button>
+  </div>
+</div>
+<!-- Column Filter Controls -->
+<div style="margin-top:15px; padding-top:15px; border-top:1px solid var(--border-color);">
+  
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    
+  </div>
+</div>
+<p class=filter-explanation style=margin-top:5px;color:var(--muted-text);font-size:.9em>
+All filters apply as AND operations; data shown will match all selected criteria.
+</p>
+</div>
+<section id=results>
+<h2>Global Augment Combinations</h2>
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+  <button type="button" id="reset-all-filters-btn" class="filter-control-btn">
+    <i class="fas fa-undo"></i> Reset All Filters
+  </button>
+  <button type="button" id="exclude-void-btn" class="filter-control-btn">
+    <i class="fas fa-ban"></i> Exclude Void Augments
+  </button>
+</div>
+<div id=current-horse-info style=display:none;margin-bottom:15px;font-style:italic;color:var(--highlight-color)></div>
+<div id=initial-prompt style=text-align:center;padding:30px;background-color:#262626;border-radius:8px;margin-bottom:20px>
+<p>View global stats by applying filters and clicking Load Augment Data, or search for a specific horse.</p>
+<button id=load-data-btn class=pagination-btn style="margin-top:15px;background-color:var(--highlight-color);color:#000;font-weight:700;padding:10px 20px">
+Load Augment Data
+</button>
+</div>
+<div id=loading class=loading>
+<div class=spinner></div> Loading data...
+</div>
+<table id=results-table class=augment-table style=display:none>
+<thead>
+<tr>
+<th>CPU Slot</th>
+<th>RAM Slot</th>
+<th>Hydraulic Slot</th>
+<th>Avg Position</th>
+<th>Avg Odds</th>
+<th>Avg Time</th>
+<th>Sample Size</th>
+<th class="horse-odds-column horse-data-column" style=display:none>Horse Odds</th>
+<th class="horse-sample-column horse-data-column" style=display:none>Horse Sample</th>
+</tr>
+</thead>
+<tbody id=results-body>
+</tbody>
+</table>
+<div id=no-data class=no-data-message style=display:none>
+No data available for the selected filters.
+</div>
+</section>
+<footer>
+<div class=donation-info>
+<p>Enjoying ZedSight? Consider supporting development:</p>
+<p><code class=donation-address id="donation-address">0x4F09B499932FF9b30C7AD408Dc0ff58756516e87</code><span class=donation-network>(ETH/ERC-20)</span>
+  <button id="copy-address-btn" style="margin-left:8px; padding:2px 10px; border-radius:4px; border:none; background:var(--highlight-color); color:#181818; font-weight:600; cursor:pointer; font-size:0.95em;">Copy</button>
+  <span id="copy-success-msg" style="display:none; margin-left:8px; color:var(--good-color); font-weight:600; font-size:0.95em;">Copied!</span>
+</p>
+</div>
+<p class=copyright>&copy; 2025 ZedSight. All Rights Reserved.</p>
+</footer>
+</div>
+<script>const API_BASE_URL="https://pqchju22ku.us-east-1.awsapprunner.com",AUGMENT_DESCRIPTIONS={"Void C100":"Minor Speed boost for the entire race","Crimson C":"Boost of 0.5 during final sprint","GX-Core C":"Boost of 1.05 when 20m behind leader, duration 5 seconds","Darklight 100C":"Boost of 0.25 at the start of the race, duration 10 seconds","Midnight 100C":"Boost of 0.16 when the horse is in the second quarter of the race","Void R100":"Minor Speed boost for the entire race","Crimson R":"Boost of 1.1 when 7m in front of adjacent horse, duration 5 seconds","GX-Core R":"Boost of 0.8 when passed by adjacent horse, duration 5 seconds","Darklight 100R":"Boost of 0.16 when the horse is in the first quarter of the race","Midnight 100R":"Boost of 0.16 when the horse is in the fourth quarter of the race","Void H100":"Minor Speed boost for the entire race","Crimson H":"Boost of 0.08 when the horse is in the second half of the race","GX-Core H":"Boost of 0.75 during final sprint, duration 5 seconds","Darklight 100H":"Boost of 0.08 when the horse is in the first half of the race","Midnight 100H":"Boost of 1.5 when 6m behind adjacent horse, duration 5 seconds"};
+
+// Add the list of augments we're tracking trigger data for
+const TRACKED_TRIGGER_AUGMENTS = ["GX-Core C", "GX-Core R", "Crimson R", "Midnight 100H"];
+
+function getAugmentTooltip(e){return AUGMENT_DESCRIPTIONS[e]||"No description available."}
+
+let activePopovers={};
+document.addEventListener("click",(function(e){Object.values(activePopovers).forEach((t=>{if(t&&"block"===t.style.display&&!t.contains(e.target)){const a=t.dataset.buttonId,n=document.getElementById(a);n&&n.contains(e.target)||(t.style.display="none")}}))}));
+let currentFilters={bloodline:"all",rating:"all",speed:"all",sprint:"all",size:1,conditionals:"any"},columnMultiFilters={cpu:[],ram:[],hydraulic:[]},sortState={"results-table":{column:null,direction:"asc"},"horse-augments-table":{column:null,direction:"asc"},"race-history-table":{column:null,direction:"asc"}},currentHorseData=null,resultsTableData=[],filteredResultsData=[],horseAugmentsData=[],raceHistoryData=[],currentHorseProcessedRaceDataForChart=[],currentRacePage=1;
+const racesPerPage=10;
+// Add these variables near the other let declarations
+let allRacesData = [];
+let currentRacesData = [];
+
+function updateGlobalTableWithHorseData(){if(!currentHorseData||!currentHorseData.horse)return;document.getElementById("current-horse-info").style.display="none";const e=document.querySelector(".horse-odds-column"),t=document.querySelector(".horse-sample-column");e&&(e.style.display="",e.textContent=`Avg Odds for ${currentHorseData.horse.name}`,e.classList.add("horse-data-column")),t&&(t.style.display="",t.textContent=`${currentHorseData.horse.name} Sample`,t.classList.add("horse-data-column"));const a=document.querySelectorAll(".size-filter");let n=1;a.forEach((e=>{e.classList.contains("active")&&(n=parseInt(e.dataset.value,10))}));
+    const r_global_table_rows = document.querySelectorAll("#results-body tr");
+    const o_horse_combos_lookup = {singles:{},pairs:{},triples:{},byCombo:{}};
+
+    currentHorseData.augment_combinations&&(currentHorseData.augment_combinations.forEach((e=>{let t="";if(e.cpu&&"-"!==e.cpu&&(t+=e.cpu+" "),e.ram&&"-"!==e.ram&&(t+=e.ram+" "),e.hydraulic&&"-"!==e.hydraulic&&(t+=e.hydraulic),t=t.trim(),o_horse_combos_lookup.byCombo[t]=e,e.cpu&&"-"!==e.cpu&&(o_horse_combos_lookup.singles[e.cpu]||(o_horse_combos_lookup.singles[e.cpu]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.singles[e.cpu].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.singles[e.cpu].count+=e.races||1)),e.ram&&"-"!==e.ram&&(o_horse_combos_lookup.singles[e.ram]||(o_horse_combos_lookup.singles[e.ram]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.singles[e.ram].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.singles[e.ram].count+=e.races||1)),e.hydraulic&&"-"!==e.hydraulic&&(o_horse_combos_lookup.singles[e.hydraulic]||(o_horse_combos_lookup.singles[e.hydraulic]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.singles[e.hydraulic].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.singles[e.hydraulic].count+=e.races||1)),e.cpu&&"-"!==e.cpu&&e.ram&&"-"!==e.ram){const t=`${e.cpu} + ${e.ram}`;o_horse_combos_lookup.pairs[t]||(o_horse_combos_lookup.pairs[t]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.pairs[t].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.pairs[t].count+=e.races||1)}if(e.cpu&&"-"!==e.cpu&&e.hydraulic&&"-"!==e.hydraulic){const t=`${e.cpu} + ${e.hydraulic}`;o_horse_combos_lookup.pairs[t]||(o_horse_combos_lookup.pairs[t]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.pairs[t].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.pairs[t].count+=e.races||1)}if(e.ram&&"-"!==e.ram&&e.hydraulic&&"-"!==e.hydraulic){const t=`${e.ram} + ${e.hydraulic}`;o_horse_combos_lookup.pairs[t]||(o_horse_combos_lookup.pairs[t]={odds:[],count:0}),e.avg_odds&&(o_horse_combos_lookup.pairs[t].odds.push(parseFloat(e.avg_odds)),o_horse_combos_lookup.pairs[t].count+=e.races||1)}if(e.cpu&&"-"!==e.cpu&&e.ram&&"-"!==e.ram&&e.hydraulic&&"-"!==e.hydraulic){const t=`${e.cpu} + ${e.ram} + ${e.hydraulic}`;o_horse_combos_lookup.triples[t]={odds:e.avg_odds?[parseFloat(e.avg_odds)]:[],count:e.races||0}}})),Object.keys(o_horse_combos_lookup.singles).forEach((e=>{const t=o_horse_combos_lookup.singles[e];t.odds.length>0&&(t.avgOdds=t.odds.reduce(((e,t)=>e+t),0)/t.odds.length)})),Object.keys(o_horse_combos_lookup.pairs).forEach((e=>{const t=o_horse_combos_lookup.pairs[e];t.odds.length>0&&(t.avgOdds=t.odds.reduce(((e,t)=>e+t),0)/t.odds.length)})),Object.keys(o_horse_combos_lookup.triples).forEach((e=>{const t=o_horse_combos_lookup.triples[e];t.odds.length>0&&(t.avgOdds=t.odds.reduce(((e,t)=>e+t),0)/t.odds.length)})));
+
+    filteredResultsData.forEach((dataItem, index) => {
+        if (index >= r_global_table_rows.length) return;
+
+        const currentRowElement = r_global_table_rows[index];
+        // Use pure augment names from dataItem for the lookup key
+        const global_cpu_name = dataItem.cpu || "-";
+        const global_ram_name = dataItem.ram || "-";
+        const global_hyd_name = dataItem.hydraulic || "-";
+
+        let s_horse_avg_odds_data = null;
+        let l_horse_races_count = 0;
+
+        if (1 === n) { // Singles logic (remains the same, but uses pure names)
+            if ("-" !== global_cpu_name && o_horse_combos_lookup.singles[global_cpu_name]) {
+                s_horse_avg_odds_data = o_horse_combos_lookup.singles[global_cpu_name];
+                if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+            } else if ("-" !== global_ram_name && o_horse_combos_lookup.singles[global_ram_name]) {
+                s_horse_avg_odds_data = o_horse_combos_lookup.singles[global_ram_name];
+                if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+            } else if ("-" !== global_hyd_name && o_horse_combos_lookup.singles[global_hyd_name]) {
+                s_horse_avg_odds_data = o_horse_combos_lookup.singles[global_hyd_name];
+                if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+            }
+        } else if (2 === n) { // Pairs logic (remains the same, but uses pure names)
+            let pair_key = "";
+            if ("-" !== global_cpu_name && "-" !== global_ram_name) {
+                pair_key = `${global_cpu_name} + ${global_ram_name}`;
+                if (o_horse_combos_lookup.pairs[pair_key]) {
+                    s_horse_avg_odds_data = o_horse_combos_lookup.pairs[pair_key];
+                    if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+                }
+            }
+            if (!s_horse_avg_odds_data && "-" !== global_cpu_name && "-" !== global_hyd_name) {
+                pair_key = `${global_cpu_name} + ${global_hyd_name}`;
+                if (o_horse_combos_lookup.pairs[pair_key]) {
+                    s_horse_avg_odds_data = o_horse_combos_lookup.pairs[pair_key];
+                    if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+                }
+            }
+            if (!s_horse_avg_odds_data && "-" !== global_ram_name && "-" !== global_hyd_name) {
+                pair_key = `${global_ram_name} + ${global_hyd_name}`;
+                if (o_horse_combos_lookup.pairs[pair_key]) {
+                    s_horse_avg_odds_data = o_horse_combos_lookup.pairs[pair_key];
+                    if(s_horse_avg_odds_data) l_horse_races_count = s_horse_avg_odds_data.count;
+                }
+            }
+        } else { // n === 3 (Triples)
+            let combo_key_from_global = "";
+            if ("-" !== global_cpu_name && global_cpu_name) combo_key_from_global += global_cpu_name + " ";
+            if ("-" !== global_ram_name && global_ram_name) combo_key_from_global += global_ram_name + " ";
+            if ("-" !== global_hyd_name && global_hyd_name) combo_key_from_global += global_hyd_name;
+            combo_key_from_global = combo_key_from_global.trim();
+            
+            const horse_combo_data = o_horse_combos_lookup.byCombo[combo_key_from_global];
+            if (horse_combo_data) {
+                s_horse_avg_odds_data = {avgOdds: horse_combo_data.avg_odds};
+                l_horse_races_count = horse_combo_data.races || 0;
+            }
+        }
+
+        let horse_odds_cell = currentRowElement.cells[7];
+        let horse_sample_cell = currentRowElement.cells[8];
+
+        if (!horse_odds_cell) {
+            horse_odds_cell = currentRowElement.insertCell(7);
+        }
+        horse_odds_cell.className="horse-odds-cell numeric-value";
+        horse_odds_cell.style.display = "";
+
+        if (!horse_sample_cell) {
+            horse_sample_cell = currentRowElement.insertCell(8);
+        }
+        horse_sample_cell.className="horse-sample-cell numeric-value";
+        horse_sample_cell.style.display = "";
+        
+        if(s_horse_avg_odds_data && s_horse_avg_odds_data.avgOdds !== undefined && s_horse_avg_odds_data.avgOdds !== null){
+            const e_avg_odds_val = parseFloat(s_horse_avg_odds_data.avgOdds);
+            horse_odds_cell.textContent=e_avg_odds_val.toFixed(2);
+            horse_odds_cell.style.color = "";
+            horse_odds_cell.classList.remove("value-good", "value-bad");
+            e_avg_odds_val<=3?horse_odds_cell.classList.add("value-good"):e_avg_odds_val>=6&&horse_odds_cell.classList.add("value-bad");
+        } else {
+            horse_odds_cell.textContent="-";
+            horse_odds_cell.style.color="var(--muted-text)";
+            horse_odds_cell.style.fontWeight="normal";
+            horse_odds_cell.classList.remove("value-good", "value-bad");
+        }
+
+        if(l_horse_races_count > 0){
+            horse_sample_cell.textContent = l_horse_races_count;
+            horse_sample_cell.style.color = "";
+            horse_sample_cell.style.fontWeight = "600";
+        } else {
+            horse_sample_cell.textContent = "-";
+            horse_sample_cell.style.color = "var(--muted-text)";
+            horse_sample_cell.style.fontWeight = "normal";
+        }
+    });
+
+    document.querySelectorAll("#results-table td.horse-odds-cell, #results-table td.horse-sample-cell").forEach((e=>{e.style.backgroundColor="rgba(187, 134, 252, 0.1)",Array.from(e.children).forEach((e=>{e.style.backgroundColor="transparent"})),e.style.textAlign="center",e.style.verticalAlign="middle"}))}
+function initializeSortableTables(){makeTableSortable("results-table"),makeTableSortable("horse-augments-table"),makeTableSortable("race-history-table")}
+function makeTableSortable(e){const t=document.getElementById(e);if(!t)return;const a=t.querySelectorAll("th");a.forEach(((t,n)=>{"results-table"===e&&n<3||"horse-augments-table"===e&&n<3||"race-history-table"===e&&(n===3||n===12)||(t.classList.add("sortable"),t.addEventListener("click",(function(){a.forEach((e=>{e.classList.remove("sort-asc","sort-desc")})),sortState[e].column===n?sortState[e].direction="asc"===sortState[e].direction?"desc":"asc":(sortState[e].column=n,sortState[e].direction="asc"),"asc"===sortState[e].direction?t.classList.add("sort-asc"):t.classList.add("sort-desc"),sortTable(e,n,sortState[e].direction)})))}))}
+function sortTable(e,t,a){let n;if("results-table"===e)n=resultsTableData,6!==t&&7!==t||"desc"!==a?"asc"===a?n.sort(((e,a)=>compareValues(e,a,t))):n.sort(((e,a)=>compareValues(a,e,t))):n.sort(((e,a)=>{if(6===t){const t=getHorseOddsForRow(e),n=getHorseOddsForRow(a),r=9999!==t,o=9999!==n;return r&&!o?-1:!r&&o?1:n-t}if(7===t){const t=getHorseSampleForRow(e),n=getHorseSampleForRow(a),r=t>0,o=n>0;return r&&!o?-1:!r&&o?1:n-t}return compareValues(a,e,t)})),updateTable(n);else if("horse-augments-table"===e){if(currentHorseData&&currentHorseData.augment_combinations){const e=[...currentHorseData.augment_combinations];e.sort(((e,n)=>{const r=getValueForColumn(e,t,"horse-augments"),o=getValueForColumn(n,t,"horse-augments");return"asc"===a?compareMixed(r,o):compareMixed(o,r)})),displayHorseAugments(e)}}else if("race-history-table"===e&&currentRacesData&&currentRacesData.length>0){const e=[...currentRacesData];e.sort(((e,n)=>{const r=getValueForColumn(e,t,"race-history"),o=getValueForColumn(n,t,"race-history");return"asc"===a?compareMixed(r,o):compareMixed(o,r)})),currentRacesData=e,displayRaceHistory(e)}}
+function getValueForColumn(e,t,a){if("horse-augments"===a)switch(t){case 0:return e.cpu||"";case 1:return e.ram||"";case 2:return e.hydraulic||"";case 3:return parseFloat(e.avg_position)||9999;case 4:return parseFloat(e.avg_odds)||9999;case 5:return parseFloat(e.avg_time)||9999;case 6:return parseFloat(e.avg_starting_points)||0;case 7:return parseFloat(e.win_percentage)||0;case 8:return parseInt(e.races)||0;default:return""}else if("race-history"===a)switch(t){
+  case 0: return e.race_name||"";
+  case 1: return e.start_time||"";
+  case 2: return parseInt(e.finish_position)||9999;
+  case 3: return ""; // QPos, not sortable
+  case 4: return parseFloat(e.finish_time)||9999;
+  case 5: return parseFloat(e.odds)||9999;
+  case 6: return parseFloat(e.starting_balance)||0;
+  case 7: return calculateProfitLoss(e)||0;
+  case 8: return calculateCurrentBalance(e)||0;
+  case 9: return parseInt(e.starting_points)||0;
+  case 10:
+    const startingPtsVal = parseInt(e.starting_points);
+    const endingPtsVal = parseInt(e.points);
+    if (!isNaN(startingPtsVal) && !isNaN(endingPtsVal)) {
+        return endingPtsVal - startingPtsVal;
+    }
+    return 0;
+  case 11: return parseInt(e.points) || 0; // Ending points
+  default: return "";
+}
+return""}
+function compareMixed(e,t){if(null==e)return 1;if(null==t)return-1;if(e instanceof Date&&t instanceof Date)return e.getTime()-t.getTime();if("string"==typeof e&&"string"==typeof t){const a=new Date(e),n=new Date(t);if(!isNaN(a)&&!isNaN(n))return a.getTime()-n.getTime()}return"number"==typeof e&&"number"==typeof t?e-t:isNaN(Number(e))||isNaN(Number(t))?"string"==typeof e&&"string"==typeof t?e.localeCompare(t):String(e).localeCompare(String(t)):Number(e)-Number(t)}
+function compareValues(e, t, a) {
+    let n, r;
+    switch (a) {
+        case 0: n = e.cpu; r = t.cpu; break;
+        case 1: n = e.ram; r = t.ram; break;
+        case 2: n = e.hydraulic; r = t.hydraulic; break;
+        case 3: n = parseFloat(e.avg_position) || 9999; r = parseFloat(t.avg_position) || 9999; break;
+        case 4: n = parseFloat(e.avg_odds) || 9999; r = parseFloat(t.avg_odds) || 9999; break;
+        case 5: n = parseFloat(e.avg_time) || 9999; r = parseFloat(t.avg_time) || 9999; break;
+        case 6: n = parseInt(e.sample_size) || 0; r = parseInt(t.sample_size) || 0; break;
+        case 7: n = getHorseOddsForRow(e); r = getHorseOddsForRow(t); break;
+        case 8: n = getHorseSampleForRow(e); r = getHorseSampleForRow(t); break;
+        default: n = ""; r = "";
+    }
+    return compareMixed(n, r);
+}
+
+function sortTable(e, t, a) {
+    let n;
+    if ("results-table" === e) {
+        n = resultsTableData;
+        // Use compareValues for all columns
+        if (a === "asc") {
+            n.sort((e1, e2) => compareValues(e1, e2, t));
+        } else {
+            n.sort((e1, e2) => compareValues(e2, e1, t));
+        }
+        updateTable(n);
+    } else if ("horse-augments-table" === e) {
+        if (currentHorseData && currentHorseData.augment_combinations) {
+            const arr = [...currentHorseData.augment_combinations];
+            arr.sort((e1, e2) => {
+                const v1 = getValueForColumn(e1, t, "horse-augments");
+                const v2 = getValueForColumn(e2, t, "horse-augments");
+                return a === "asc" ? compareMixed(v1, v2) : compareMixed(v2, v1);
+            });
+            displayHorseAugments(arr);
+        }
+    } else if ("race-history-table" === e && allRacesData && allRacesData.length > 0) {
+        // Always sort a copy of allRacesData, never mutate the original
+        let sorted = [...allRacesData];
+        sorted.sort((e1, e2) => {
+            const v1 = getValueForColumn(e1, t, "race-history");
+            const v2 = getValueForColumn(e2, t, "race-history");
+            return a === "asc" ? compareMixed(v1, v2) : compareMixed(v2, v1);
+        });
+        currentRacesData = sorted;
+        currentRacePage = 1;
+        displayRaceHistory(currentRacesData);
+    }
+}
+
+function setupHorseSearch(){const e=document.getElementById("horse-search-input"),t=document.getElementById("horse-id-input"),a=document.getElementById("horse-search-button"),n=document.getElementById("horse-results");function r(){const a=e.value.trim(),r=t.value.trim();if(!r&&(!a||a.length<2))return void alert("Please enter a valid horse ID or a name with at least 2 characters");n.innerHTML='<div style="text-align: center; padding: 20px;"><div class="spinner"></div> Searching...</div>',n.style.display="block";let o=`${API_BASE_URL}/api/search-horse?`;o+=r?`id=${encodeURIComponent(r)}`:`name=${encodeURIComponent(a)}`,fetch(o).then((e=>e.json())).then((e=>{if(!e.success)return void(n.innerHTML=`<div style="padding: 15px; color: var(--bad-color);">${e.message||"Error searching for horse"}</div>`);if(0===e.horses.length)return void(n.innerHTML='<div style="padding: 15px;">No horses found with that name or ID</div>');let t=e.horses;if(a){const e=a.toLowerCase(),n=t.findIndex((t=>t.name.toLowerCase()===e));if(n>0){const[e]=t.splice(n,1);t.unshift(e)}}var r;r=t,n.innerHTML="",r.forEach((e=>{const t=document.createElement("div");if(t.className="horse-result-item",e.bloodline){const a=`bloodline-${e.bloodline.toLowerCase()}`;t.classList.add(a)}const a=generateStarRatingHTML(parseFloat(e.complete_rating)),r=generateStarRatingHTML(parseFloat(e.speed_rating)),o=generateStarRatingHTML(parseFloat(e.sprint_rating)),s=generateStarRatingHTML(parseFloat(e.endurance_rating));t.innerHTML=`
+                        <div>
+                            <div class="horse-name">${e.name}<span class="horse-result-bloodline">| ${e.bloodline||"Unknown"} | Gen ${null!==e.generation&&void 0!==e.generation?e.generation:"N/A"}</span></div>
+                            <div class="horse-details">
+                                <span class="rating-group">Overall: ${a}</span>
+                                <span class="rating-group">Speed: ${r}</span>
+                                <span class="rating-group">Sprint: ${o}</span>
+                                <span class="rating-group">Endurance: ${s}</span>
+                            </div>
+                        </div>
+                    `,t.addEventListener("click",(function(){if(!e.id)return console.error("Horse ID is missing!"),void alert("Cannot use this horse - ID is missing");!function(e){if(!e||!e.id)return console.error("Invalid horse object or missing ID:",e),void alert("Cannot apply filters - invalid horse data");if(document.getElementById("initial-prompt").style.display="none",e.bloodline){const t=e.bloodline.toLowerCase();["nakamoto","szabo","finney","buterin"].includes(t)?activateFilter("bloodline",t):activateFilter("bloodline","all")}else activateFilter("bloodline","all");if(e.complete_rating){const t=parseFloat(e.complete_rating);let a="all";a=t<2.5?"<2.5":t<3?"2.5":t<3.5?"3.0":t<4?"3.5":t<4.5?"4.0":"4.5+",activateFilter("rating",a)}else activateFilter("rating","all");if(e.speed_rating){const t=parseFloat(e.speed_rating);let a="all";a=t<2.5?"<2.5":t<3?"2.5":t<3.5?"3.0":t<4?"3.5":t<4.5?"4.0":"4.5+",activateFilter("speed",a)}else activateFilter("speed","all");if(e.sprint_rating){const t=parseFloat(e.sprint_rating);let a="all";a=t<2.5?"<2.5":t<3?"2.5":t<3.5?"3.0":t<4?"3.5":t<4.5?"4.0":"4.5+",activateFilter("sprint",a)}else activateFilter("sprint","all");if(e.endurance_rating){const t=parseFloat(e.endurance_rating);let a="all";a=t<2.5?"<2.5":t<3?"2.5":t<3.5?"3.0":t<4?"3.5":t<4.5?"4.0":"4.5+",activateFilter("endurance",a)}else activateFilter("endurance","all");fetchData(),function(e){const t=document.getElementById("horse-stats");t.style.display="block",document.getElementById("horse-name-display").textContent="Loading horse data...",fetch(`${API_BASE_URL}/api/horse-history?id=${encodeURIComponent(e)}`).then((e=>{if(!e.ok)throw new Error(`HTTP error! Status: ${e.status}`);return e.json()})).then((e=>{if(!e.success)return console.error("API returned error:",e.message),alert(`Error: ${e.message||"Failed to load horse data"}`),void(t.style.display="none");currentHorseData=e,function(e){
+    // Set horse name as a link to ZedChampions
+    var horseNameElem = document.getElementById("horse-name-display");
+    if (e.horse && e.horse.id && e.horse.name) {
+        horseNameElem.innerHTML = `<a href="https://app.zedchampions.com/horse/${e.horse.id}" target="_blank" rel="noopener noreferrer" style="color: #bb86fc; text-decoration: underline;">${e.horse.name}</a>`;
+    } else if (e.horse && e.horse.name) {
+        horseNameElem.textContent = e.horse.name;
+    } else {
+        horseNameElem.textContent = "-";
+    }
+    document.getElementById("horse-bloodline").textContent=e.horse.bloodline||"-";
+    document.getElementById("horse-generation").textContent=null!==e.horse.generation&&void 0!==e.horse.generation?`Gen ${e.horse.generation}`:"N/A";
+    document.getElementById("horse-captured-races").textContent=e.total_races||0;
+    const t=e.horse.complete_rating?parseFloat(e.horse.complete_rating).toFixed(1):"-";
+    document.getElementById("horse-overall-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.complete_rating))+("-"!==t?` <span class=\"rating-text-value\">(${t})</span>`:"");
+    const a=e.horse.speed_rating?parseFloat(e.horse.speed_rating).toFixed(1):"-";
+    document.getElementById("horse-speed-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.speed_rating))+("-"!==a?` <span class=\"rating-text-value\">(${a})</span>`:"");
+    const n=e.horse.sprint_rating?parseFloat(e.horse.sprint_rating).toFixed(1):"-";
+    document.getElementById("horse-sprint-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.sprint_rating))+("-"!==n?` <span class=\"rating-text-value\">(${n})</span>`:"");
+    const r=e.horse.endurance_rating?parseFloat(e.horse.endurance_rating).toFixed(1):"-";
+    if(document.getElementById("horse-endurance-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.endurance_rating))+("-"!==r?` <span class=\"rating-text-value\">(${r})</span>`:""),document.getElementById("horse-win-rate").textContent=`${parseFloat(e.win_percentage||0).toFixed(1)}%`,e.avg_position&&"number"==typeof e.avg_position?document.getElementById("horse-avg-pos").textContent=e.avg_position.toFixed(2):document.getElementById("horse-avg-pos").textContent="-",e.avg_finish_time&&"number"==typeof e.avg_finish_time?document.getElementById("horse-avg-time").textContent=e.avg_finish_time.toFixed(2)+"s":document.getElementById("horse-avg-time").textContent="-",e.best_finish_time&&"number"==typeof e.best_finish_time?document.getElementById("horse-best-time").textContent=e.best_finish_time.toFixed(2)+"s":document.getElementById("horse-best-time").textContent="-",e.avg_overall_odds&&"number"==typeof e.avg_overall_odds?document.getElementById("horse-avg-odds").textContent=e.avg_overall_odds.toFixed(2):document.getElementById("horse-avg-odds").textContent="-",e.races&&e.races.length>0){const t=e.races[0],a=calculateCurrentBalance(t);null!==a?(document.getElementById("horse-current-balance").textContent=safeFormatNumber(a,2,!0),document.getElementById("horse-current-balance").className="detail-value"+(a>0?" value-good":a<0?" value-bad":"")):(document.getElementById("horse-current-balance").textContent="-",document.getElementById("horse-current-balance").className="detail-value");
+const currentMMPoints = parseInt(t.points); // Assuming t.points is the ending points for the latest race
+document.getElementById("horse-mm-points").textContent = !isNaN(currentMMPoints) ? currentMMPoints : "-";
+}else document.getElementById("horse-current-balance").textContent="-",document.getElementById("horse-current-balance").className="detail-value",document.getElementById("horse-mm-points").textContent="-";let o=null;if(e.races&&e.races.length>0){
+    // Calculate TOTAL P/L as the sum of all race P/Ls
+    o = e.races.reduce((acc, race) => {
+        const pl = calculateProfitLoss(race);
+        return acc + (pl !== null ? pl : 0);
+    }, 0);
+}
+            const s=document.getElementById("horse-total-pl");
+            null!==o?(s.textContent=safeFormatNumber(o,2,!0),s.className="detail-value"+(o>0?" value-good":o<0?" value-bad":"")):(s.textContent="-",s.className="detail-value");
+            
+            // Calculate and display quarter position stats
+            const quarterStats = calculateQuarterPositionStats(e.races || []);
+            const quarterPositionsElem = document.getElementById("horse-quarter-positions");
+            const quarterRanksElem = document.getElementById("horse-quarter-ranks");
+            
+            if (quarterStats.averages.some(avg => avg !== null)) {
+                // Display averages as X.X|X.X|X.X|X.X
+                const avgText = quarterStats.averages.map(avg => {
+                    return avg !== null ? avg.toFixed(1) : "-";
+                }).join('|');
+                quarterPositionsElem.textContent = avgText;
+                
+                // Display rankings as numbers representing each quarter's rank (1|2|3|4)
+                if (quarterStats.rankings && quarterStats.rankings.some(rank => rank !== null)) {
+                    const rankText = quarterStats.rankings.map(rank => {
+                        return rank !== null ? rank.toString() : "-";
+                    }).join('|');
+                    quarterRanksElem.textContent = rankText;
+                } else {
+                    quarterRanksElem.textContent = "-";
+                }
+            } else {
+                quarterPositionsElem.textContent = "-";
+                quarterRanksElem.textContent = "-";
+            }
+            
+            displayHorseAugments(e.augment_combinations||[]),currentRacePage = 1;
+displayRaceHistory(e.races||[]),prepareBalanceChartData(e.races||[]),setupTabs();const l=document.querySelector('.tab[data-tab="balance-graph"]');l&&l.classList.contains("active")&&currentHorseProcessedRaceDataForChart.length>0&&renderBalanceChart(currentHorseProcessedRaceDataForChart)}(e),updateGlobalTableWithHorseData()})).catch((e=>{console.error("Error fetching horse history:",e.message||e),alert(`Error connecting to server: ${e.message||"Unknown error"}`),t.style.display="none"}))}(e.id)}(e),n.style.display="none"})),n.appendChild(t)}))})).catch((e=>{console.error("Error searching for horse:",e),n.innerHTML='<div style="padding: 15px; color: var(--bad-color);">Error connecting to server</div>'}))}a.addEventListener("click",(function(){r()})),e.addEventListener("keypress",(function(e){"Enter"===e.key&&(t.value="",r())})),t.addEventListener("keypress",(function(t){"Enter"===t.key&&(e.value="",r())})),e.addEventListener("focus",(function(){t.value=""})),t.addEventListener("focus",(function(){e.value=""}))}
+function displayHorseAugments(e){
+    const t=document.getElementById("horse-augments-body"),
+    a=document.getElementById("horse-no-augments");
+    
+    if(t.innerHTML="",!e||0===e.length)
+        return void(a.style.display="block");
+    
+    a.style.display="none";
+    let n=Number.MAX_VALUE;
+    
+    // Find lowest average odds for highlighting
+    e.forEach((e=>{
+        e.avg_odds&&parseFloat(e.avg_odds)<n&&(n=parseFloat(e.avg_odds))
+    }));
+    
+    e.forEach((e=>{
+        const a=document.createElement("tr");
+        
+        // CPU CELL
+        const r=document.createElement("td");
+        const o=getAugmentCategory(e.cpu||"-");
+        r.className=`augment-cell ${e.cpu&&"-"!==e.cpu?"":"augment-empty"} ${o}`;
+        
+        // Check if this is a tracked augment (CPU slot)
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.cpu) && e.trigger_percentages && e.trigger_percentages[e.cpu] !== undefined) {
+            // Create text node for the augment name
+            const cpuText = document.createTextNode(e.cpu || "-");
+            r.appendChild(cpuText);
+            
+            // Create trigger percentage badge
+            const triggerPct = e.trigger_percentages[e.cpu];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            r.appendChild(triggerBadge);
+        } else {
+            r.textContent = e.cpu || "-";
+        }
+        
+        e.cpu&&"-"!==e.cpu&&(r.title=getAugmentTooltip(e.cpu));
+        a.appendChild(r);
+        
+        // RAM CELL
+        const s=document.createElement("td");
+        const l=getAugmentCategory(e.ram||"-");
+        s.className=`augment-cell ${e.ram&&"-"!==e.ram?"":"augment-empty"} ${l}`;
+        
+        // Check if this RAM augment is tracked and has trigger data
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.ram) && (e.trigger_percentage !== undefined || (e.trigger_percentages && e.trigger_percentages[e.ram] !== undefined))) {
+            // Create text node for the augment name
+            const ramText = document.createTextNode(e.ram);
+            s.appendChild(ramText);
+            
+            // Add trigger percentage badge
+            const triggerPct = e.trigger_percentage !== undefined ? e.trigger_percentage : e.trigger_percentages[e.ram];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            s.appendChild(triggerBadge);
+        } else {
+            s.textContent = e.ram || "-";
+        }
+        
+        e.ram && "-"!==e.ram && (s.title=getAugmentTooltip(e.ram));
+        a.appendChild(s);
+        
+        // HYDRAULIC CELL
+        const c=document.createElement("td");
+        const i=getAugmentCategory(e.hydraulic||"-");
+        c.className=`augment-cell ${e.hydraulic&&"-"!==e.hydraulic?"":"augment-empty"} ${i}`;
+        
+        // Check if this Hydraulic augment is tracked and has trigger data
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.hydraulic) && (e.trigger_percentage !== undefined || (e.trigger_percentages && e.trigger_percentages[e.hydraulic] !== undefined))) {
+            // Create text node for the augment name
+            const hydraulicText = document.createTextNode(e.hydraulic);
+            c.appendChild(hydraulicText);
+            
+            // Add trigger percentage badge
+            const triggerPct = e.trigger_percentage !== undefined ? e.trigger_percentage : e.trigger_percentages[e.hydraulic];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            c.appendChild(triggerBadge);
+        } else {
+            c.textContent = e.hydraulic || "-";
+        }
+        
+        e.hydraulic && "-"!==e.hydraulic && (c.title=getAugmentTooltip(e.hydraulic));
+        a.appendChild(c);
+        
+        // Remaining columns stay the same
+        const d=document.createElement("td");
+        const u=safeFormatNumber(e.avg_position);
+        if(null!==u){
+            d.textContent=u;
+            const t=parseFloat(e.avg_position);
+            t<=3?d.className="value-good":t>=6&&(d.className="value-bad");
+        } else d.textContent="N/A";
+        a.appendChild(d);
+        
+        const m=document.createElement("td");
+        const p=safeFormatNumber(e.avg_odds);
+        if(null!==p){
+            m.textContent=p;
+            const t=parseFloat(e.avg_odds);
+            Math.abs(t-n)<.001?(m.className="value-best",m.style.fontWeight="bold",m.style.backgroundColor="rgba(76, 175, 80, 0.2)"):t<=3?m.className="value-good":t>=6&&(m.className="value-bad");
+        } else m.textContent="N/A",m.style.color="var(--muted-text)";
+        a.appendChild(m);
+        
+        const g=document.createElement("td");
+        const h=safeFormatNumber(e.avg_time);
+        g.textContent=null!==h?h+"s":"N/A";
+        a.appendChild(g);
+        
+        const y=document.createElement("td");
+        const f=e.avg_starting_points;
+        if(null===f||isNaN(parseFloat(f)))y.textContent="N/A";
+        else{
+            const e=Math.round(parseFloat(f));
+            y.textContent=e,e>3e3?y.className="value-good":e<1e3&&(y.className="value-bad");
+        }
+        a.appendChild(y);
+        
+        const b=document.createElement("td");
+        b.textContent=`${e.win_percentage||0}%`;
+        e.win_percentage>25&&(b.className="value-good");
+        a.appendChild(b);
+        
+        const v=document.createElement("td");
+        v.textContent=e.races;
+        a.appendChild(v);
+        
+        t.appendChild(a);
+    }));
+    
+    // Handle sorting
+    if(null!==sortState["horse-augments-table"].column){
+        const e=document.querySelectorAll("#horse-augments-table th");
+        const t=sortState["horse-augments-table"].column;
+        const a=sortState["horse-augments-table"].direction;
+        e[t]&&("asc"===a?e[t].classList.add("sort-asc"):e[t].classList.add("sort-desc"));
+    }
+}
+function displayRaceHistory(e) {
+    const t = document.getElementById("race-history-body"),
+        a = document.getElementById("horse-no-races"),
+        n = document.getElementById("race-history-pagination");
+    // Only update currentRacesData if new data is loaded (not on sort or page change)
+    if (e && (e !== currentRacesData && e !== allRacesData)) {
+        allRacesData = [...e];
+        currentRacesData = [...e];
+        currentRacePage = 1;
+    }
+    t.innerHTML = "";
+    if (!currentRacesData || currentRacesData.length === 0) {
+        a.style.display = "block";
+        n.style.display = "none";
+        return;
+    }
+    a.style.display = "none";
+    const r = Math.ceil(currentRacesData.length / 10);
+    document.getElementById("total-pages").textContent = r;
+    document.getElementById("current-page").textContent = currentRacePage;
+    n.style.display = currentRacesData.length > 10 ? "block" : "none";
+    const o = 10 * (currentRacePage - 1),
+        s = Math.min(o + 10, currentRacesData.length),
+        l = currentRacesData.slice(o, s);
+    document.getElementById("prev-page-btn").disabled = 1 === currentRacePage;
+    document.getElementById("next-page-btn").disabled = currentRacePage === r;
+    l.forEach((e => { appendRaceRow(e, t); }));
+    if (null !== sortState["race-history-table"].column) {
+        const e = document.querySelectorAll("#race-history-table th"),
+            t = sortState["race-history-table"].column,
+            a = sortState["race-history-table"].direction;
+        e[t] && ("asc" === a ? e[t].classList.add("sort-asc") : e[t].classList.add("sort-desc"));
+    }
+}
+function calculateCurrentBalance(e){if(void 0!==e.starting_balance&&void 0!==e.stake&&void 0!==e.earnings){return(parseFloat(e.starting_balance)||0)-(parseFloat(e.stake)||0)+(parseFloat(e.earnings)||0)}return null}
+function calculateCurrentPoints(e){if(void 0!==e.starting_points&&void 0!==e.points){return(parseInt(e.starting_points)||0)+(parseInt(e.points)||0)}return null}
+function abbreviateAugmentName(e){return e||""}
+function appendRaceRow(e,t){
+    const a=document.createElement("tr");
+    
+    // Race Name
+    const n=document.createElement("td");
+    n.style.maxWidth="180px";
+    n.style.whiteSpace="normal";
+    n.style.wordWrap="break-word";
+    // If race_id or id is present, make the name a link
+    const raceId = e.race_id || e.id;
+    if (raceId) {
+        const link = document.createElement("a");
+        link.href = `https://app.zedchampions.com/race/${raceId}`;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = e.race_name || "Unknown Race";
+        link.style.color = "#bb86fc";
+        link.style.textDecoration = "underline";
+        n.appendChild(link);
+    } else {
+        n.textContent = e.race_name || "Unknown Race";
+    }
+    a.appendChild(n);
+    
+    // Date
+    const r=document.createElement("td");
+    r.textContent=e.start_time?new Date(e.start_time).toLocaleDateString():"-";
+    a.appendChild(r);
+    
+    // Position
+    const o=document.createElement("td");
+    o.textContent=e.finish_position||"-";
+    if (1===e.finish_position) {
+        o.className="value-good";
+    } else if (e.finish_position && e.finish_position>=6) {
+        o.className="value-bad";
+    }
+    a.appendChild(o);
+    
+    // QPos (Sectional Positions)
+    const qpos = document.createElement("td");
+    if (e.sectional_positions && Array.isArray(e.sectional_positions)) {
+        qpos.textContent = e.sectional_positions.join("|");
+    } else if (typeof e.sectional_positions === "string") {
+        try {
+            const arr = JSON.parse(e.sectional_positions);
+            qpos.textContent = Array.isArray(arr) ? arr.join("|") : "-";
+        } catch {
+            qpos.textContent = "-";
+        }
+    } else {
+        qpos.textContent = "-";
+    }
+    a.appendChild(qpos);
+    
+    // Time
+    const s=document.createElement("td");
+    const l=safeFormatNumber(e.finish_time);
+    s.textContent=null!==l?l+"s":"-";
+    a.appendChild(s);
+    
+    // Odds
+    const c=document.createElement("td");
+    c.textContent=e.odds?e.odds:"-";
+    a.appendChild(c);
+    
+    // Starting Balance
+    const i=document.createElement("td");
+    if (null!==e.starting_balance && void 0!==e.starting_balance) {
+        i.textContent=safeFormatNumber(e.starting_balance,2,!0);
+    } else {
+        i.textContent="N/A";
+        i.style.color="var(--muted-text)";
+    }
+    a.appendChild(i);
+    
+    // P/L
+    const d=document.createElement("td");
+    const u=calculateProfitLoss(e);
+    if (null!==u) {
+        d.textContent=safeFormatNumber(u,2,!0);
+        if (u>0) {
+            d.className="value-good";
+        } else if (u<0) {
+            d.className="value-bad";
+        }
+    } else {
+        d.textContent="N/A";
+        d.style.color="var(--muted-text)";
+    }
+    a.appendChild(d);
+    
+    // End Balance
+    const m=document.createElement("td");
+    const p=calculateCurrentBalance(e);
+    if (null!==p) {
+        m.textContent=safeFormatNumber(p,2,!0);
+    } else {
+        m.textContent="N/A";
+        m.style.color="var(--muted-text)";
+    }
+    a.appendChild(m);
+    
+    // Start Points
+    const g=document.createElement("td");
+    if (null!==e.starting_points && void 0!==e.starting_points) {
+        g.textContent=e.starting_points;
+    } else {
+        g.textContent="-";
+    }
+    a.appendChild(g);
+    
+    // Points +/-
+    const h = document.createElement("td");
+    const startingPtsForChange = parseInt(e.starting_points);
+    const endingPtsForChange = parseInt(e.points); // Assuming e.points from API is ending points
+    if (!isNaN(startingPtsForChange) && !isNaN(endingPtsForChange)) {
+        const pointsChange = endingPtsForChange - startingPtsForChange;
+        h.textContent = pointsChange;
+        if (pointsChange > 0) h.className = "value-good";
+        else if (pointsChange < 0) h.className = "value-bad";
+    } else {
+        h.textContent = "N/A";
+        h.style.color = "var(--muted-text)";
+    }
+    a.appendChild(h);
+    
+    // End Points
+    const y = document.createElement("td");
+    const endPointsVal = parseInt(e.points); // Assuming e.points from API is ending points
+    if (!isNaN(endPointsVal)) {
+        y.textContent = endPointsVal;
+    } else {
+        // Fallback if e.points is not a number
+        const startPointsValFallback = parseInt(e.starting_points);
+        y.textContent = !isNaN(startPointsValFallback) ? startPointsValFallback : "-";
+    }
+    a.appendChild(y);
+    
+    // Augments
+    const b=document.createElement("td");
+    b.style.maxWidth="200px";
+    
+    if (e.augments && e.augments.length > 0) {
+        const t=document.createElement("div");
+        t.style.display="flex";
+        t.style.flexDirection="column";
+        t.style.gap="1px";
+        
+        // Sort augments by type
+        [...e.augments].sort(((e,t)=>{
+            const a={cpu:1,ram:2,hydraulic:3};
+            function n(e){
+                if(!e.name) return "";
+                const t=e.name.trim();
+                return t.endsWith("C")?"cpu":t.endsWith("R")?"ram":t.endsWith("H")?"hydraulic":"";
+            }
+            let r="",o="";
+            return e.type && "string"==typeof e.type && (r=e.type.toLowerCase()),
+            r && a[r] || (r=n(e)),
+            t.type && "string"==typeof t.type && (o=t.type.toLowerCase()),
+            o && a[o] || (o=n(t)),
+            a[r] && a[o] ? a[r]-a[o] : a[r] ? -1 : a[o] ? 1 : 0;
+        })).forEach((e=>{
+            const a=document.createElement("div");
+            a.className=`augment-cell ${getAugmentCategory(e.name)}`;
+            a.style.padding="2px 6px";
+            a.style.margin="0";
+            a.style.whiteSpace="normal";
+            a.style.wordWrap="break-word";
+            a.style.fontSize="0.95em";
+            a.style.fontFamily="'Trebuchet MS', sans-serif";
+            a.style.borderRadius="3px";
+            a.style.display = "flex";
+            a.style.alignItems = "center";
+            a.style.justifyContent = "space-between";
+            
+            // Create text for augment name
+            const augmentText = document.createTextNode(abbreviateAugmentName(e.name));
+            a.appendChild(augmentText);
+            
+            // Add trigger indicator for tracked augments
+            if (TRACKED_TRIGGER_AUGMENTS.includes(e.name) && e.triggered !== null) {
+                const triggerIcon = document.createElement("span");
+                triggerIcon.className = `trigger-icon triggered-${e.triggered}`;
+                triggerIcon.title = e.triggered ? "Triggered" : "Did not trigger";
+                triggerIcon.style.marginLeft = "5px";
+                a.appendChild(triggerIcon);
+            }
+            
+            if (e.name && "-" !== e.name) {
+                a.title = getAugmentTooltip(e.name);
+            }
+            
+            t.appendChild(a);
+        }));
+        
+        b.appendChild(t);
+    } else {
+        b.textContent="None";
+        b.style.color="var(--muted-text)";
+    }
+    
+    a.appendChild(b);
+    t.appendChild(a);
+}
+function goToRacePage(e){const t=Math.ceil(currentRacesData.length/10);if(e<1||e>t)return;currentRacePage=e;const a=document.getElementById("race-history-body");a.innerHTML="",document.getElementById("current-page").textContent=currentRacePage,document.getElementById("prev-page-btn").disabled=1===currentRacePage,document.getElementById("next-page-btn").disabled=currentRacePage===t;const n=10*(currentRacePage-1),r=Math.min(n+10,currentRacesData.length);currentRacesData.slice(n,r).forEach((e=>{appendRaceRow(e,a)}))}
+function getAugmentCategory(e){return"-"===e?"augment-empty":e.includes("GX-Core")?"augment-gx":e.includes("Crimson")?"augment-crimson":e.includes("Midnight")?"augment-midnight":e.includes("Darklight")?"augment-darklight":e.includes("Void")?"augment-void":""}
+function setupTabs(){const e=document.querySelectorAll(".tab"),t=document.querySelectorAll(".tab-content");
+  
+  // Make sure all tab contents are hidden except active one on page load
+  t.forEach(content => {
+    content.style.display = "none";
+  });
+  
+  const activeTab = document.querySelector(".tab.active");
+  if (activeTab) {
+    const activeContentId = activeTab.getAttribute("data-tab");
+    const activeContent = document.getElementById(activeContentId);
+    if (activeContent) {
+      activeContent.style.display = "block";
+    }
+  }
+  
+  e.forEach((a=>{a.addEventListener("click",(function(){
+    e.forEach((e=>e.classList.remove("active"))),
+    t.forEach((e=>{
+      e.classList.remove("active");
+      e.style.display = "none";
+    })),
+    this.classList.add("active");
+    const a=document.getElementById(this.dataset.tab);
+    if(a) {
+      a.classList.add("active");
+      a.style.display = "block";
+    }
+    "balance-graph"===this.dataset.tab&&currentHorseProcessedRaceDataForChart.length>0&&renderBalanceChart(currentHorseProcessedRaceDataForChart)
+  }))}));
+  document.getElementById("close-horse-btn").addEventListener("click",(function(){document.getElementById("horse-stats").style.display="none"})),
+  document.getElementById("prev-page-btn").addEventListener("click",(function(){goToRacePage(currentRacePage-1)})),
+  document.getElementById("next-page-btn").addEventListener("click",(function(){goToRacePage(currentRacePage+1)}))
+}
+function safeFormatNumber(e,t=2,a=!1){if("string"==typeof e){const n=parseFloat(e);if(!isNaN(n))return a?Math.round(n).toString():n.toFixed(t)}return"number"!=typeof e||isNaN(e)?null:a?Math.round(e).toString():e.toFixed(t)}
+function calculateCurrentBalance(e){if(void 0!==e.starting_balance&&void 0!==e.stake&&void 0!==e.earnings){return(parseFloat(e.starting_balance)||0)-(parseFloat(e.stake)||0)+(parseFloat(e.earnings)||0)}return null}
+function calculateProfitLoss(e){const t=calculateCurrentBalance(e),a=parseFloat(e.starting_balance)||0;return null!==t?t-a:null}
+function calculateTotalPl(e){if(!e||0===e.length)return 0;let t=0;return e.forEach((e=>{const a=calculateProfitLoss(e);null!==a&&(t+=a)})),t}
+
+function calculateQuarterPositionStats(races) {
+    if (!races || races.length === 0) return { averages: [], rankings: [] };
+    
+    // Initialize arrays for each quarter (Q1, Q2, Q3, Q4)
+    const quarterPositions = [[], [], [], []];
+    
+    // Extract sectional positions from each race
+    races.forEach(race => {
+        let positions = null;
+        
+        if (race.sectional_positions && Array.isArray(race.sectional_positions)) {
+            positions = race.sectional_positions;
+        } else if (typeof race.sectional_positions === "string") {
+            try {
+                const arr = JSON.parse(race.sectional_positions);
+                if (Array.isArray(arr)) positions = arr;
+            } catch (e) {
+                // Failed to parse, ignore this race
+            }
+        }
+        
+        // Add positions to respective quarters if we have valid data
+        if (positions && positions.length >= 4) {
+            for (let i = 0; i < 4; i++) {
+                const pos = parseFloat(positions[i]);
+                if (!isNaN(pos)) {
+                    quarterPositions[i].push(pos);
+                }
+            }
+        }
+    });
+    
+    // Calculate averages for each quarter
+    const averages = quarterPositions.map(quarterData => {
+        if (quarterData.length === 0) return null;
+        const sum = quarterData.reduce((acc, val) => acc + val, 0);
+        return sum / quarterData.length;
+    });
+    
+    // Create rankings (1 = best performing quarter, 4 = worst)
+    // Lower average position is better
+    const quarterInfo = averages.map((avg, index) => ({
+        quarter: index + 1,
+        average: avg
+    })).filter(q => q.average !== null);
+    
+    // Sort by average (ascending - lower is better)
+    quarterInfo.sort((a, b) => a.average - b.average);
+    
+    // Create rankings array where index represents quarter-1, value represents rank
+    const rankings = new Array(4).fill(null);
+    quarterInfo.forEach((q, rankIndex) => {
+        rankings[q.quarter - 1] = rankIndex + 1;
+    });
+    
+    return { averages, rankings, quarterInfo };
+}
+function fetchData(){document.getElementById("loading").style.display="block",document.getElementById("results-table").style.display="none",document.getElementById("no-data").style.display="none";let url = `${API_BASE_URL}/api/augment-combinations?bloodline=${currentFilters.bloodline}&rating=${currentFilters.rating}&speed=${currentFilters.speed}&sprint=${currentFilters.sprint}&size=${currentFilters.size}&sort=avg_odds&order=asc`;
+    if (parseInt(currentFilters.size) === 3 && currentFilters.conditionals && currentFilters.conditionals !== "any") {
+        url += `&conditionals=${currentFilters.conditionals}`;
+    }
+    fetch(url)
+    .then((e=>{if(!e.ok)throw new Error("Network response was not ok");return e.json()}))
+    .then((e=>{if(document.getElementById("loading").style.display="none",e.data&&e.data.length>0){resultsTableData=e.data,document.getElementById("results-table").style.display="table",updateTable(e.data);document.querySelector("#results-table th .column-filter-container")||initializeMultiSelectColumnFilters()}else document.getElementById("no-data").style.display="block"})).catch((e=>{console.error("Error fetching data:",e),document.getElementById("loading").style.display="none",document.getElementById("no-data").style.display="block",document.getElementById("no-data").textContent="Error loading data. Please try again later."}))}
+function updateTable(e){
+    const t=document.getElementById("results-body");
+    let a=applyColumnFilters(e);
+    
+    // Debug: Log the filtered data to see what we're getting
+    console.log("Filtered data from API:", a);
+    
+    // Debug: Log tracked augments specifically
+    const trackedAugmentData = a.filter(item => 
+        TRACKED_TRIGGER_AUGMENTS.includes(item.cpu) || 
+        TRACKED_TRIGGER_AUGMENTS.includes(item.ram) || 
+        TRACKED_TRIGGER_AUGMENTS.includes(item.hydraulic)
+    );
+    console.log("Tracked augments data:", trackedAugmentData);
+    
+    if(filteredResultsData=a,t.innerHTML="",0===a.length)
+        return document.getElementById("no-data").style.display="block",
+        void(document.getElementById("results-table").style.display="none");
+    
+    document.getElementById("no-data").style.display="none",
+    document.getElementById("results-table").style.display="table",
+    
+    a.forEach((e=>{
+        // Debug: Log each augment to check its structure
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.cpu) || 
+            TRACKED_TRIGGER_AUGMENTS.includes(e.ram) || 
+            TRACKED_TRIGGER_AUGMENTS.includes(e.hydraulic)) {
+            console.log("Processing tracked augment:", e);
+        }
+        
+        const a=document.createElement("tr");
+        
+        // CPU CELL
+        const n=document.createElement("td");
+        const r=getAugmentCategory(e.cpu);
+        n.className=`augment-cell ${"-"!==e.cpu?"":"augment-empty"} ${r}`;
+        
+        // Check if this CPU augment is tracked and has trigger data
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.cpu) && (e.trigger_percentage !== undefined || (e.trigger_percentages && e.trigger_percentages[e.cpu] !== undefined))) {
+            // Create text node for augment name
+            const cpuText = document.createTextNode(e.cpu);
+            n.appendChild(cpuText);
+            
+            // Add trigger percentage badge
+            const triggerPct = e.trigger_percentage !== undefined ? e.trigger_percentage : e.trigger_percentages[e.cpu];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            n.appendChild(triggerBadge);
+        } else {
+            n.textContent = e.cpu;
+        }
+        
+        e.cpu && "-"!==e.cpu && (n.title=getAugmentTooltip(e.cpu));
+        a.appendChild(n);
+        
+        // RAM CELL
+        const o=document.createElement("td");
+        const s=getAugmentCategory(e.ram);
+        o.className=`augment-cell ${"-"!==e.ram?"":"augment-empty"} ${s}`;
+        
+        // Check if this RAM augment is tracked and has trigger data
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.ram) && (e.trigger_percentage !== undefined || (e.trigger_percentages && e.trigger_percentages[e.ram] !== undefined))) {
+            // Create text node for the augment name
+            const ramText = document.createTextNode(e.ram);
+            o.appendChild(ramText);
+            
+            // Add trigger percentage badge
+            const triggerPct = e.trigger_percentage !== undefined ? e.trigger_percentage : e.trigger_percentages[e.ram];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            o.appendChild(triggerBadge);
+        } else {
+            o.textContent = e.ram;
+        }
+        
+        e.ram && "-"!==e.ram && (o.title=getAugmentTooltip(e.ram));
+        a.appendChild(o);
+        
+        // HYDRAULIC CELL
+        const l=document.createElement("td");
+        const c=getAugmentCategory(e.hydraulic);
+        l.className=`augment-cell ${"-"!==e.hydraulic?"":"augment-empty"} ${c}`;
+        
+        // Check if this Hydraulic augment is tracked and has trigger data
+        if (TRACKED_TRIGGER_AUGMENTS.includes(e.hydraulic) && (e.trigger_percentage !== undefined || (e.trigger_percentages && e.trigger_percentages[e.hydraulic] !== undefined))) {
+            // Create text node for the augment name
+            const hydraulicText = document.createTextNode(e.hydraulic);
+            l.appendChild(hydraulicText);
+            
+            // Add trigger percentage badge
+            const triggerPct = e.trigger_percentage !== undefined ? e.trigger_percentage : e.trigger_percentages[e.hydraulic];
+            const triggerBadge = document.createElement("span");
+            triggerBadge.className = "trigger-badge";
+            
+            // Add color class based on percentage
+            if (triggerPct >= 70) {
+                triggerBadge.classList.add("high");
+            } else if (triggerPct >= 40) {
+                triggerBadge.classList.add("medium");
+            } else {
+                triggerBadge.classList.add("low");
+            }
+            
+            triggerBadge.textContent = `${triggerPct}%`;
+            triggerBadge.title = `Triggered in ${triggerPct}% of races`;
+            l.appendChild(triggerBadge);
+        } else {
+            l.textContent = e.hydraulic;
+        }
+        
+        e.hydraulic && "-"!==e.hydraulic && (l.title=getAugmentTooltip(e.hydraulic));
+        a.appendChild(l);
+        
+        // Avg Position
+        const i=document.createElement("td");
+        i.className="numeric-value",
+        null!==e.avg_position&&(typeof e.avg_position==="number"||!isNaN(parseFloat(e.avg_position)))?
+            (i.textContent=parseFloat(e.avg_position).toFixed(2),
+            parseFloat(e.avg_position)<=3?i.className+=" value-good":parseFloat(e.avg_position)>=6&&(i.className+=" value-bad")):
+            (i.textContent="-",i.style.fontWeight="normal"),
+        a.appendChild(i);
+        
+        // Avg Odds (Implied Probability Average)
+        const d=document.createElement("td");
+        d.className="numeric-value odds-column",
+        // Average odds is now calculated as the inverse of the mean implied probability (not a simple arithmetic mean)
+        null!==e.avg_odds&&(typeof e.avg_odds==="number"||!isNaN(parseFloat(e.avg_odds)))?
+            (d.textContent=parseFloat(e.avg_odds).toFixed(2),
+            parseFloat(e.avg_odds)<=3?d.className+=" value-good":parseFloat(e.avg_odds)>=6&&(d.className+=" value-bad")):
+            (d.textContent="-",d.style.fontWeight="normal"),
+        a.appendChild(d);
+        
+        // Avg Time (NEW)
+        const avgTimeCell=document.createElement("td");
+        if(e.avg_time!==undefined&&e.avg_time!==null&&!isNaN(parseFloat(e.avg_time))) {
+            avgTimeCell.textContent = parseFloat(e.avg_time).toFixed(2) + 's';
+        } else {
+            avgTimeCell.textContent = '-';
+            avgTimeCell.style.color = 'var(--muted-text)';
+        }
+        avgTimeCell.className = "numeric-value";
+        a.appendChild(avgTimeCell);
+        
+        // Sample Size
+        const u=document.createElement("td");
+        u.className="numeric-value",
+        u.textContent=e.sample_size,
+        a.appendChild(u);
+        
+        // Horse-specific columns if horse data exists
+        if(currentHorseData){
+            const e=document.createElement("td");
+            e.className="horse-odds-cell numeric-value",
+            e.textContent="-",
+            e.style.color="var(--muted-text)",
+            a.appendChild(e);
+            
+            const t=document.createElement("td");
+            t.className="horse-sample-cell numeric-value",
+            t.textContent="-",
+            t.style.color="var(--muted-text)",
+            a.appendChild(t)
+        }
+        
+        t.appendChild(a)
+    }));
+    
+    currentHorseData&&updateGlobalTableWithHorseData();
+    
+    // Handle sorting
+    if(null!==sortState["results-table"].column){
+        const e=document.querySelectorAll("#results-table th"),
+        t=sortState["results-table"].column,
+        a=sortState["results-table"].direction;
+        e[t]&&("asc"===a?e[t].classList.add("sort-asc"):e[t].classList.add("sort-desc"))
+    }
+}
+function applyColumnFilters(e){
+    const t=columnMultiFilters.cpu.length>0,
+    a=columnMultiFilters.ram.length>0,
+    n=columnMultiFilters.hydraulic.length>0;
+    
+    if (!t && !a && !n) return e; // No filters active
+    
+    return e.filter((item => {
+        const currentSize = parseInt(currentFilters.size);
+        const cpuValue = item.cpu || "-";
+        const ramValue = item.ram || "-";
+        const hydraulicValue = item.hydraulic || "-";
+        
+        // For singles: only apply filter for the slot that has an augment
+        if (currentSize === 1) {
+            if (cpuValue !== "-" && ramValue === "-" && hydraulicValue === "-") {
+                // CPU single - only check CPU filter if active
+                return !t || columnMultiFilters.cpu.includes(cpuValue);
+            } else if (cpuValue === "-" && ramValue !== "-" && hydraulicValue === "-") {
+                // RAM single - only check RAM filter if active  
+                return !a || columnMultiFilters.ram.includes(ramValue);
+            } else if (cpuValue === "-" && ramValue === "-" && hydraulicValue !== "-") {
+                // Hydraulic single - only check Hydraulic filter if active
+                return !n || columnMultiFilters.hydraulic.includes(hydraulicValue);
+            }
+        }
+        // For pairs: only apply filters for slots that have augments (not "-")
+        else if (currentSize === 2) {
+            let passesFilter = true;
+            if (cpuValue !== "-" && t) {
+                passesFilter = passesFilter && columnMultiFilters.cpu.includes(cpuValue);
+            }
+            if (ramValue !== "-" && a) {
+                passesFilter = passesFilter && columnMultiFilters.ram.includes(ramValue);
+            }
+            if (hydraulicValue !== "-" && n) {
+                passesFilter = passesFilter && columnMultiFilters.hydraulic.includes(hydraulicValue);
+            }
+            return passesFilter;
+        }
+        // For triples: apply all active filters (original logic)
+        else {
+            return !(t && !columnMultiFilters.cpu.includes(cpuValue)) && 
+                   !(a && !columnMultiFilters.ram.includes(ramValue)) && 
+                   !(n && !columnMultiFilters.hydraulic.includes(hydraulicValue));
+        }
+        
+        return true; // Fallback
+    }));
+}
+function updateColumnFilterOptions(e){const t=new Set,a=new Set,n=new Set;t.add(""),a.add(""),n.add(""),e.forEach((e=>{e.cpu&&"-"!==e.cpu&&t.add(e.cpu),e.ram&&"-"!==e.ram&&a.add(e.ram),e.hydraulic&&"-"!==e.hydraulic&&n.add(e.hydraulic)})),columnFilterOptions.cpu=Array.from(t).sort(),columnFilterOptions.ram=Array.from(a).sort(),columnFilterOptions.hydraulic=Array.from(n).sort(),updateFilterDropdown("cpu-filter",columnFilterOptions.cpu,columnMultiFilters.cpu),updateFilterDropdown("ram-filter",columnFilterOptions.ram,columnMultiFilters.ram),updateFilterDropdown("hydraulic-filter",columnFilterOptions.hydraulic,columnMultiFilters.hydraulic)}
+function updateFilterDropdown(e,t,a){const n=document.getElementById(e);if(!n)return;const r=n.scrollTop;n.innerHTML="";const o=document.createElement("option");o.value="",o.textContent="All",n.appendChild(o),t.forEach((e=>{if(""===e)return;const t=document.createElement("option");t.value=e,t.textContent=e,t.selected=e===a,n.appendChild(t)})),n.scrollTop=r}
+function initializeMultiSelectColumnFilters(){const e=document.getElementById("results-table");if(!e)return;const t=e.querySelector("thead tr");!t||t.cells.length<3||(t.cells[0]?addMultiSelectFilterToHeader(t.cells[0],"cpu"):console.error("CPU Slot header cell (index 0) not found."),t.cells[1]?addMultiSelectFilterToHeader(t.cells[1],"ram"):console.error("RAM Slot header cell (index 1) not found."),t.cells[2]?addMultiSelectFilterToHeader(t.cells[2],"hydraulic"):console.error("Hydraulic Slot header cell (index 2) not found."))}
+function addMultiSelectFilterToHeader(e,t){const a=document.createElement("i");a.className="fas fa-filter",a.style.marginLeft="5px",a.style.opacity="0.7",a.style.color="var(--muted-text)";const n=e.textContent.trim();e.textContent="",e.id=`${t}-header-cell`,e.classList.add("filterable-header");const r=document.createElement("div");r.className="header-content-wrapper",r.style.display="flex",r.style.alignItems="center",r.style.justifyContent="space-between",r.style.width="100%",r.style.cursor="pointer",r.id=`${t}-filter-popover-trigger`;const o=document.createElement("div");o.textContent=n,o.style.userSelect="none",o.style.flexGrow="1",o.style.textAlign="left";const s=createFilterPopover(t,r.id);document.body.appendChild(s),activePopovers[t]=s,columnMultiFilters[t]&&columnMultiFilters[t].length>0&&(e.classList.add("filtered"),a.style.opacity="1",a.style.color="var(--highlight-color)",a.style.fontWeight="bold"),r.appendChild(o),r.appendChild(a),e.appendChild(r),r.addEventListener("click",(e=>{e.stopPropagation(),Object.entries(activePopovers).forEach((([e,a])=>{e!==t&&a&&"block"===a.style.display&&(a.style.display="none")})),"block"===s.style.display?s.style.display="none":(populateFilterPopover(t,s),positionPopover(r,s),s.style.display="block")})),s.addEventListener("click",(e=>{e.stopPropagation()}))}
+function clearAllColumnFilters(){
+  columnMultiFilters.cpu=[];
+  columnMultiFilters.ram=[];
+  columnMultiFilters.hydraulic=[];
+  document.querySelectorAll("#results-table th").forEach((e=>{
+    e.classList.remove("filtered");
+    const t=e.querySelector("select");
+    t&&(t.value="")
+  }));
+  
+  // Reset button states
+  const resetBtn = document.getElementById('reset-all-filters-btn');
+  const excludeBtn = document.getElementById('exclude-void-btn');
+  if (resetBtn) resetBtn.classList.remove('active');
+  if (excludeBtn) excludeBtn.classList.remove('active');
+  
+  updateTable(resultsTableData);
+}
+function activateFilter(e,t){document.querySelectorAll(`.${e}-filter`).forEach((e=>{e.classList.remove("active"),e.dataset.value===t&&e.classList.add("active")})),currentFilters[e]=t}
+function setupFilters(e){const t=document.querySelectorAll(`.${e}-filter`);t.forEach((a=>{a.addEventListener("click",(function(){t.forEach((e=>e.classList.remove("active"))),this.classList.add("active"),currentFilters[e]=this.dataset.value,"none"===document.getElementById("results-table").style.display||"block"===document.getElementById("no-data").style.display?document.getElementById("initial-prompt").style.display="block":fetchData()}))}))}
+function getHorseOddsForRow(e){if(!currentHorseData||!currentHorseData.augment_combinations)return 9999;const t=currentFilters.size;let a="";e.cpu&&"-"!==e.cpu&&(a+=e.cpu),e.ram&&"-"!==e.ram&&(a&&(a+=" + "),a+=e.ram),e.hydraulic&&"-"!==e.hydraulic&&(a&&(a+=" + "),a+=e.hydraulic);for(const e of currentHorseData.augment_combinations){let t="";if(e.cpu&&"-"!==e.cpu&&(t+=e.cpu),e.ram&&"-"!==e.ram&&(t&&(t+=" + "),t+=e.ram),e.hydraulic&&"-"!==e.hydraulic&&(t&&(t+=" + "),t+=e.hydraulic),a===t)return parseFloat(e.avg_odds)||9999}if(1===t){if(e.cpu&&"-"!==e.cpu&&currentHorseData.augment_combinations.some((t=>t.cpu===e.cpu))){const t=currentHorseData.augment_combinations.filter((t=>t.cpu===e.cpu));if(t.length>0){return t.reduce(((e,t)=>e+(parseFloat(t.avg_odds)||0)),0)/t.length||9999}}if(e.ram&&"-"!==e.ram&&currentHorseData.augment_combinations.some((t=>t.ram===e.ram))){const t=currentHorseData.augment_combinations.filter((t=>t.ram===e.ram));if(t.length>0){return t.reduce(((e,t)=>e+(parseFloat(t.avg_odds)||0)),0)/t.length||9999}}if(e.hydraulic&&"-"!==e.hydraulic&&currentHorseData.augment_combinations.some((t=>t.hydraulic===e.hydraulic))){const t=currentHorseData.augment_combinations.filter((t=>t.hydraulic===e.hydraulic));if(t.length>0){return t.reduce(((e,t)=>e+(parseFloat(t.avg_odds)||0)),0)/t.length||9999}}}const n=document.querySelectorAll("#results-table tbody tr");for(const t of n){const a=t.cells[0].textContent.trim(),n=t.cells[1].textContent.trim(),r=t.cells[2].textContent.trim();if(a===e.cpu&&n===e.ram&&r===e.hydraulic){if(t.cells.length>6){const e=t.cells[6].textContent.trim();if("-"!==e)return parseFloat(e)||9999}break}}return 9999}
+function getHorseSampleForRow(e){if(!currentHorseData||!currentHorseData.augment_combinations)return 0;for(const t of currentHorseData.augment_combinations)if((t.cpu===e.cpu||"-"===t.cpu&&"-"===e.cpu)&&(t.ram===e.ram||"-"===t.ram&&"-"===e.ram)&&(t.hydraulic===e.hydraulic||"-"===t.hydraulic&&"-"===e.hydraulic))return parseInt(t.races)||0;const t=document.querySelectorAll("#results-table tbody tr");for(const a of t){const t=a.cells[0].textContent.trim(),n=a.cells[1].textContent.trim(),r=a.cells[2].textContent.trim();if(t===e.cpu&&n===e.ram&&r===e.hydraulic){if(a.cells.length>7){const e=a.cells[7].textContent.trim();if("-"!==e)return parseInt(e)||0}break}}return 0}
+function populateFilterPopover(e,t){const a=t.querySelector(".filter-popover-options"),n=t.querySelector(".select-all-checkbox");a.innerHTML="";const r=new Set;let o=!1;resultsTableData.forEach((t=>{const a=t[e];a&&"-"!==a?r.add(a):"-"===a&&(o=!0)}));const s=Array.from(r).sort(),l=o?["-",...s]:s,c=columnMultiFilters[e],i=c.length>0;l.forEach((e=>{const t=document.createElement("label"),n=document.createElement("input");n.type="checkbox",n.value=e,n.checked=!i||c.includes(e),t.appendChild(n),t.appendChild(document.createTextNode("-"===e?"(Empty)":e)),a.appendChild(t)}));const d=a.querySelectorAll('input[type="checkbox"]');n.checked=Array.from(d).every((e=>e.checked)),n.onchange=()=>{d.forEach((e=>e.checked=n.checked))},d.forEach((e=>{e.onchange=()=>{n.checked=Array.from(d).every((e=>e.checked))}}));const u=t.querySelector(".filter-apply-btn"),m=t.querySelector(".filter-clear-btn"),p=u.cloneNode(!0),g=m.cloneNode(!0);u.parentNode.replaceChild(p,u),m.parentNode.replaceChild(g,m);p.addEventListener("click",(()=>{const n=Array.from(a.querySelectorAll('input[type="checkbox"]:checked')).map((e=>e.value)),r=document.getElementById(t.dataset.buttonId)?.closest("th");n.length===l.length||0===n.length?columnMultiFilters[e]=[]:columnMultiFilters[e]=n,t.style.display="none",updateTable(resultsTableData),columnMultiFilters[e].length>0?r.classList.add("filtered"):r.classList.remove("filtered")})),g.addEventListener("click",(()=>{columnMultiFilters[e]=[],t.style.display="none",updateTable(resultsTableData);const a=document.getElementById(t.dataset.buttonId)?.closest("th");a?(a.classList.remove("filtered"),a.classList.remove("filtered")):console.warn("Could not find header cell for",e)}))}
+function createFilterPopover(e,t){const a=document.createElement("div");return a.className="filter-popover",a.id=`${e}-filter-popover`,a.dataset.buttonId=t,a.innerHTML='\n                <div class="filter-popover-content">\n                    <div class="filter-popover-header">\n                        <label>\n                            <input type="checkbox" class="select-all-checkbox"> Select All\n                        </label>\n                    </div>\n                    <div class="filter-popover-options"></div>\n                    <div class="filter-popover-buttons">\n                        <button class="filter-clear-btn">Clear</button>\n                        <button class="filter-apply-btn">Apply</button>\n                    </div>\n                </div>\n            ',a.addEventListener("click",(e=>{e.stopPropagation()})),a}
+function positionPopover(e,t){const a=e.getBoundingClientRect();t.style.position="absolute",t.style.top=`${window.scrollY+a.bottom+5}px`,t.style.left=`${window.scrollX+a.left}px`,t.style.minWidth=`${a.width}px`}
+function generateVerticalRatingHTML(e,t=5){if(isNaN(e)||null==e)return"N/A";const a=parseFloat(e),n=Math.max(0,Math.min(100,a/t*100));let r="";r=a<2.5?"rating-under_2-5":a<3?"rating-2-5":a<3.5?"rating-3-0":a<4?"rating-3-5":a<4.5?"rating-4-0":"rating-4-5plus";return`<span class="vertical-rating-wrapper">${`<div class="vertical-rating-bar" title="${a.toFixed(1)}"><div class="vertical-rating-fill ${r}" style="height: ${n}%;"></div></div>`}${`<span class="vertical-rating-label ${r}">${a.toFixed(1)}</span>`}</span>`}
+function generateStarRatingHTML(e,t=5){if(isNaN(e)||null==e)return'<span class="rating-na">N/A</span>';const a=parseFloat(e);let n='<span class="star-rating">';for(let e=1;e<=t;e++)n+=a>=e?'<i class="fas fa-star"></i>':a>=e-.5?'<i class="fas fa-star-half-alt"></i>':'<i class="far fa-star"></i>';return n+="</span>",n}
+function prepareBalanceChartData(e){if(!e||0===e.length)return currentHorseProcessedRaceDataForChart=[],void Chart.getChart("balance-chart")?.destroy();const t=[...e].sort(((e,t)=>new Date(e.start_time)-new Date(t.start_time))),a=[];if(t[0]&&null!==t[0].starting_balance&&void 0!==t[0].starting_balance){const e=parseFloat(t[0].starting_balance)||0;a.push({x:0,y:e})}else a.push({x:0,y:0});t.forEach(((e,t)=>{const n=calculateCurrentBalance(e);null!==n&&a.push({x:t+1,y:n})})),currentHorseProcessedRaceDataForChart=a,Chart.getChart("balance-chart")?.destroy()}
+function renderBalanceChart(e){Chart.getChart("balance-chart")?.destroy();const t=document.getElementById("balance-chart").getContext("2d");Chart.defaults.color="#e0e0e0",Chart.defaults.borderColor="#444",new Chart(t,{type:"line",data:{datasets:[{label:"Balance Per Race",data:e,borderColor:"#03dac6",backgroundColor:"rgba(3, 218, 198, 0.2)",borderWidth:2,pointBackgroundColor:"#03dac6",pointRadius:3,pointHoverRadius:5,fill:!0,tension:.1}]},options:{responsive:!0,maintainAspectRatio:!1,scales:{x:{type:"linear",title:{display:!0,text:"Race Number"},grid:{color:"#444"},ticks:{stepSize:1,callback:function(e){if(Number.isInteger(e))return e}}},y:{beginAtZero:!1,title:{display:!0,text:"Balance"},grid:{color:"#444"}}},plugins:{tooltip:{mode:"index",intersect:!1,backgroundColor:"rgba(0, 0, 0, 0.8)",titleFont:{weight:"bold"},callbacks:{title:function(e){const t=e[0];return 0===t.parsed.x?"Starting Balance":`Race ${t.parsed.x}`},label:function(e){let t="Balance";return t&&(t+=": "),null!==e.parsed.y&&(t+=Math.round(e.parsed.y)),t}}},legend:{display:!1}}}})}
+document.addEventListener("DOMContentLoaded",(function(){setupFilters("bloodline"),setupFilters("rating"),setupFilters("speed"),setupFilters("sprint"),setupFilters("size"),setupHorseSearch(),
+    document.getElementById("load-data-btn").addEventListener("click",(function(){document.getElementById("initial-prompt").style.display="none",fetchData()})),
+    initializeSortableTables(),initializeMultiSelectColumnFilters();
+    // Add pagination and close button event listeners (only once)
+    document.getElementById("prev-page-btn").addEventListener("click",(function(){goToRacePage(currentRacePage-1)}));
+    document.getElementById("next-page-btn").addEventListener("click",(function(){goToRacePage(currentRacePage+1)}));
+    document.getElementById("close-horse-btn").addEventListener("click",(function(){document.getElementById("horse-stats").style.display="none"}));
+
+    // --- Auto-search by horse_id or horse_name from URL params ---
+    function getQueryParam(name) {
+        const url = window.location.search;
+        const params = new URLSearchParams(url);
+        return params.get(name);
+    }
+    const horseId = getQueryParam('horse_id');
+    const horseName = getQueryParam('horse_name');
+    if (horseId || horseName) {
+        // Fill the input(s)
+        if (horseId) {
+            document.getElementById('horse-id-input').value = horseId;
+            document.getElementById('horse-search-input').value = '';
+        } else if (horseName) {
+            document.getElementById('horse-search-input').value = horseName;
+            document.getElementById('horse-id-input').value = '';
+        }
+        // Trigger the search as if user clicked the button
+        setTimeout(function() {
+            document.getElementById('horse-search-button').click();
+        }, 200);
+
+        // After search results are rendered, auto-select the exact match
+        // We'll use a MutationObserver to watch for the results to appear
+        const resultsContainer = document.getElementById('horse-results');
+        const observer = new MutationObserver(function() {
+            // Wait for at least one result to appear
+            const items = resultsContainer.querySelectorAll('.horse-result-item');
+            if (items.length === 0) return;
+            let found = false;
+            items.forEach(item => {
+                // Get the horse name from the DOM
+                const nameElem = item.querySelector('.horse-name');
+                let name = nameElem ? nameElem.textContent.trim() : '';
+                // If searching by ID, match by ID in the item HTML (if available)
+                if (horseId && item.innerHTML.includes(horseId)) {
+                    setTimeout(() => item.click(), 100);
+                    found = true;
+                }
+                // If searching by name, match case-insensitive
+                if (!found && horseName && name.toLowerCase() === horseName.toLowerCase()) {
+                    setTimeout(() => item.click(), 100);
+                    found = true;
+                }
+            });
+            if (found) {
+                observer.disconnect();
+            }
+        });
+        observer.observe(resultsContainer, { childList: true, subtree: true });
+    }
+}))</script>
+
+<script>
+// Mobile responsiveness improvements - consolidated into a single script
+document.addEventListener("DOMContentLoaded", function() {
+  // Add mobile class to tables for responsive styling
+  const tables = document.querySelectorAll('table');
+  tables.forEach(table => {
+    table.classList.add('mobile-responsive');
+  });
+  
+  // Only run mobile optimizations on small screens
+  if (window.innerWidth <= 768) {
+    // Handle the results table for proper scrolling
+    const resultsTable = document.getElementById('results-table');
+    if (resultsTable) {
+      // Get the parent
+      const resultsSection = document.getElementById('results');
+      
+      // Create a wrapper for the table if not already wrapped
+      if (!document.getElementById('results-table-wrapper')) {
+        const wrapper = document.createElement('div');
+        wrapper.id = 'results-table-wrapper';
+        wrapper.style.overflowX = 'auto';
+        wrapper.style.width = '100%';
+        wrapper.style.maxWidth = '100%';
+        wrapper.style.position = 'relative';
+        
+        // Get the original table parent
+        const tableParent = resultsTable.parentNode;
+        
+        // Replace the table with the wrapper and put the table inside
+        tableParent.insertBefore(wrapper, resultsTable);
+        wrapper.appendChild(resultsTable);
+        
+        // Set the table to full width but allow overflow
+        resultsTable.style.width = '100%';
+        resultsTable.style.minWidth = '600px';
+      }
+    }
+    
+    // Clean up any existing swipe indicators
+    document.querySelectorAll('.swipe-indicator').forEach(indicator => {
+      indicator.remove();
+    });
+    
+    // Add swipe indicators to scrollable tables
+    const tableWrappers = document.querySelectorAll('#race-history, #augment-combos, #results-table-wrapper');
+    tableWrappers.forEach(wrapper => {
+      if (wrapper && !wrapper.querySelector('.swipe-indicator')) {
+        const indicator = document.createElement('div');
+        indicator.className = 'swipe-indicator';
+        indicator.innerHTML = '<i class="fas fa-arrows-left-right"></i> Swipe to see more';
+        indicator.style.textAlign = 'center';
+        indicator.style.color = 'var(--muted-text)';
+        indicator.style.fontSize = '0.8rem';
+        indicator.style.padding = '5px';
+        wrapper.insertBefore(indicator, wrapper.firstChild);
+      }
+    });
+    
+    // Make table headers sticky on scroll
+    document.querySelectorAll('th').forEach(header => {
+      header.style.position = 'sticky';
+      header.style.top = '0';
+      header.style.zIndex = '10';
+      header.style.backgroundColor = '#2a2a2a';
+    });
+    
+    // Fix horizontal scrolling on tables
+    document.querySelectorAll('#race-history, #horse-augments-table, #augment-combos, .tab-content, #results-table-wrapper').forEach(container => {
+      if (container) {
+        container.style.overflowX = 'auto';
+        container.style.maxWidth = '100%';
+        container.style.display = 'block';
+      }
+    });
+    
+    // Adjust table row widths to ensure proper background span
+    const adjustTableRowWidths = () => {
+      document.querySelectorAll('#results-table, #horse-augments-table, #race-history-table').forEach(table => {
+        if (table) {
+          const tableWidth = table.scrollWidth;
+          table.querySelectorAll('tr').forEach(row => {
+            row.style.minWidth = tableWidth + 'px';
+            row.style.width = '100%';
+          });
+        }
+      });
+    };
+    
+    // Run the adjustment after a short delay
+    setTimeout(adjustTableRowWidths, 500);
+    
+    // Also run after window resize
+    window.addEventListener('resize', adjustTableRowWidths);
+    
+    // Fix for tables inside tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        setTimeout(adjustTableRowWidths, 300);
+      });
+    });
+    
+    // Fix excessive empty space
+    const fixEmptySpace = () => {
+      // Force proper table layout
+      document.querySelectorAll('table').forEach(table => {
+        if (table && table.rows.length > 0) {
+          table.style.width = '100%';
+          table.style.display = 'table';
+        }
+      });
+      
+      // Ensure proper body height
+      document.body.style.minHeight = '100vh';
+    };
+    
+    // Run on load and after data loads
+    fixEmptySpace();
+    setTimeout(fixEmptySpace, 1000);
+    
+    // Also fix when horse data changes
+    const originalUpdateGlobalTableWithHorseData = updateGlobalTableWithHorseData;
+    if (typeof updateGlobalTableWithHorseData === 'function') {
+      window.updateGlobalTableWithHorseData = function() {
+        originalUpdateGlobalTableWithHorseData.apply(this, arguments);
+        setTimeout(fixEmptySpace, 300);
+        setTimeout(adjustTableRowWidths, 300);
+      };
+    }
+  }
+});
+</script>
+
+<script>
+function prepareFinishTimeTrendData(races, fieldAverages) {
+    // races: horse's race history (ordered by date asc)
+    // fieldAverages: {race_id: avg_finish_time}
+    if (!races || races.length === 0) return {labels: [], horseTimes: [], movingAvg: [], fieldAvg: []};
+    // Sort by date ascending
+    const sorted = [...races].sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+    const labels = [];
+    const horseTimes = [];
+    const fieldAvg = [];
+    for (let i = 0; i < sorted.length; i++) {
+        const race = sorted[i];
+        labels.push(race.race_name + ' (' + (race.start_time ? new Date(race.start_time).toLocaleDateString() : '-') + ')');
+        horseTimes.push(race.finish_time !== null && !isNaN(race.finish_time) ? parseFloat(race.finish_time) : null);
+        fieldAvg.push(fieldAverages && fieldAverages[race.race_id] !== undefined ? fieldAverages[race.race_id] : null);
+    }
+    // Moving average (5-race window)
+    const movingAvg = [];
+    const window = 5;
+    for (let i = 0; i < horseTimes.length; i++) {
+        let sum = 0, count = 0;
+        for (let j = Math.max(0, i - window + 1); j <= i; j++) {
+            if (horseTimes[j] !== null) {
+                sum += horseTimes[j];
+                count++;
+            }
+        }
+        movingAvg.push(count > 0 ? sum / count : null);
+    }
+    return {labels, horseTimes, movingAvg, fieldAvg, sortedRaces: sorted};
+}
+
+let finishTimeChartInstance = null;
+
+function renderFinishTimeTrendChart(races, fieldAverages) {
+    const ctx = document.getElementById('finish-time-chart').getContext('2d');
+    if (finishTimeChartInstance) {
+        finishTimeChartInstance.destroy();
+    }
+    const {labels, horseTimes, movingAvg, fieldAvg, sortedRaces} = prepareFinishTimeTrendData(races, fieldAverages);
+    finishTimeChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Finish Time',
+                    data: horseTimes,
+                    borderColor: '#03dac6',
+                    backgroundColor: 'rgba(3, 218, 198, 0.15)',
+                    pointBackgroundColor: '#03dac6',
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.1,
+                    order: 1
+                },
+                {
+                    label: 'Moving Avg (5 races)',
+                    data: movingAvg,
+                    borderColor: '#bb86fc',
+                    backgroundColor: 'rgba(187, 134, 252, 0.10)',
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.2,
+                    order: 2
+                },
+                {
+                    label: 'Field Avg (Filtered)',
+                    data: fieldAvg,
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.10)',
+                    borderDash: [2, 2],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.2,
+                    order: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: function(context) {
+                            const idx = context[0].dataIndex;
+                            const race = sortedRaces[idx];
+                            return race.race_name + ' (' + (race.start_time ? new Date(race.start_time).toLocaleDateString() : '-') + ')';
+                        },
+                        label: function(context) {
+                            const idx = context.dataIndex;
+                            const race = sortedRaces[idx];
+                            let lines = [];
+                            if (context.datasetIndex === 0) {
+                                // Safely handle finish_time for Horse Time
+                                let finishTimeVal = race.finish_time;
+                                if (typeof finishTimeVal === "string") finishTimeVal = parseFloat(finishTimeVal);
+                                if (typeof finishTimeVal === "number" && !isNaN(finishTimeVal)) {
+                                    lines.push('Horse Time: ' + finishTimeVal.toFixed(2) + 's');
+                                } else {
+                                    lines.push('Horse Time: -');
+                                }
+                                lines.push('Position: ' + (race.finish_position !== undefined ? race.finish_position : '-'));
+                                lines.push('Odds: ' + (race.odds !== undefined && race.odds !== null ? race.odds : '-'));
+                                if (race.augments && race.augments.length > 0) {
+                                    lines.push('Augments: ' + getAugmentsOrderedBySlot(race.augments).join(', '));
+                                }
+                            } else if (context.datasetIndex === 1) {
+                                lines.push('Moving Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            } else if (context.datasetIndex === 2) {
+                                lines.push('Field Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            }
+                            return lines;
+                        }
+                    }
+                },
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Race' },
+                    ticks: { autoSkip: true, maxTicksLimit: 20 }
+                },
+                y: {
+                    title: { display: true, text: 'Finish Time (s)' },
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+}
+
+async function fetchFieldAveragesForRaces(raceIds, filters) {
+    // Call backend endpoint to get field averages for these race IDs and filters
+    if (!raceIds || raceIds.length === 0) return {};
+    const params = new URLSearchParams();
+    raceIds.forEach(id => params.append('race_ids', id));
+    if (filters) {
+        if (filters.bloodline) params.append('bloodline', filters.bloodline);
+        if (filters.rating) params.append('rating', filters.rating);
+        if (filters.speed) params.append('speed', filters.speed);
+        if (filters.sprint) params.append('sprint', filters.sprint);
+    }
+    const resp = await fetch(`${API_BASE_URL}/api/field-averages?${params.toString()}`);
+    if (!resp.ok) return {};
+    const data = await resp.json();
+    return data && data.averages ? data.averages : {};
+}
+
+async function updateFinishTimeTrendChart() {
+    if (!currentHorseData || !currentHorseData.races) return;
+    const races = currentHorseData.races;
+    const raceIds = races.map(r => r.race_id);
+    // Use currentFilters for field average
+    const fieldAverages = await fetchFieldAveragesForRaces(raceIds, currentFilters);
+    renderFinishTimeTrendChart(races, fieldAverages);
+}
+
+// Update setupTabs to handle the new tab
+function setupTabs(){const e=document.querySelectorAll(".tab"),t=document.querySelectorAll(".tab-content");
+  t.forEach(content => { content.style.display = "none"; });
+  const activeTab = document.querySelector(".tab.active");
+  if (activeTab) {
+    const activeContentId = activeTab.getAttribute("data-tab");
+    const activeContent = document.getElementById(activeContentId);
+    if (activeContent) {
+      activeContent.style.display = "block";
+      // If finish-time-trend tab is active, update the chart
+      if (activeContentId === "finish-time-trend") {
+        updateFinishTimeTrendChart();
+      }
+      // If finish-distribution tab is active, update the chart
+      if (activeContentId === "finish-distribution") {
+        updateFinishDistributionChart();
+      }
+    }
+  }
+  e.forEach((a=>{a.addEventListener("click",(function(){
+    e.forEach((e=>e.classList.remove("active"))),
+    t.forEach((e=>{
+      e.classList.remove("active");
+      e.style.display = "none";
+    })),
+    this.classList.add("active");
+    const a=document.getElementById(this.dataset.tab);
+    if(a) {
+      a.classList.add("active");
+      a.style.display = "block";
+      if (this.dataset.tab === "finish-time-trend") {
+        updateFinishTimeTrendChart();
+      }
+      if (this.dataset.tab === "finish-distribution") {
+        updateFinishDistributionChart();
+      }
+    }
+    "balance-graph"===this.dataset.tab&&currentHorseProcessedRaceDataForChart.length>0&&renderBalanceChart(currentHorseProcessedRaceDataForChart)
+  }))}));
+}
+// When horse data changes, update the finish time trend chart if the tab is active
+// (Call updateFinishTimeTrendChart() after horse data loads)
+
+</script>
+
+<script>
+async function fetchGlobalAverages(filters, mm_points) {
+    // Call backend endpoint to get global and MM points averages
+    const params = new URLSearchParams();
+    if (filters) {
+        if (filters.bloodline) params.append('bloodline', filters.bloodline);
+        if (filters.rating) params.append('rating', filters.rating);
+        if (filters.speed) params.append('speed', filters.speed);
+        if (filters.sprint) params.append('sprint', filters.sprint);
+    }
+    if (mm_points !== undefined && mm_points !== null) {
+        params.append('mm_points', mm_points);
+    }
+    const resp = await fetch(`${API_BASE_URL}/api/global-averages?${params.toString()}`);
+    if (!resp.ok) return { global_avg: null, mm_avg: null };
+    const data = await resp.json();
+    return data;
+}
+
+function prepareFinishTimeTrendDataV2(races, globalAvg, mmAvg) {
+    // races: horse's race history (ordered by date asc)
+    if (!races || races.length === 0) return {labels: [], horseTimes: [], movingAvg: [], globalAvgLine: [], mmAvgLine: []};
+    // Sort by date ascending
+    const sorted = [...races].sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+    const labels = [];
+    const horseTimes = [];
+    for (let i = 0; i < sorted.length; i++) {
+        labels.push((i + 1).toString()); // Race number
+        horseTimes.push(sorted[i].finish_time !== null && !isNaN(sorted[i].finish_time) ? parseFloat(sorted[i].finish_time) : null);
+    }
+    // Moving average (5-race window)
+    const movingAvg = [];
+    const window = 5;
+    for (let i = 0; i < horseTimes.length; i++) {
+        let sum = 0, count = 0;
+        for (let j = Math.max(0, i - window + 1); j <= i; j++) {
+            if (horseTimes[j] !== null) {
+                sum += horseTimes[j];
+                count++;
+            }
+        }
+        movingAvg.push(count > 0 ? sum / count : null);
+    }
+    // Flat lines for global and mm averages
+    const globalAvgLine = globalAvg !== null ? Array(horseTimes.length).fill(globalAvg) : [];
+    const mmAvgLine = mmAvg !== null ? Array(horseTimes.length).fill(mmAvg) : [];
+    return {labels, horseTimes, movingAvg, globalAvgLine, mmAvgLine, sortedRaces: sorted};
+}
+
+function renderFinishTimeTrendChartV2(races, globalAvg, mmAvg) {
+    const ctx = document.getElementById('finish-time-chart').getContext('2d');
+    if (finishTimeChartInstance) {
+        finishTimeChartInstance.destroy();
+    }
+    const {labels, horseTimes, movingAvg, globalAvgLine, mmAvgLine, sortedRaces} = prepareFinishTimeTrendDataV2(races, globalAvg, mmAvg);
+    finishTimeChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Finish Time',
+                    data: horseTimes,
+                    borderColor: '#03dac6',
+                    backgroundColor: 'rgba(3, 218, 198, 0.15)',
+                    pointBackgroundColor: '#03dac6',
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.1,
+                    order: 1
+                },
+                {
+                    label: 'Moving Avg (5 races)',
+                    data: movingAvg,
+                    borderColor: '#bb86fc',
+                    backgroundColor: 'rgba(187, 134, 252, 0.10)',
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.2,
+                    order: 2
+                },
+                globalAvgLine.length > 0 ? {
+                    label: 'Global Avg (Filtered)',
+                    data: globalAvgLine,
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.10)',
+                    borderDash: [2, 2],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 3
+                } : null,
+                mmAvgLine.length > 0 ? {
+                    label: 'MM Points Avg (±10)',
+                    data: mmAvgLine,
+                    borderColor: '#4ecca3',
+                    backgroundColor: 'rgba(76, 204, 163, 0.10)',
+                    borderDash: [1, 2],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 4
+                } : null
+            ].filter(Boolean)
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: function(context) {
+                            const idx = context[0].dataIndex;
+                            const race = sortedRaces[idx];
+                            return 'Race #' + (idx + 1) + (race.race_name ? (': ' + race.race_name) : '') + (race.start_time ? (' (' + new Date(race.start_time).toLocaleDateString() + ')') : '');
+                        },
+                        label: function(context) {
+                            const idx = context.dataIndex;
+                            const race = sortedRaces[idx];
+                            let lines = [];
+                            if (context.datasetIndex === 0) {
+                                // Safely handle finish_time for Horse Time
+                                let finishTimeVal = race.finish_time;
+                                if (typeof finishTimeVal === "string") finishTimeVal = parseFloat(finishTimeVal);
+                                if (typeof finishTimeVal === "number" && !isNaN(finishTimeVal)) {
+                                    lines.push('Horse Time: ' + finishTimeVal.toFixed(2) + 's');
+                                } else {
+                                    lines.push('Horse Time: -');
+                                }
+                                lines.push('Position: ' + (race.finish_position !== undefined ? race.finish_position : '-'));
+                                lines.push('Odds: ' + (race.odds !== undefined && race.odds !== null ? race.odds : '-'));
+                                if (race.augments && race.augments.length > 0) {
+                                    lines.push('Augments: ' + getAugmentsOrderedBySlot(race.augments).join(', '));
+                                }
+                            } else if (context.dataset.label && context.dataset.label.startsWith('Moving Avg')) {
+                                lines.push('Moving Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            } else if (context.dataset.label && context.dataset.label.startsWith('Global Avg')) {
+                                lines.push('Global Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            } else if (context.dataset.label && context.dataset.label.startsWith('MM Points Avg')) {
+                                lines.push('MM Points Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            }
+                            return lines;
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Race Number' },
+                    ticks: { autoSkip: false }
+                },
+                y: {
+                    title: { display: true, text: 'Finish Time (s)' },
+                    beginAtZero: false,
+                    reverse: true // Fastest at top, slowest at bottom
+                }
+            }
+        }
+    });
+}
+
+async function updateFinishTimeTrendChart() {
+    if (!currentHorseData || !currentHorseData.races) return;
+    const races = currentHorseData.races;
+    // Get latest MM points from the most recent race
+    let mm_points = null;
+    if (races.length > 0) {
+        // Use the most recent race (by date)
+        const sorted = [...races].sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
+        if (sorted[0].points !== undefined && sorted[0].points !== null) {
+            mm_points = parseInt(sorted[0].points);
+        }
+    }
+    // Use currentFilters for global averages
+    const { global_avg, mm_avg } = await fetchGlobalAverages(currentFilters, mm_points);
+    renderFinishTimeTrendChartV2(races, global_avg, mm_avg);
+}
+
+function addLegendTooltipsToFinishTimeChart() {
+    // Explanations for each legend label
+    const legendExplanations = {
+        'Finish Time': "The horse's finish time in each race.",
+        'Moving Avg (5 races)': "The moving average of the horse's finish time over the last 5 races.",
+        'Global Avg (Filtered)': "Average finish time for all horses matching the current horse filters.",
+        'MM Points Avg (±10)': "Average finish time for horses with Matchmaking Points within ±10 of this horse's current MM Points (and matching the filters)."
+    };
+    // Remove any existing tooltip
+    let tooltipDiv = document.getElementById('legend-tooltip');
+    if (!tooltipDiv) {
+        tooltipDiv = document.createElement('div');
+        tooltipDiv.id = 'legend-tooltip';
+        tooltipDiv.style.position = 'fixed';
+        tooltipDiv.style.pointerEvents = 'none';
+        tooltipDiv.style.background = 'rgba(30,30,30,0.97)';
+        tooltipDiv.style.color = '#fff';
+        tooltipDiv.style.padding = '7px 12px';
+        tooltipDiv.style.borderRadius = '6px';
+        tooltipDiv.style.fontSize = '0.95em';
+        tooltipDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+        tooltipDiv.style.zIndex = 9999;
+        tooltipDiv.style.display = 'none';
+        document.body.appendChild(tooltipDiv);
+    }
+    // Find legend items (Chart.js v3+ renders legend as <li> inside <ul> with class 'legend')
+    setTimeout(() => {
+        const chartLegend = document.querySelector('#finish-time-chart').parentNode.parentNode.querySelector('ul');
+        if (!chartLegend) return;
+        const legendItems = chartLegend.querySelectorAll('li');
+        legendItems.forEach((li) => {
+            // Remove previous listeners
+            li.onmouseenter = null;
+            li.onmousemove = null;
+            li.onmouseleave = null;
+            // Get label text
+            const labelSpan = li.querySelector('span:last-child');
+            if (!labelSpan) return;
+            const label = labelSpan.textContent.trim();
+            if (!legendExplanations[label]) return;
+            li.addEventListener('mouseenter', (e) => {
+                tooltipDiv.textContent = legendExplanations[label];
+                tooltipDiv.style.display = 'block';
+            });
+            li.addEventListener('mousemove', (e) => {
+                tooltipDiv.style.left = (e.clientX + 15) + 'px';
+                tooltipDiv.style.top = (e.clientY + 10) + 'px';
+            });
+            li.addEventListener('mouseleave', () => {
+                tooltipDiv.style.display = 'none';
+            });
+        });
+    }, 400); // Wait for legend to render
+}
+
+function renderFinishTimeTrendChartV2(races, globalAvg, mmAvg) {
+    const ctx = document.getElementById('finish-time-chart').getContext('2d');
+    if (finishTimeChartInstance) {
+        finishTimeChartInstance.destroy();
+    }
+    const {labels, horseTimes, movingAvg, globalAvgLine, mmAvgLine, sortedRaces} = prepareFinishTimeTrendDataV2(races, globalAvg, mmAvg);
+    finishTimeChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Finish Time',
+                    data: horseTimes,
+                    borderColor: '#03dac6',
+                    backgroundColor: 'rgba(3, 218, 198, 0.15)',
+                    pointBackgroundColor: '#03dac6',
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.1,
+                    order: 1
+                },
+                {
+                    label: 'Moving Avg (5 races)',
+                    data: movingAvg,
+                    borderColor: '#bb86fc',
+                    backgroundColor: 'rgba(187, 134, 252, 0.10)',
+                    borderDash: [6, 4],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.2,
+                    order: 2
+                },
+                globalAvgLine.length > 0 ? {
+                    label: 'Global Avg (Filtered)',
+                    data: globalAvgLine,
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.10)',
+                    borderDash: [2, 2],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 3
+                } : null,
+                mmAvgLine.length > 0 ? {
+                    label: 'MM Points Avg (±10)',
+                    data: mmAvgLine,
+                    borderColor: '#4ecca3',
+                    backgroundColor: 'rgba(76, 204, 163, 0.10)',
+                    borderDash: [1, 2],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 4
+                } : null
+            ].filter(Boolean)
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: function(context) {
+                            const idx = context[0].dataIndex;
+                            const race = sortedRaces[idx];
+                            return 'Race #' + (idx + 1) + (race.race_name ? (': ' + race.race_name) : '') + (race.start_time ? (' (' + new Date(race.start_time).toLocaleDateString() + ')') : '');
+                        },
+                        label: function(context) {
+                            const idx = context.dataIndex;
+                            const race = sortedRaces[idx];
+                            let lines = [];
+                            if (context.datasetIndex === 0) {
+                                // Safely handle finish_time for Horse Time
+                                let finishTimeVal = race.finish_time;
+                                if (typeof finishTimeVal === "string") finishTimeVal = parseFloat(finishTimeVal);
+                                if (typeof finishTimeVal === "number" && !isNaN(finishTimeVal)) {
+                                    lines.push('Horse Time: ' + finishTimeVal.toFixed(2) + 's');
+                                } else {
+                                    lines.push('Horse Time: -');
+                                }
+                                lines.push('Position: ' + (race.finish_position !== undefined ? race.finish_position : '-'));
+                                lines.push('Odds: ' + (race.odds !== undefined && race.odds !== null ? race.odds : '-'));
+                                if (race.augments && race.augments.length > 0) {
+                                    lines.push('Augments: ' + getAugmentsOrderedBySlot(race.augments).join(', '));
+                                }
+                            } else if (context.dataset.label && context.dataset.label.startsWith('Moving Avg')) {
+                                lines.push('Moving Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            } else if (context.dataset.label && context.dataset.label.startsWith('Global Avg')) {
+                                lines.push('Global Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            } else if (context.dataset.label && context.dataset.label.startsWith('MM Points Avg')) {
+                                lines.push('MM Points Avg: ' + (context.raw !== null ? context.raw.toFixed(2) + 's' : '-'));
+                            }
+                            return lines;
+                        }
+                    }
+                },
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Race Number' },
+                    ticks: { autoSkip: false }
+                },
+                y: {
+                    title: { display: true, text: 'Finish Time (s)' },
+                    beginAtZero: false,
+                    reverse: true // Fastest at top, slowest at bottom
+                }
+            }
+        }
+    });
+    addLegendTooltipsToFinishTimeChart();
+}
+</script>
+
+<script>
+// Remove addCustomLegendTooltips and instead attach tooltips directly to the custom legend keys
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Tooltip logic for custom legend
+  const legendExplanations = {
+    'legend-finish-time': "The horse's finish time in each race.",
+    'legend-moving-avg': "The moving average of the horse's finish time over the last 5 races.",
+    'legend-global-avg': "Average finish time for all horses matching the current filters.",
+    'legend-mm-avg': "Average finish time for horses with Matchmaking Points within ±10 of this horse's current MM Points (and matching the filters)."
+  };
+  let tooltipDiv = document.getElementById('custom-legend-tooltip');
+  if (!tooltipDiv) {
+    tooltipDiv = document.createElement('div');
+    tooltipDiv.id = 'custom-legend-tooltip';
+    tooltipDiv.style.position = 'fixed';
+    tooltipDiv.style.pointerEvents = 'none';
+    tooltipDiv.style.background = 'rgba(30,30,30,0.97)';
+    tooltipDiv.style.color = '#fff';
+    tooltipDiv.style.padding = '7px 12px';
+    tooltipDiv.style.borderRadius = '6px';
+    tooltipDiv.style.fontSize = '0.95em';
+    tooltipDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+    tooltipDiv.style.zIndex = 9999;
+    tooltipDiv.style.display = 'none';
+    document.body.appendChild(tooltipDiv);
+  }
+  [
+    'legend-finish-time',
+    'legend-moving-avg',
+    'legend-global-avg',
+    'legend-mm-avg'
+  ].forEach(cls => {
+    const el = document.querySelector('.' + cls);
+    if (el) {
+      el.addEventListener('mouseenter', function(e) {
+        tooltipDiv.textContent = legendExplanations[cls];
+        tooltipDiv.style.display = 'block';
+      });
+      el.addEventListener('mousemove', function(e) {
+        tooltipDiv.style.left = (e.clientX + 15) + 'px';
+        tooltipDiv.style.top = (e.clientY + 10) + 'px';
+      });
+      el.addEventListener('mouseleave', function() {
+        tooltipDiv.style.display = 'none';
+      });
+    }
+  });
+});
+</script>
+
+<script>
+// Fallback: Remove Chart.js legend <ul> after chart render (in case CSS is not enough)
+function removeChartJsLegendUl() {
+  const chartContainer = document.querySelector('#finish-time-chart').parentNode;
+  if (!chartContainer) return;
+  const legendUl = chartContainer.querySelector('ul');
+  if (legendUl) legendUl.remove();
+}
+// Call after chart render
+const origRenderFinishTimeTrendChartV2 = renderFinishTimeTrendChartV2;
+renderFinishTimeTrendChartV2 = function(...args) {
+  origRenderFinishTimeTrendChartV2.apply(this, args);
+  setTimeout(removeChartJsLegendUl, 100);
+};
+</script>
+
+<script>
+function attachCustomLegendTooltips() {
+  const legendExplanations = {
+    'legend-finish-time': "The horse's finish time in each race.",
+    'legend-moving-avg': "The moving average of the horse's finish time over the last 5 races.",
+    'legend-global-avg': "Average finish time for all horses matching the current filters.",
+    'legend-mm-avg': "Average finish time for horses with Matchmaking Points within ±10 of this horse's current MM Points (and matching the filters)."
+  };
+  let tooltipDiv = document.getElementById('custom-legend-tooltip');
+  if (!tooltipDiv) {
+    tooltipDiv = document.createElement('div');
+    tooltipDiv.id = 'custom-legend-tooltip';
+    tooltipDiv.style.position = 'fixed';
+    tooltipDiv.style.pointerEvents = 'none';
+    tooltipDiv.style.background = 'rgba(30,30,30,0.97)';
+    tooltipDiv.style.color = '#fff';
+    tooltipDiv.style.padding = '7px 12px';
+    tooltipDiv.style.borderRadius = '6px';
+    tooltipDiv.style.fontSize = '0.95em';
+    tooltipDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
+    tooltipDiv.style.zIndex = 9999;
+    tooltipDiv.style.display = 'none';
+    document.body.appendChild(tooltipDiv);
+  }
+  [
+    'legend-finish-time',
+    'legend-moving-avg',
+    'legend-global-avg',
+    'legend-mm-avg'
+  ].forEach(cls => {
+    const el = document.querySelector('.' + cls);
+    if (el) {
+      el.onmouseenter = function(e) {
+        tooltipDiv.textContent = legendExplanations[cls];
+        tooltipDiv.style.display = 'block';
+      };
+      el.onmousemove = function(e) {
+        tooltipDiv.style.left = (e.clientX + 15) + 'px';
+        tooltipDiv.style.top = (e.clientY + 10) + 'px';
+      };
+      el.onmouseleave = function() {
+        tooltipDiv.style.display = 'none';
+      };
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  attachCustomLegendTooltips();
+});
+
+
+// Patch tab switch to re-attach tooltips
+const origSetupTabs = setupTabs;
+setupTabs = function() {
+  origSetupTabs.apply(this, arguments);
+  setTimeout(attachCustomLegendTooltips, 200);
+};
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var infoIcon = document.getElementById('finish-time-info-icon');
+  var tooltip = document.getElementById('finish-time-info-tooltip');
+  if (infoIcon && tooltip) {
+    // Show on hover (desktop)
+    infoIcon.addEventListener('mouseenter', function() {
+      tooltip.style.display = 'block';
+    });
+    infoIcon.addEventListener('mouseleave', function() {
+      tooltip.style.display = 'none';
+    });
+    // Show/hide on click (mobile)
+    infoIcon.addEventListener('click', function(e) {
+      e.stopPropagation();
+      tooltip.style.display = (tooltip.style.display === 'block') ? 'none' : 'block';
+    });
+    // Hide if clicking elsewhere
+    document.addEventListener('click', function(e) {
+      if (tooltip.style.display === 'block' && !infoIcon.contains(e.target) && !tooltip.contains(e.target)) {
+        tooltip.style.display = 'none';
+      }
+    });
+  }
+});
+</script>
+
+<script>
+// Conditional augment filter logic
+const condFilterContainer = document.getElementById("conditional-augment-filter-container");
+const condFilter = document.getElementById("conditional-augment-filter");
+// Show/hide based on size
+function updateConditionalFilterVisibility() {
+    if (parseInt(currentFilters.size) === 3) {
+        condFilterContainer.style.display = "block";
+    } else {
+        condFilterContainer.style.display = "none";
+        currentFilters.conditionals = "any";
+        condFilter.value = "any";
+    }
+}
+// Listen for size filter changes
+document.querySelectorAll('.size-filter').forEach(btn => {
+    btn.addEventListener('click', function() {
+        currentFilters.size = this.dataset.value;
+        updateConditionalFilterVisibility();
+    });
+});
+// Listen for conditional filter changes
+condFilter.addEventListener('change', function() {
+    currentFilters.conditionals = this.value;
+    fetchData();
+});
+updateConditionalFilterVisibility();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Conditional augment filter logic
+  const condFilterContainer = document.getElementById("conditional-augment-filter-container");
+  const condBtnGroup = document.getElementById("conditional-augment-btn-group");
+  // Show/hide based on size
+  function updateConditionalFilterVisibility() {
+      if (parseInt(currentFilters.size) === 3) {
+          condFilterContainer.style.display = "block";
+      } else {
+          condFilterContainer.style.display = "none";
+          currentFilters.conditionals = "any";
+          // Reset button highlight
+          condBtnGroup.querySelectorAll('.cond-btn').forEach(btn => btn.classList.remove('active'));
+          condBtnGroup.querySelector('.cond-btn[data-value="any"]').classList.add('active');
+      }
+  }
+  // Listen for size filter changes
+  document.querySelectorAll('.size-filter').forEach(btn => {
+      btn.addEventListener('click', function() {
+          currentFilters.size = this.dataset.value;
+          updateConditionalFilterVisibility();
+      });
+  });
+  // Listen for conditional button group changes
+  condBtnGroup.querySelectorAll('.cond-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+          condBtnGroup.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentFilters.conditionals = this.dataset.value;
+          fetchData();
+      });
+  });
+  updateConditionalFilterVisibility();
+});
+</script>
+
+<script>
+function getAugmentSlot(name) {
+  if (!name) return null;
+  name = name.toUpperCase();
+  // CPU slot
+  if (/(^|[^A-Z])C(100)?$|100C$/.test(name)) return "cpu";
+  // RAM slot
+  if (/(^|[^A-Z])R(100)?$|100R$/.test(name)) return "ram";
+  // Hydraulic slot
+  if (/(^|[^A-Z])H(100)?$|100H$/.test(name)) return "hydraulic";
+  return null;
+}
+function getAugmentsOrderedBySlot(augments) {
+  if (!augments) return [];
+  const slotMap = { cpu: null, ram: null, hydraulic: null };
+  for (const a of augments) {
+    const slot = getAugmentSlot(a.name);
+    if (slot && !slotMap[slot]) slotMap[slot] = a.name;
+  }
+  // Always return in CPU, RAM, Hydraulic order
+  return [slotMap.cpu, slotMap.ram, slotMap.hydraulic].filter(Boolean);
+}
+
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+
+
+  // Copy donation address logic
+  var copyBtn = document.getElementById('copy-address-btn');
+  var addressElem = document.getElementById('donation-address');
+  var successMsg = document.getElementById('copy-success-msg');
+  if (copyBtn && addressElem && successMsg) {
+    copyBtn.addEventListener('click', function() {
+      var address = addressElem.textContent.trim();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(address).then(function() {
+          successMsg.style.display = 'inline';
+          setTimeout(function() { successMsg.style.display = 'none'; }, 1200);
+        });
+      } else {
+        // Fallback for older browsers
+        var textarea = document.createElement('textarea');
+        textarea.value = address;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(textarea);
+        successMsg.style.display = 'inline';
+        setTimeout(function() { successMsg.style.display = 'none'; }, 1200);
+      }
+    });
+  }
+
+  // Filter control buttons
+  const resetAllBtn = document.getElementById('reset-all-filters-btn');
+  const excludeVoidBtn = document.getElementById('exclude-void-btn');
+
+  if (resetAllBtn) {
+    resetAllBtn.addEventListener('click', function() {
+      clearAllColumnFilters();
+      this.classList.remove('active');
+      excludeVoidBtn.classList.remove('active');
+    });
+  }
+
+  if (excludeVoidBtn) {
+    excludeVoidBtn.addEventListener('click', function() {
+      excludeVoidAugments();
+      this.classList.add('active');
+      resetAllBtn.classList.remove('active');
+    });
+  }
+});
+
+function excludeVoidAugments() {
+  if (!resultsTableData || resultsTableData.length === 0) {
+    alert('Please load augment data first by clicking "Load Augment Data"');
+    return;
+  }
+
+  // Clear existing filters first
+  columnMultiFilters.cpu = [];
+  columnMultiFilters.ram = [];
+  columnMultiFilters.hydraulic = [];
+
+  // Find all non-void augments for each slot
+  const nonVoidCpu = new Set();
+  const nonVoidRam = new Set();
+  const nonVoidHydraulic = new Set();
+
+  resultsTableData.forEach(item => {
+    // Check CPU slot
+    if (item.cpu && item.cpu !== "-" && !item.cpu.toLowerCase().includes('void')) {
+      nonVoidCpu.add(item.cpu);
+    }
+    // Check RAM slot  
+    if (item.ram && item.ram !== "-" && !item.ram.toLowerCase().includes('void')) {
+      nonVoidRam.add(item.ram);
+    }
+    // Check Hydraulic slot
+    if (item.hydraulic && item.hydraulic !== "-" && !item.hydraulic.toLowerCase().includes('void')) {
+      nonVoidHydraulic.add(item.hydraulic);
+    }
+  });
+
+  // Set filters to only include non-void augments
+  columnMultiFilters.cpu = Array.from(nonVoidCpu);
+  columnMultiFilters.ram = Array.from(nonVoidRam);
+  columnMultiFilters.hydraulic = Array.from(nonVoidHydraulic);
+
+  // Update visual indicators
+  const cpuHeader = document.getElementById('cpu-header-cell');
+  const ramHeader = document.getElementById('ram-header-cell');
+  const hydraulicHeader = document.getElementById('hydraulic-header-cell');
+
+  if (cpuHeader && columnMultiFilters.cpu.length > 0) cpuHeader.classList.add('filtered');
+  if (ramHeader && columnMultiFilters.ram.length > 0) ramHeader.classList.add('filtered');
+  if (hydraulicHeader && columnMultiFilters.hydraulic.length > 0) hydraulicHeader.classList.add('filtered');
+
+  // Update the table
+  updateTable(resultsTableData);
+}
+</script>
+
+<script>
+// 1. Add selectHorse function at top-level (after setupHorseSearch)
+function selectHorse(horseObj) {
+    document.getElementById("horse-results").style.display = "none";
+    if (!horseObj || !horseObj.id) {
+        console.error("Invalid horse object or missing ID:", horseObj);
+        alert("Cannot apply filters - invalid horse data");
+        return;
+    }
+    document.getElementById("initial-prompt").style.display = "none";
+    // Set filters based on horse
+    if (horseObj.bloodline) {
+        const t = horseObj.bloodline.toLowerCase();
+        ["nakamoto","szabo","finney","buterin"].includes(t) ? activateFilter("bloodline", t) : activateFilter("bloodline", "all");
+    } else activateFilter("bloodline", "all");
+    
+    // Check if horse has both speed and sprint ratings
+    const hasSpeedRating = horseObj.speed_rating !== null && horseObj.speed_rating !== undefined && !isNaN(parseFloat(horseObj.speed_rating));
+    const hasSprintRating = horseObj.sprint_rating !== null && horseObj.sprint_rating !== undefined && !isNaN(parseFloat(horseObj.sprint_rating));
+    
+    if (hasSpeedRating && hasSprintRating) {
+        // If horse has both speed and sprint ratings, set overall rating to "all"
+        activateFilter("rating", "all");
+    } else if (horseObj.complete_rating) {
+        const t = parseFloat(horseObj.complete_rating);
+        let a = "all";
+        a = t < 2.5 ? "<2.5" : t < 3 ? "2.5" : t < 3.5 ? "3.0" : t < 4 ? "3.5" : t < 4.5 ? "4.0" : "4.5+";
+        activateFilter("rating", a);
+    } else activateFilter("rating", "all");
+    if (horseObj.speed_rating) {
+        const t = parseFloat(horseObj.speed_rating);
+        let a = "all";
+        a = t < 2.5 ? "<2.5" : t < 3 ? "2.5" : t < 3.5 ? "3.0" : t < 4 ? "3.5" : t < 4.5 ? "4.0" : "4.5+";
+        activateFilter("speed", a);
+    } else activateFilter("speed", "all");
+    if (horseObj.sprint_rating) {
+        const t = parseFloat(horseObj.sprint_rating);
+        let a = "all";
+        a = t < 2.5 ? "<2.5" : t < 3 ? "2.5" : t < 3.5 ? "3.0" : t < 4 ? "3.5" : t < 4.5 ? "4.0" : "4.5+";
+        activateFilter("sprint", a);
+    } else activateFilter("sprint", "all");
+    if (horseObj.endurance_rating) {
+        const t = parseFloat(horseObj.endurance_rating);
+        let a = "all";
+        a = t < 2.5 ? "<2.5" : t < 3 ? "2.5" : t < 3.5 ? "3.0" : t < 4 ? "3.5" : t < 4.5 ? "4.0" : "4.5+";
+        activateFilter("endurance", a);
+    } else activateFilter("endurance", "all");
+    fetchData();
+    // Show horse stats
+    const t = document.getElementById("horse-stats");
+    t.style.display = "block";
+    document.getElementById("horse-name-display").textContent = "Loading horse data...";
+    fetch(`${API_BASE_URL}/api/horse-history?id=${encodeURIComponent(horseObj.id)}`)
+        .then((e => { if (!e.ok) throw new Error(`HTTP error! Status: ${e.status}`); return e.json(); }))
+        .then((e => {
+            if (!e.success) return console.error("API returned error:", e.message), alert(`Error: ${e.message || "Failed to load horse data"}`), void (t.style.display = "none");
+            currentHorseData = e;
+            // Set horse name as a link to ZedChampions
+            var horseNameElem = document.getElementById("horse-name-display");
+            // Create gender symbol based on database value
+            var genderSymbol = "";
+            if (e.horse && e.horse.gender) {
+                if (e.horse.gender === "MALE") {
+                    genderSymbol = ' <span style="color: #4a90e2; font-size: 1.1em; margin-left: 8px;" title="Male">♂</span>';
+                } else if (e.horse.gender === "FEMALE") {
+                    genderSymbol = ' <span style="color: #e94b8c; font-size: 1.1em; margin-left: 8px;" title="Female">♀</span>';
+                }
+            }
+            // Create bloodline and generation info
+            var bloodlineGenInfo = "";
+            if (e.horse && (e.horse.bloodline || (e.horse.generation !== null && e.horse.generation !== undefined))) {
+                var bloodlinePart = e.horse.bloodline || "";
+                var genPart = (e.horse.generation !== null && e.horse.generation !== undefined) ? `Gen ${e.horse.generation}` : "";
+                if (bloodlinePart && genPart) {
+                    bloodlineGenInfo = `<br class="mobile-line-break"><span style="color: var(--muted-text); font-size: 0.9em; margin-left: 8px;">${bloodlinePart} ${genPart}</span>`;
+                } else if (bloodlinePart) {
+                    bloodlineGenInfo = `<br class="mobile-line-break"><span style="color: var(--muted-text); font-size: 0.9em; margin-left: 8px;">${bloodlinePart}</span>`;
+                } else if (genPart) {
+                    bloodlineGenInfo = `<br class="mobile-line-break"><span style="color: var(--muted-text); font-size: 0.9em; margin-left: 8px;">${genPart}</span>`;
+                }
+            }
+            if (e.horse && e.horse.id && e.horse.name) {
+                horseNameElem.innerHTML = `<a href="https://app.zedchampions.com/horse/${e.horse.id}" target="_blank" rel="noopener noreferrer" style="color: #bb86fc; text-decoration: underline;">${e.horse.name}</a>${genderSymbol}${bloodlineGenInfo}`;
+            } else if (e.horse && e.horse.name) {
+                horseNameElem.innerHTML = `${e.horse.name}${genderSymbol}${bloodlineGenInfo}`;
+            } else {
+                horseNameElem.textContent = "-";
+            }
+            document.getElementById("horse-captured-races").textContent=e.total_races||0;
+            const tVal = e.horse.complete_rating ? parseFloat(e.horse.complete_rating).toFixed(1) : "-";
+            document.getElementById("horse-overall-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.complete_rating))+("-"!==tVal?` <span class=\"rating-text-value\">(${tVal})</span>`:"");
+            const a = e.horse.speed_rating ? parseFloat(e.horse.speed_rating).toFixed(1) : "-";
+            document.getElementById("horse-speed-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.speed_rating))+("-"!==a?` <span class=\"rating-text-value\">(${a})</span>`:"");
+            const n = e.horse.sprint_rating ? parseFloat(e.horse.sprint_rating).toFixed(1) : "-";
+            document.getElementById("horse-sprint-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.sprint_rating))+("-"!==n?` <span class=\"rating-text-value\">(${n})</span>`:"");
+            const r = e.horse.endurance_rating ? parseFloat(e.horse.endurance_rating).toFixed(1) : "-";
+            document.getElementById("horse-endurance-rating").innerHTML=generateStarRatingHTML(parseFloat(e.horse.endurance_rating))+("-"!==r?` <span class=\"rating-text-value\">(${r})</span>`:"");
+            document.getElementById("horse-win-rate").textContent = `${parseFloat(e.win_percentage || 0).toFixed(1)}%`;
+            e.avg_position && "number" == typeof e.avg_position ? document.getElementById("horse-avg-pos").textContent = e.avg_position.toFixed(2) : document.getElementById("horse-avg-pos").textContent = "-";
+            e.avg_finish_time && "number" == typeof e.avg_finish_time ? document.getElementById("horse-avg-time").textContent = e.avg_finish_time.toFixed(2) + "s" : document.getElementById("horse-avg-time").textContent = "-";
+            e.best_finish_time && "number" == typeof e.best_finish_time ? document.getElementById("horse-best-time").textContent = e.best_finish_time.toFixed(2) + "s" : document.getElementById("horse-best-time").textContent = "-";
+            e.avg_overall_odds && "number" == typeof e.avg_overall_odds ? document.getElementById("horse-avg-odds").textContent = e.avg_overall_odds.toFixed(2) : document.getElementById("horse-avg-odds").textContent = "-";
+            if (e.races && e.races.length > 0) {
+                const t = e.races[0], a = calculateCurrentBalance(t);
+                null !== a ? (document.getElementById("horse-current-balance").textContent = safeFormatNumber(a, 2, !0), document.getElementById("horse-current-balance").className = "detail-value" + (a > 0 ? " value-good" : a < 0 ? " value-bad" : "")) : (document.getElementById("horse-current-balance").textContent = "-", document.getElementById("horse-current-balance").className = "detail-value");
+                const currentMMPoints = parseInt(t.points);
+                document.getElementById("horse-mm-points").textContent = !isNaN(currentMMPoints) ? currentMMPoints : "-";
+            } else document.getElementById("horse-current-balance").textContent = "-", document.getElementById("horse-current-balance").className = "detail-value", document.getElementById("horse-mm-points").textContent = "-";
+            let o = null;
+            if (e.races && e.races.length > 0) {
+                o = e.races.reduce((acc, race) => {
+                    const pl = calculateProfitLoss(race);
+                    return acc + (pl !== null ? pl : 0);
+                }, 0);
+            }
+            const s = document.getElementById("horse-total-pl");
+            null !== o ? (s.textContent = safeFormatNumber(o, 2, !0), s.className = "detail-value" + (o > 0 ? " value-good" : o < 0 ? " value-bad" : "")) : (s.textContent = "-", s.className = "detail-value");
+            
+            // Calculate and display quarter position stats
+            const quarterStats = calculateQuarterPositionStats(e.races || []);
+            const quarterPositionsElem = document.getElementById("horse-quarter-positions");
+            const quarterRanksElem = document.getElementById("horse-quarter-ranks");
+            
+            if (quarterStats.averages.some(avg => avg !== null)) {
+                // Display averages as X.X|X.X|X.X|X.X
+                const avgText = quarterStats.averages.map(avg => {
+                    return avg !== null ? avg.toFixed(1) : "-";
+                }).join('|');
+                quarterPositionsElem.textContent = avgText;
+                
+                // Display rankings as numbers representing each quarter's rank (1|2|3|4)
+                if (quarterStats.rankings && quarterStats.rankings.some(rank => rank !== null)) {
+                    const rankText = quarterStats.rankings.map(rank => {
+                        return rank !== null ? rank.toString() : "-";
+                    }).join('|');
+                    quarterRanksElem.textContent = rankText;
+                } else {
+                    quarterRanksElem.textContent = "-";
+                }
+            } else {
+                quarterPositionsElem.textContent = "-";
+                quarterRanksElem.textContent = "-";
+            }
+            
+            displayHorseAugments(e.augment_combinations || []), currentRacePage = 1;
+            displayRaceHistory(e.races || []), prepareBalanceChartData(e.races || []), setupTabs();
+            const l = document.querySelector('.tab[data-tab="balance-graph"]');
+            l && l.classList.contains("active") && currentHorseProcessedRaceDataForChart.length > 0 && renderBalanceChart(currentHorseProcessedRaceDataForChart);
+            updateGlobalTableWithHorseData();
+        })).catch((e => { console.error("Error fetching horse history:", e.message || e), alert(`Error connecting to server: ${e.message || "Unknown error"}`), t.style.display = "none"; }));
+}
+
+// 2. In setupHorseSearch, use selectHorse for click handler and expose last search results
+window.lastHorseSearchResults = [];
+function setupHorseSearch(){const e=document.getElementById("horse-search-input"),t=document.getElementById("horse-id-input"),a=document.getElementById("horse-search-button"),n=document.getElementById("horse-results");function r(){const a=e.value.trim(),r=t.value.trim();if(!r&&(!a||a.length<2))return void alert("Please enter a valid horse ID or a name with at least 2 characters");n.innerHTML='<div style="text-align: center; padding: 20px;"><div class="spinner"></div> Searching...</div>',n.style.display="block";let o=`${API_BASE_URL}/api/search-horse?`;o+=r?`id=${encodeURIComponent(r)}`:`name=${encodeURIComponent(a)}`,fetch(o).then((e=>e.json())).then((e=>{if(!e.success)return void(n.innerHTML=`<div style="padding: 15px; color: var(--bad-color);">${e.message||"Error searching for horse"}</div>`);if(0===e.horses.length)return void(n.innerHTML='<div style="padding: 15px;">No horses found with that name or ID</div>');let t=e.horses;if(a){const e=a.toLowerCase(),n=t.findIndex((t=>t.name.toLowerCase()===e));if(n>0){const[e]=t.splice(n,1);t.unshift(e)}}window.lastHorseSearchResults = t; // Save for auto-select
+n.innerHTML="",t.forEach((horseObj=>{
+    const item=document.createElement("div");
+    item.className="horse-result-item";
+    if(horseObj.bloodline){const a=`bloodline-${horseObj.bloodline.toLowerCase()}`;item.classList.add(a)}
+    const a=generateStarRatingHTML(parseFloat(horseObj.complete_rating)),r=generateStarRatingHTML(parseFloat(horseObj.speed_rating)),o=generateStarRatingHTML(parseFloat(horseObj.sprint_rating)),s=generateStarRatingHTML(parseFloat(horseObj.endurance_rating));
+    item.innerHTML=`
+        <div>
+            <div class="horse-name">${horseObj.name}<span class="horse-result-bloodline">| ${horseObj.bloodline||"Unknown"} | Gen ${null!==horseObj.generation&&void 0!==horseObj.generation?horseObj.generation:"N/A"}</span></div>
+            <div class="horse-details">
+                <span class="rating-group">Overall: ${a}</span>
+                <span class="rating-group">Speed: ${r}</span>
+                <span class="rating-group">Sprint: ${o}</span>
+                <span class="rating-group">Endurance: ${s}</span>
+            </div>
+        </div>
+    `;
+    item.addEventListener("click",function(){selectHorse(horseObj);});
+    n.appendChild(item);
+}));
+n.style.display="block";
+// Trigger auto-selection if this is from URL params
+window.dispatchEvent(new CustomEvent('searchResultsReady'));
+})).catch((e=>{console.error("Error searching for horse:",e),n.innerHTML='<div style="padding: 15px; color: var(--bad-color);">Error connecting to server</div>'}))}a.addEventListener("click",(function(){r()})),e.addEventListener("keypress",(function(e){"Enter"===e.key&&(t.value="",r())})),t.addEventListener("keypress",(function(t){"Enter"===t.key&&(e.value="",r())})),e.addEventListener("focus",(function(){t.value=""})),t.addEventListener("focus",(function(){e.value=""}))}
+
+// 3. In auto-search logic, after results are rendered, find the exact match in lastHorseSearchResults and call selectHorse directly
+    // --- Auto-search by horse_id or horse_name from URL params ---
+    function getQueryParam(name) {
+        const url = window.location.search;
+        const params = new URLSearchParams(url);
+        return params.get(name);
+    }
+    const horseId = getQueryParam('horse_id');
+    const horseName = getQueryParam('horse_name');
+    if (horseId || horseName) {
+        if (horseId) {
+            document.getElementById('horse-id-input').value = horseId;
+            document.getElementById('horse-search-input').value = '';
+        } else if (horseName) {
+            document.getElementById('horse-search-input').value = horseName;
+            document.getElementById('horse-id-input').value = '';
+        }
+        
+        // Listen for search results to be ready
+        window.addEventListener('searchResultsReady', function() {
+            if (!window.lastHorseSearchResults || !Array.isArray(window.lastHorseSearchResults) || window.lastHorseSearchResults.length === 0) return;
+            
+            let found = false;
+            if (horseId) {
+                const match = window.lastHorseSearchResults.find(h => h.id && h.id.toString() === horseId.toString());
+                if (match) { 
+                    setTimeout(() => selectHorse(match), 100); 
+                    found = true; 
+                }
+            } else if (horseName) {
+                const match = window.lastHorseSearchResults.find(h => h.name && h.name.toLowerCase() === horseName.toLowerCase());
+                if (match) { 
+                    setTimeout(() => selectHorse(match), 100); 
+                    found = true; 
+                }
+            }
+        }, { once: true }); // Only listen once
+        
+        setTimeout(function() {
+            document.getElementById('horse-search-button').click();
+        }, 200);
+    }
+</script>
+
+<script>
+// --- SCHEDULED TAB LOGIC ---
+async function fetchScheduledRace(horseId) {
+  if (!horseId) return null;
+  try {
+    const resp = await fetch(`${API_BASE_URL}/api/scheduled-race?id=${encodeURIComponent(horseId)}`);
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    if (data.success && data.scheduled_race) return data.scheduled_race;
+    return null;
+  } catch (e) { return null; }
+}
+
+function getAdjacentGates(gate, totalGates=8) {
+  gate = parseInt(gate);
+  if (isNaN(gate)) return [];
+  if (gate === 1) return [2,3];
+  if (gate === totalGates) return [totalGates-1, totalGates-2];
+  if (gate === 2) return [1,3];
+  if (gate === totalGates-1) return [totalGates, totalGates-2];
+  return [gate-1, gate+1];
+}
+
+function renderScheduledRaceTab(race, selectedHorseId) {
+  const container = document.getElementById('scheduled-race-container');
+  if (!race) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted-text);">No upcoming scheduled race found for this horse.</div>';
+    return;
+  }
+
+  // --- NEW: Race header info ---
+  // Get race name, time, and id
+  const raceName = race.name || race.race_name || 'Scheduled Race';
+  const raceId = race.id || race.race_id || '';
+  const raceTimeRaw = race.start_time || race.startTime || null;
+  let raceTimeStr = '-';
+  if (raceTimeRaw) {
+    try {
+      const d = new Date(raceTimeRaw);
+      // Format: Weekday, Month Day, Year, HH:MM AM/PM (local)
+      raceTimeStr = d.toLocaleString(undefined, {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: true
+      });
+    } catch {}
+  }
+  const raceLink = raceId ? `https://app.zedchampions.com/race/${raceId}` : null;
+
+  // Build the header HTML
+  let headerHtml = `<div style=\"margin-bottom:18px;\">\n    <h3 style=\"margin:0 0 6px 0; color:#fff; font-size:1.25em;\">${raceName}</h3>`;
+  // Format race time as 'Month Day, HH:MM AM/PM'
+  let formattedTime = raceTimeStr;
+  if (raceTimeRaw) {
+    try {
+      const d = new Date(raceTimeRaw);
+      const month = d.toLocaleString(undefined, { month: 'long' });
+      const day = d.getDate();
+      let hour = d.getHours();
+      let minute = d.getMinutes();
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12;
+      if (hour === 0) hour = 12;
+      const minuteStr = minute.toString().padStart(2, '0');
+      formattedTime = `${month} ${day}, ${hour}:${minuteStr} ${ampm}`;
+    } catch {}
+  }
+  headerHtml += `<div style=\"color:#fff; text-decoration:none; font-size:1em; font-weight:500; margin:0 0 2px 0;\">${formattedTime}</div>`;
+  if (raceLink) {
+    headerHtml += `<div><a href=\"${raceLink}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:#bb86fc; text-decoration:underline; font-size:1em; font-weight:500; background:none; border:none; padding:0; margin:0;\">View on ZedChampions</a></div>`;
+  }
+  headerHtml += '</div>';
+
+  // --- END NEW ---
+
+  // Find selected horse and adjacent gates
+  const selectedGate = parseInt(race.selected_gate);
+  const totalGates = race.participants.length;
+  const adjGates = getAdjacentGates(selectedGate, totalGates);
+  // Find selected horse's info
+  const selectedHorse = race.participants.find(p => String(p.horse_id) === String(selectedHorseId));
+  // QPos avg for selected horse
+  let qposAvg = null;
+  if (selectedHorse && Array.isArray(selectedHorse.last_qpos) && selectedHorse.last_qpos.length > 0) {
+    const sum = selectedHorse.last_qpos.reduce((a,b)=>a+parseFloat(b||0),0);
+    qposAvg = (sum/selectedHorse.last_qpos.length).toFixed(2);
+  }
+  // Build table
+  let html = headerHtml + `<table style=\"width:100%;border-collapse:collapse;\">\n    <thead>\n      <tr>\n        <th>Gate</th><th>Horse</th><th colspan=\"3\" style=\"text-align:center;\">Last Augment Set</th><th>Last QPos</th>\n        <th>Avg QPos w/ Set</th>\n        <th>Avg QPos Overall</th>\n      </tr>\n    </thead><tbody>`;
+  race.participants.sort((a,b)=>parseInt(a.gate)-parseInt(b.gate));
+  for (const p of race.participants) {
+    // Determine if this is the looked-up horse or adjacent
+    let horseNameClass = '';
+    if (String(p.gate) === String(selectedGate)) {
+      horseNameClass = 'scheduled-horse-main';
+    } else if (adjGates.includes(parseInt(p.gate))) {
+      horseNameClass = 'scheduled-horse-adjacent';
+    }
+
+    // CPU, RAM, HYDRAULIC augments styled like augment combinations tab, color fills the entire cell
+    function renderAugmentCell(name, slot) {
+      if (!name) return { cellClass: 'augment-empty', html: '<span class="augment-cell augment-empty">-</span>' };
+      const category = getAugmentCategory(name);
+      const tooltip = getAugmentTooltip(name);
+      let badge = '';
+      // Only show badge for tracked augments and if trigger_percentages exists for this augment
+      if (
+        TRACKED_TRIGGER_AUGMENTS.includes(name) &&
+        p.trigger_percentages &&
+        p.trigger_percentages[name] !== undefined
+      ) {
+        const pct = p.trigger_percentages[name];
+        let badgeClass = 'trigger-badge';
+        if (pct >= 70) badgeClass += ' high';
+        else if (pct >= 40) badgeClass += ' medium';
+        else badgeClass += ' low';
+        badge = `<span class="${badgeClass}" title="Triggered in ${pct}% of races">${pct}%</span>`;
+      }
+      return {
+        cellClass: `augment-cell ${category}`,
+        html: `<span title="${tooltip}">${name}${badge}</span>`
+      };
+    }
+    let cpuCell = renderAugmentCell(Array.isArray(p.last_augments) ? p.last_augments[0] : null, 'cpu');
+    let ramCell = renderAugmentCell(Array.isArray(p.last_augments) ? p.last_augments[1] : null, 'ram');
+    let hydCell = renderAugmentCell(Array.isArray(p.last_augments) ? p.last_augments[2] : null, 'hydraulic');
+
+    // QPos values
+    let qposStr = (p.last_qpos && Array.isArray(p.last_qpos)) ? p.last_qpos.join('|') : '<span style="color:var(--muted-text);">-</span>';
+    // Avg QPos w/ Augments (Q1-Q4)
+    let avgQposWithAugmentsArr = (p.avg_qpos_per_quarter_with_augments && Array.isArray(p.avg_qpos_per_quarter_with_augments)) ? p.avg_qpos_per_quarter_with_augments : [];
+    // Avg QPos Overall (Q1-Q4)
+    let avgQposOverallArr = (p.avg_qpos_per_quarter_overall && Array.isArray(p.avg_qpos_per_quarter_overall)) ? p.avg_qpos_per_quarter_overall : [];
+
+    function getQposColorClass(val) {
+      if (val === null || val === undefined || isNaN(val)) return '';
+      const num = parseFloat(val);
+      if (num < 2) return 'qpos-best';
+      if (num >= 2 && num <= 3) return 'qpos-above-avg';
+      if (num > 3 && num <= 5) return 'qpos-avg';
+      if (num > 5 && num <= 7) return 'qpos-below-avg';
+      if (num > 7) return 'qpos-worst';
+      return '';
+    }
+    function renderQposCell(val, isLast = false, isLastInGroup = false) {
+      const spacing = isLastInGroup ? 'margin-right:20px;' : 'margin-right:0px;';
+      const valStr = (val === null || val === undefined || isNaN(val)) ? '-' : val;
+      const colorClass = getQposColorClass(val);
+      return `<td style=\"text-align:center;padding:0 2px;\"><span class=\"${colorClass}\" style=\"display:inline-block;padding:1px 3px;border:1px solid var(--border-color);border-radius:3px;background:rgba(255,255,255,0.05);min-width:1ch;text-align:center;font-size:0.9em;${spacing}\">${valStr}</span></td>`;
+    }
+
+    html += `<tr>
+      <td>${p.gate}</td>
+      <td><a href="https://zedsight.com/?horse_id=${p.horse_id}" target="_blank" rel="noopener noreferrer" class="scheduled-horse-link"><span class="${horseNameClass}">${p.horse_name||'-'}</span></a></td>
+      <td class="${cpuCell.cellClass}">${cpuCell.html}</td>
+      <td class="${ramCell.cellClass}">${ramCell.html}</td>
+      <td class="${hydCell.cellClass}">${hydCell.html}</td>
+      <td style="text-align:center;">${qposStr}</td>
+      <td style="text-align:center;">
+        <span class="qpos-inline-group">
+        ${avgQposWithAugmentsArr.map((val, idx) => {
+          const colorClass = getQposColorClass(val);
+          const valStr = (val === null || val === undefined || isNaN(val)) ? '-' : val;
+          return `<span class=\"${colorClass}\" style=\"display:inline-block;padding:1px 7px;margin:0 2px;border:1px solid var(--border-color);border-radius:3px;background:rgba(255,255,255,0.05);width:1.5em;min-width:1.5em;max-width:1.5em;text-align:center;font-size:0.95em;\">${valStr}</span>`;
+        }).join('')}
+        </span>
+      </td>
+      <td style="text-align:center;">
+        <span class="qpos-inline-group">
+        ${avgQposOverallArr.map((val, idx) => {
+          const colorClass = getQposColorClass(val);
+          const valStr = (val === null || val === undefined || isNaN(val)) ? '-' : val;
+          return `<span class=\"${colorClass}\" style=\"display:inline-block;padding:1px 7px;margin:0 2px;border:1px solid var(--border-color);border-radius:3px;background:rgba(255,255,255,0.05);width:1.5em;min-width:1.5em;max-width:1.5em;text-align:center;font-size:0.95em;\">${valStr}</span>`;
+        }).join('')}
+        </span>
+      </td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Add styles for horse name highlighting
+  const styleId = 'scheduled-horse-highlight-style';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .scheduled-horse-main {
+        color: var(--highlight-color) !important;
+        font-weight: bold;
+        font-size: 1.08em;
+        letter-spacing: 0.01em;
+      }
+      .scheduled-horse-adjacent {
+        color: var(--second-highlight) !important;
+        font-weight: bold;
+        font-size: 1.05em;
+      }
+      .scheduled-horse-link {
+        text-decoration: none;
+        color: inherit;
+        transition: opacity 0.2s ease;
+      }
+      .scheduled-horse-link:hover {
+        opacity: 0.8;
+        text-decoration: underline;
+      }
+      .scheduled-horse-link:visited {
+        color: inherit;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Patch selectHorse to also fetch and show scheduled tab if needed
+const origSelectHorse = window.selectHorse;
+window.selectHorse = async function(horseObj) {
+  // Start fetching scheduled race immediately
+  let scheduledRacePromise = horseObj && horseObj.id ? fetchScheduledRace(horseObj.id) : Promise.resolve(null);
+  // Start loading the rest of the horse data (origSelectHorse)
+  const origPromise = origSelectHorse.apply(this, arguments);
+
+  // As soon as scheduled race data is ready, show/hide the tab
+  scheduledRacePromise.then(race => {
+    const scheduledTab = document.getElementById('scheduled-tab');
+    const scheduledContent = document.getElementById('scheduled');
+    scheduledTab.style.display = 'none';
+    scheduledContent.style.display = 'none';
+    if (race && race.start_time && new Date(race.start_time) > new Date()) {
+      scheduledTab.style.display = '';
+      // If this tab is active, render content
+      if (scheduledTab.classList.contains('active')) {
+        renderScheduledRaceTab(race, horseObj.id);
+        scheduledContent.style.display = 'block';
+      }
+      // Add click handler to render content when tab is clicked
+      scheduledTab.onclick = function() {
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>{c.classList.remove('active');c.style.display='none';});
+        scheduledTab.classList.add('active');
+        scheduledContent.classList.add('active');
+        scheduledContent.style.display = 'block';
+        renderScheduledRaceTab(race, horseObj.id);
+      };
+    } else {
+      scheduledTab.style.display = 'none';
+      scheduledContent.style.display = 'none';
+    }
+  });
+
+  // Wait for the rest of the horse data to finish loading
+  await origPromise;
+};
+</script>
+
+<script>
+// --- FINISH DISTRIBUTION CHART LOGIC ---
+let finishDistributionChartInstance = null;
+
+function prepareFinishDistributionData(races) {
+    if (!races || races.length === 0) return { labels: [], data: [], colors: [] };
+    
+    // Initialize position counts (1st through 8th place)
+    const positions = [1, 2, 3, 4, 5, 6, 7, 8];
+    const positionCounts = new Array(8).fill(0);
+    
+    // Count finish positions
+    races.forEach(race => {
+        const position = parseInt(race.finish_position);
+        if (position >= 1 && position <= 8) {
+            positionCounts[position - 1]++;
+        }
+    });
+    
+    // Create labels
+    const labels = positions.map(pos => {
+        if (pos === 1) return '1st';
+        if (pos === 2) return '2nd';
+        if (pos === 3) return '3rd';
+        return pos + 'th';
+    });
+    
+    // Create colors (green for wins, gradually shifting to red for worse positions)
+    const colors = [
+        '#4ecca3', // 1st - good green
+        '#45b7d1', // 2nd - blue
+        '#96ceb4', // 3rd - light green
+        '#ffeaa7', // 4th - yellow
+        '#fdcb6e', // 5th - orange
+        '#fd79a8', // 6th - pink
+        '#e17055', // 7th - orange-red
+        '#d63031'  // 8th - red
+    ];
+    
+    return {
+        labels,
+        data: positionCounts,
+        colors,
+        totalRaces: races.length
+    };
+}
+
+function renderFinishDistributionChart(races) {
+    const ctx = document.getElementById('finish-distribution-chart').getContext('2d');
+    
+    if (finishDistributionChartInstance) {
+        finishDistributionChartInstance.destroy();
+    }
+    
+    const { labels, data, colors, totalRaces } = prepareFinishDistributionData(races);
+    
+    finishDistributionChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Finishes',
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors.map(color => color + '80'), // Add transparency
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label + ' Place';
+                        },
+                        label: function(context) {
+                            const count = context.raw;
+                            const percentage = totalRaces > 0 ? ((count / totalRaces) * 100).toFixed(1) : '0.0';
+                            return [
+                                `Finishes: ${count}`,
+                                `Percentage: ${percentage}%`,
+                                `Total Races: ${totalRaces}`
+                            ];
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    title: { 
+                        display: true, 
+                        text: 'Finish Position' 
+                    },
+                    grid: {
+                        color: '#444'
+                    }
+                },
+                y: {
+                    title: { 
+                        display: true, 
+                        text: 'Number of Races' 
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: '#444'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Add function to update finish distribution chart
+function updateFinishDistributionChart() {
+    if (!currentHorseData || !currentHorseData.races) return;
+    renderFinishDistributionChart(currentHorseData.races);
+}
+</script>
+</body>
+</html> 
