@@ -14,5 +14,6 @@
       ]
     }
   ],
+  "buildCommand": "cp -r src/* production-build/",
   "outputDirectory": "production-build"
 }

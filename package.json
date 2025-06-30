@@ -1,0 +1,15 @@
+{
+  "name": "champion-predictor",
+  "version": "1.0.0",
+  "description": "ZED Champions horse tracking and prediction app",
+  "scripts": {
+    "build": "mkdir -p production-build && cp -r src/* production-build/",
+    "dev": "vercel dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
