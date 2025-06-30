@@ -165,14 +165,8 @@ class ZedApiService {
   
   async fetchHorseRaces(horseId) {
     try {
-      // Clean the horse ID if needed
-      let cleanId = horseId;
-      if (typeof horseId === 'string') {
-        if (horseId.includes('app.zedchampions.com/horse/')) {
-          const parts = horseId.split('horse/');
-          cleanId = parts[parts.length - 1].split('/')[0].trim();
-        }
-      }
+      // Clean the horse ID
+      let cleanId = cleanHorseId(horseId);
       
       // First get the horse details
       const horseData = await this.fetchFromApi(`/horses/${cleanId}`);
@@ -180,11 +174,44 @@ class ZedApiService {
       // Then fetch race history
       const raceData = await this.fetchFromApi(`/horses/${cleanId}/races`);
       
-      // Return both horse details and race history
+      // Process and enhance the race data
+      const races = raceData.races || [];
+      
+      // Calculate additional metrics like ZedSight does
+      let balance = 0;
+      let mmPoints = 0;
+      
+      const processedRaces = races.map(race => {
+        // Calculate balance changes
+        const startBalance = balance;
+        const prize = parseFloat(race.prize || 0);
+        const position = parseInt(race.position);
+        
+        // Update balance based on position and prize
+        if (position === 1) balance += prize;
+        else if (position === 2) balance += prize * 0.3;
+        else if (position === 3) balance += prize * 0.1;
+        
+        // Track MM points changes
+        const startPoints = mmPoints;
+        mmPoints = parseInt(race.mm_points_after || mmPoints);
+        const pointsDelta = mmPoints - startPoints;
+        
+        return {
+          ...race,
+          starting_balance: startBalance,
+          ending_balance: balance,
+          balance_change: balance - startBalance,
+          starting_points: startPoints,
+          points_delta: pointsDelta,
+          ending_points: mmPoints
+        };
+      });
+      
       return {
         success: true,
         horse: horseData,
-        races: raceData.races || []
+        races: processedRaces
       };
     } catch (error) {
       return { success: false, message: error.message };
