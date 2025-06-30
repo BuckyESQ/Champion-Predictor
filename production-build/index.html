@@ -472,6 +472,47 @@
                 </table>
               </div>
         </div>
+
+        <!-- Augments Tab Content - New Section -->
+        <div id="tab-content-augments" class="tab-content">
+          <div class="section">
+            <h2>Augment Performance</h2>
+            <p>View and analyze augment combinations and their performance.</p>
+            
+            <div id="horse-selector" class="form-grid">
+              <div>
+                <label for="augment-horse">Select Horse:</label>
+                <select id="augment-horse">
+                  <option value="">-- Select Horse --</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="augment-chart-container" style="height: 400px; margin-top: 20px;">
+              <canvas id="augment-chart"></canvas>
+            </div>
+            
+            <table id="augment-combinations-table" style="margin-top: 20px;">
+              <thead>
+                <tr>
+                  <th>CPU Slot</th>
+                  <th>RAM Slot</th>
+                  <th>Hydraulic Slot</th>
+                  <th>Avg Position</th>
+                  <th>Win %</th>
+                  <th>Races</th>
+                </tr>
+              </thead>
+              <tbody id="augment-combinations-tbody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                    Select a horse to view augment combinations.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
     </div>
     
     <!-- Emergency reset button -->
@@ -646,39 +687,219 @@
                 }
             }
             
-            // Render all tables and set up auto-update
-            renderRacingHorses();
-            renderBreedingHorses();
-            renderTransactions();
-            renderRaceHistory(); // Initial render for race history
-            
-            // Update tables when tab is changed
-            const originalActivateTab = window.activateTab;
-            window.activateTab = function(tabId) {
-                originalActivateTab(tabId);
+            // Render augment data
+            function renderAugmentData() {
+                const horseSelect = document.getElementById('augment-horse');
+                const horseId = horseSelect.value;
                 
-                // Refresh data for the selected tab
-                if (tabId === 'racing') renderRacingHorses();
-                if (tabId === 'breeding') renderBreedingHorses();
-                if (tabId === 'transactions') renderTransactions();
-                if (tabId === 'races') renderRaceHistory(); // Refresh race history
-            };
-            
-            // Subscribe to data changes
-            const originalSaveData = window.saveData;
-            window.saveData = function() {
-                originalSaveData();
-                renderRacingHorses();
-                renderBreedingHorses();
-                renderTransactions();
-                renderRaceHistory(); // Refresh race history on data save
-            };
-            
-            // Horse selector for race history
-            const horseSelect = document.getElementById('race-history-horse');
-            horseSelect.addEventListener('change', function() {
-                renderRaceHistory();
-            });
+                if (!horseId) return;
+                
+                // Find the horse
+                const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+                const horse = allHorses.find(h => h.id === horseId);
+                
+                if (!horse || !horse.races || horse.races.length === 0) {
+                  document.getElementById('augment-combinations-tbody').innerHTML = `
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        No race history with augment data found for this horse.
+                      </td>
+                    </tr>
+                  `;
+                  
+                  // Destroy existing chart
+                  const existingChart = Chart.getChart('augment-chart');
+                  if (existingChart) {
+                    existingChart.destroy();
+                  }
+                  
+                  return;
+                }
+                
+                // Process augment combinations
+                const combinations = processAugmentCombinations(horse.races);
+                
+                // Render the table
+                renderAugmentTable(combinations);
+                
+                // Render the chart
+                renderAugmentChart(combinations);
+              }
+              
+              // Function to process augment combinations
+              function processAugmentCombinations(races) {
+                // Group races by augment combination
+                const combinationMap = {};
+                
+                races.forEach(race => {
+                  if (!race.augments) return;
+                  
+                  // Create key from augments
+                  const cpuAugment = race.augments[0] || '-';
+                  const ramAugment = race.augments[1] || '-';
+                  const hydraulicAugment = race.augments[2] || '-';
+                  const key = `${cpuAugment}|${ramAugment}|${hydraulicAugment}`;
+                  
+                  if (!combinationMap[key]) {
+                    combinationMap[key] = {
+                      cpu: cpuAugment,
+                      ram: ramAugment,
+                      hydraulic: hydraulicAugment,
+                      positions: [],
+                      races: 0,
+                      wins: 0
+                    };
+                  }
+                  
+                  combinationMap[key].positions.push(parseInt(race.position));
+                  combinationMap[key].races++;
+                  if (parseInt(race.position) === 1) {
+                    combinationMap[key].wins++;
+                  }
+                });
+                
+                // Calculate averages and convert to array
+                return Object.values(combinationMap).map(combo => {
+                  const avgPosition = combo.positions.reduce((sum, pos) => sum + pos, 0) / combo.positions.length;
+                  const winPercentage = (combo.wins / combo.races) * 100;
+                  
+                  return {
+                    ...combo,
+                    avgPosition: avgPosition.toFixed(2),
+                    winPercentage: winPercentage.toFixed(1)
+                  };
+                }).sort((a, b) => a.avgPosition - b.avgPosition);
+              }
+              
+              // Function to render the augment table
+              function renderAugmentTable(combinations) {
+                const tbody = document.getElementById('augment-combinations-tbody');
+                if (!tbody) return;
+                
+                if (combinations.length === 0) {
+                  tbody.innerHTML = `
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        No augment combinations found.
+                      </td>
+                    </tr>
+                  `;
+                  return;
+                }
+                
+                tbody.innerHTML = '';
+                combinations.forEach(combo => {
+                  const row = document.createElement('tr');
+                  
+                  // Determine CSS classes for augments
+                  const getCssClass = (augment) => {
+                    if (!augment || augment === '-') return 'augment-empty';
+                    if (augment.includes('GX')) return 'augment-gx';
+                    if (augment.includes('Crimson')) return 'augment-crimson';
+                    if (augment.includes('Midnight')) return 'augment-midnight';
+                    if (augment.includes('Darklight')) return 'augment-darklight';
+                    if (augment.includes('Void')) return 'augment-void';
+                    return '';
+                  };
+                  
+                  row.innerHTML = `
+                    <td><span class="${getCssClass(combo.cpu)}">${combo.cpu}</span></td>
+                    <td><span class="${getCssClass(combo.ram)}">${combo.ram}</span></td>
+                    <td><span class="${getCssClass(combo.hydraulic)}">${combo.hydraulic}</span></td>
+                    <td>${combo.avgPosition}</td>
+                    <td>${combo.winPercentage}%</td>
+                    <td>${combo.races}</td>
+                  `;
+                  
+                  tbody.appendChild(row);
+                });
+              }
+              
+              // Function to render the augment chart
+              function renderAugmentChart(combinations) {
+                // Destroy existing chart
+                const existingChart = Chart.getChart('augment-chart');
+                if (existingChart) {
+                  existingChart.destroy();
+                }
+                
+                if (combinations.length === 0) return;
+                
+                // Prepare chart data
+                const chartData = {
+                  labels: combinations.map(c => {
+                    let label = '';
+                    if (c.cpu && c.cpu !== '-') label += c.cpu;
+                    if (c.ram && c.ram !== '-') label += label ? ` + ${c.ram}` : c.ram;
+                    if (c.hydraulic && c.hydraulic !== '-') label += label ? ` + ${c.hydraulic}` : c.hydraulic;
+                    return label || 'No Augments';
+                  }),
+                  datasets: [
+                    {
+                      label: 'Average Position',
+                      data: combinations.map(c => parseFloat(c.avgPosition)),
+                      backgroundColor: combinations.map(c => {
+                        // Lower (better) positions get greener colors
+                        const avgPos = parseFloat(c.avgPosition);
+                        if (avgPos <= 2) return 'rgba(76, 175, 80, 0.8)'; // Green
+                        if (avgPos <= 3) return 'rgba(139, 195, 74, 0.8)'; // Light green
+                        if (avgPos <= 4) return 'rgba(255, 235, 59, 0.8)'; // Yellow
+                        if (avgPos <= 5) return 'rgba(255, 152, 0, 0.8)'; // Orange
+                        return 'rgba(244, 67, 54, 0.8)'; // Red
+                      }),
+                      borderWidth: 1
+                    },
+                    {
+                      label: 'Races',
+                      data: combinations.map(c => c.races),
+                      type: 'line',
+                      fill: false,
+                      borderColor: 'rgba(54, 162, 235, 1)',
+                      tension: 0.1,
+                      yAxisID: 'y1'
+                    }
+                  ]
+                };
+                
+                // Create the chart
+                const ctx = document.getElementById('augment-chart').getContext('2d');
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: chartData,
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bar chart
+                    scales: {
+                      y: {
+                        beginAtZero: false
+                      },
+                      y1: {
+                        position: 'right',
+                        grid: {
+                          drawOnChartArea: false
+                        }
+                      }
+                    },
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const datasetLabel = context.dataset.label || '';
+                            const value = context.raw;
+                            if (datasetLabel === 'Average Position') {
+                              return `Avg Position: ${value}`;
+                            } else if (datasetLabel === 'Races') {
+                              return `Races: ${value}`;
+                            }
+                            return `${datasetLabel}: ${value}`;
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+              }
         });
         
         document.getElementById('debug-check-token').addEventListener('click', function() {
@@ -731,5 +952,352 @@ Format: ${token.includes('.') ? 'Looks like JWT format' : 'Not JWT format'}`;
             output.innerHTML += '\n' + JSON.stringify(storage, null, 2);
         });
     </script>
+
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <script>
+      // Add Augment Chart functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        // Create Augment Chart tab
+        const tabButtons = document.getElementById('tab-buttons');
+        const tabContent = document.getElementById('tab-content');
+        
+        if (tabButtons && tabContent) {
+          // Add the augment tab button
+          const augmentTabButton = document.createElement('button');
+          augmentTabButton.className = 'tab-button';
+          augmentTabButton.setAttribute('data-tab', 'augments');
+          augmentTabButton.textContent = 'Augments';
+          tabButtons.appendChild(augmentTabButton);
+          
+          // Add the augment tab content container
+          const augmentTabContent = document.createElement('div');
+          augmentTabContent.id = 'tab-content-augments';
+          augmentTabContent.className = 'tab-content';
+          
+          augmentTabContent.innerHTML = `
+            <div class="section">
+              <h2>Augment Performance</h2>
+              <p>View and analyze augment combinations and their performance.</p>
+              
+              <div id="horse-selector" class="form-grid">
+                <div>
+                  <label for="augment-horse">Select Horse:</label>
+                  <select id="augment-horse">
+                    <option value="">-- Select Horse --</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div id="augment-chart-container" style="height: 400px; margin-top: 20px;">
+                <canvas id="augment-chart"></canvas>
+              </div>
+              
+              <table id="augment-combinations-table" style="margin-top: 20px;">
+                <thead>
+                  <tr>
+                    <th>CPU Slot</th>
+                    <th>RAM Slot</th>
+                    <th>Hydraulic Slot</th>
+                    <th>Avg Position</th>
+                    <th>Win %</th>
+                    <th>Races</th>
+                  </tr>
+                </thead>
+                <tbody id="augment-combinations-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                      Select a horse to view augment combinations.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+          
+          tabContent.appendChild(augmentTabContent);
+          
+          // Add event listener for the augment tab
+          augmentTabButton.addEventListener('click', function() {
+            const horseSelect = document.getElementById('augment-horse');
+            updateHorseSelectors(horseSelect);
+            activateTab('augments');
+          });
+          
+          // Add event listener for horse selection
+          const horseSelect = document.getElementById('augment-horse');
+          if (horseSelect) {
+            horseSelect.addEventListener('change', renderAugmentData);
+          }
+        }
+      });
+      
+      // Function to populate horse selectors
+      function updateHorseSelectors(selector) {
+        if (!selector) return;
+        
+        // Clear existing options except the first one
+        while (selector.options.length > 1) {
+          selector.remove(1);
+        }
+        
+        // Get all horses (combine racing and breeding)
+        const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+        
+        // Sort by name
+        allHorses.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Add options
+        allHorses.forEach(horse => {
+          const option = document.createElement('option');
+          option.value = horse.id;
+          option.textContent = `${horse.name} (${horse.bloodline || 'Unknown'})`;
+          selector.appendChild(option);
+        });
+      }
+      
+      // Function to render augment data
+      function renderAugmentData() {
+        const horseSelect = document.getElementById('augment-horse');
+        const horseId = horseSelect.value;
+        
+        if (!horseId) return;
+        
+        // Find the horse
+        const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+        const horse = allHorses.find(h => h.id === horseId);
+        
+        if (!horse || !horse.races || horse.races.length === 0) {
+          document.getElementById('augment-combinations-tbody').innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                No race history with augment data found for this horse.
+              </td>
+            </tr>
+          `;
+          
+          // Destroy existing chart
+          const existingChart = Chart.getChart('augment-chart');
+          if (existingChart) {
+            existingChart.destroy();
+          }
+          
+          return;
+        }
+        
+        // Process augment combinations
+        const combinations = processAugmentCombinations(horse.races);
+        
+        // Render the table
+        renderAugmentTable(combinations);
+        
+        // Render the chart
+        renderAugmentChart(combinations);
+      }
+      
+      // Function to process augment combinations
+      function processAugmentCombinations(races) {
+        // Group races by augment combination
+        const combinationMap = {};
+        
+        races.forEach(race => {
+          if (!race.augments) return;
+          
+          // Create key from augments
+          const cpuAugment = race.augments[0] || '-';
+          const ramAugment = race.augments[1] || '-';
+          const hydraulicAugment = race.augments[2] || '-';
+          const key = `${cpuAugment}|${ramAugment}|${hydraulicAugment}`;
+          
+          if (!combinationMap[key]) {
+            combinationMap[key] = {
+              cpu: cpuAugment,
+              ram: ramAugment,
+              hydraulic: hydraulicAugment,
+              positions: [],
+              races: 0,
+              wins: 0
+            };
+          }
+          
+          combinationMap[key].positions.push(parseInt(race.position));
+          combinationMap[key].races++;
+          if (parseInt(race.position) === 1) {
+            combinationMap[key].wins++;
+          }
+        });
+        
+        // Calculate averages and convert to array
+        return Object.values(combinationMap).map(combo => {
+          const avgPosition = combo.positions.reduce((sum, pos) => sum + pos, 0) / combo.positions.length;
+          const winPercentage = (combo.wins / combo.races) * 100;
+          
+          return {
+            ...combo,
+            avgPosition: avgPosition.toFixed(2),
+            winPercentage: winPercentage.toFixed(1)
+          };
+        }).sort((a, b) => a.avgPosition - b.avgPosition);
+      }
+      
+      // Function to render the augment table
+      function renderAugmentTable(combinations) {
+        const tbody = document.getElementById('augment-combinations-tbody');
+        if (!tbody) return;
+        
+        if (combinations.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                No augment combinations found.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        tbody.innerHTML = '';
+        combinations.forEach(combo => {
+          const row = document.createElement('tr');
+          
+          // Determine CSS classes for augments
+          const getCssClass = (augment) => {
+            if (!augment || augment === '-') return 'augment-empty';
+            if (augment.includes('GX')) return 'augment-gx';
+            if (augment.includes('Crimson')) return 'augment-crimson';
+            if (augment.includes('Midnight')) return 'augment-midnight';
+            if (augment.includes('Darklight')) return 'augment-darklight';
+            if (augment.includes('Void')) return 'augment-void';
+            return '';
+          };
+          
+          row.innerHTML = `
+            <td><span class="${getCssClass(combo.cpu)}">${combo.cpu}</span></td>
+            <td><span class="${getCssClass(combo.ram)}">${combo.ram}</span></td>
+            <td><span class="${getCssClass(combo.hydraulic)}">${combo.hydraulic}</span></td>
+            <td>${combo.avgPosition}</td>
+            <td>${combo.winPercentage}%</td>
+            <td>${combo.races}</td>
+          `;
+          
+          tbody.appendChild(row);
+        });
+      }
+      
+      // Function to render the augment chart
+      function renderAugmentChart(combinations) {
+        // Destroy existing chart
+        const existingChart = Chart.getChart('augment-chart');
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        
+        if (combinations.length === 0) return;
+        
+        // Prepare chart data
+        const chartData = {
+          labels: combinations.map(c => {
+            let label = '';
+            if (c.cpu && c.cpu !== '-') label += c.cpu;
+            if (c.ram && c.ram !== '-') label += label ? ` + ${c.ram}` : c.ram;
+            if (c.hydraulic && c.hydraulic !== '-') label += label ? ` + ${c.hydraulic}` : c.hydraulic;
+            return label || 'No Augments';
+          }),
+          datasets: [
+            {
+              label: 'Average Position',
+              data: combinations.map(c => parseFloat(c.avgPosition)),
+              backgroundColor: combinations.map(c => {
+                // Lower (better) positions get greener colors
+                const avgPos = parseFloat(c.avgPosition);
+                if (avgPos <= 2) return 'rgba(76, 175, 80, 0.8)'; // Green
+                if (avgPos <= 3) return 'rgba(139, 195, 74, 0.8)'; // Light green
+                if (avgPos <= 4) return 'rgba(255, 235, 59, 0.8)'; // Yellow
+                if (avgPos <= 5) return 'rgba(255, 152, 0, 0.8)'; // Orange
+                return 'rgba(244, 67, 54, 0.8)'; // Red
+              }),
+              borderWidth: 1
+            },
+            {
+              label: 'Races',
+              data: combinations.map(c => c.races),
+              type: 'line',
+              fill: false,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              tension: 0.1,
+              yAxisID: 'y1'
+            }
+          ]
+        };
+        
+        // Create the chart
+        const ctx = document.getElementById('augment-chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: chartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y', // Horizontal bar chart
+            scales: {
+              y: {
+                beginAtZero: false
+              },
+              y1: {
+                position: 'right',
+                grid: {
+                  drawOnChartArea: false
+                }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const datasetLabel = context.dataset.label || '';
+                    const value = context.raw;
+                    if (datasetLabel === 'Average Position') {
+                      return `Avg Position: ${value}`;
+                    } else if (datasetLabel === 'Races') {
+                      return `Races: ${value}`;
+                    }
+                    return `${datasetLabel}: ${value}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    </script>
+
+    <style>
+      /* Augment styles */
+      .augment-empty {
+        color: var(--muted-text);
+        font-style: italic;
+      }
+      .augment-gx {
+        color: #4CAF50;
+        font-weight: bold;
+      }
+      .augment-crimson {
+        color: #F44336;
+        font-weight: bold;
+      }
+      .augment-midnight {
+        color: #3F51B5;
+        font-weight: bold;
+      }
+      .augment-darklight {
+        color: #FF9800;
+        font-weight: bold;
+      }
+      .augment-void {
+        color: #9C27B0;
+        font-weight: bold;
+      }
+    </style>
 </body>
 </html>
