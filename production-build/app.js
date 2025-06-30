@@ -1,6 +1,14 @@
 // Consolidated app script for ZED Champions Tracker
 console.log("ZED Champions Tracker loading...");
 
+// Global state
+window.horses = JSON.parse(localStorage.getItem('horses') || '[]');
+window.races = JSON.parse(localStorage.getItem('races') || '[]');
+window.breedingHorses = JSON.parse(localStorage.getItem('breedingHorses') || '[]');
+window.bredHorses = JSON.parse(localStorage.getItem('bredHorses') || '[]');
+window.studAuctions = JSON.parse(localStorage.getItem('studAuctions') || '[]');
+window.transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+
 // Authentication Manager
 class ZedAuthManager {
   constructor() {
@@ -32,6 +40,18 @@ class ZedAuthManager {
   
   getToken() {
     return localStorage.getItem(this.tokenKey);
+  }
+  
+  getTokenExpiry() {
+    const expiryStr = localStorage.getItem(this.tokenExpiryKey);
+    if (!expiryStr) return null;
+    const expiryDate = new Date(expiryStr);
+    const remaining = Math.max(0, expiryDate.getTime() - Date.now());
+    return {
+      date: expiryDate,
+      remaining,
+      expired: this.isTokenExpired(this.getToken())
+    };
   }
   
   setToken(token) {
@@ -139,15 +159,6 @@ class ZedApiService {
     }
   }
   
-  async searchHorse(query) {
-    try {
-      const data = await this.fetchFromApi(`/horses/search?q=${encodeURIComponent(query)}`);
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  }
-  
   async fetchAllHorses(type = 'racing') {
     try {
       const endpoint = type === 'racing' ? '/stable/racing' : '/stable/breeding';
@@ -157,6 +168,17 @@ class ZedApiService {
       return { success: false, message: error.message };
     }
   }
+}
+
+// Save all data to localStorage
+function saveData() {
+  localStorage.setItem('horses', JSON.stringify(window.horses || []));
+  localStorage.setItem('races', JSON.stringify(window.races || []));
+  localStorage.setItem('breedingHorses', JSON.stringify(window.breedingHorses || []));
+  localStorage.setItem('bredHorses', JSON.stringify(window.bredHorses || []));
+  localStorage.setItem('studAuctions', JSON.stringify(window.studAuctions || []));
+  localStorage.setItem('transactions', JSON.stringify(window.transactions || []));
+  console.log("Data saved to localStorage");
 }
 
 // Tab Navigation
@@ -198,8 +220,74 @@ function activateTab(tabId) {
   localStorage.setItem('zedTrackerActiveTab', tabId);
 }
 
-// Bloodline Functions
+// Bloodline functions and color mapping
+window.breedColorOptions = {
+  "Nakamoto": {
+    "normal": [
+      { label: "Bay", hex: "#5E3A22" },
+      { label: "Black", hex: "#000000" }
+    ],
+    "rare": [
+      { label: "White", hex: "#FFFFFF" }
+    ],
+    "super rare": [
+      { label: "Gold", hex: "#FFD700" }
+    ]
+  },
+  "Szabo": {
+    "normal": [
+      { label: "Gray", hex: "#808080" },
+      { label: "Chestnut", hex: "#954535" }
+    ],
+    "rare": [
+      { label: "Blue", hex: "#4169E1" }
+    ],
+    "super rare": [
+      { label: "Silver", hex: "#C0C0C0" }
+    ]
+  },
+  "Finney": {
+    "normal": [
+      { label: "Roan", hex: "#A76C64" },
+      { label: "Palomino", hex: "#D9B280" }
+    ],
+    "rare": [
+      { label: "Green", hex: "#4CAF50" }
+    ],
+    "super rare": [
+      { label: "Bronze", hex: "#CD7F32" }
+    ]
+  },
+  "Buterin": {
+    "normal": [
+      { label: "Dun", hex: "#D6B76F" },
+      { label: "Buckskin", hex: "#CC9966" }
+    ],
+    "rare": [
+      { label: "Purple", hex: "#8A2BE2" }
+    ],
+    "super rare": [
+      { label: "Platinum", hex: "#E5E4E2" }
+    ]
+  }
+};
+
+window.bloodlineTraits = {
+  "Nakamoto": ["Speed", "Endurance", "Agility"],
+  "Szabo": ["Power", "Stamina", "Balance"],
+  "Finney": ["Sprint", "Focus", "Acceleration"],
+  "Buterin": ["Tenacity", "Consistency", "Resilience"]
+};
+
+window.bloodlineAttributes = {
+  "Nakamoto": ["Lean", "Muscular", "Aerodynamic"],
+  "Szabo": ["Strong", "Sturdy", "Powerful"],
+  "Finney": ["Quick", "Light", "Agile"],
+  "Buterin": ["Smart", "Steady", "Tactical"]
+};
+
 function onBloodlineChange(colorId, traitsId, attrsId) {
+  console.log(`onBloodlineChange: color=${colorId}, traits=${traitsId}, attrs=${attrsId}`);
   const colorEl = document.getElementById(colorId);
   const traitsEl = document.getElementById(traitsId);
   const attrsEl = document.getElementById(attrsId);
@@ -213,45 +301,47 @@ function onBloodlineChange(colorId, traitsId, attrsId) {
   // Get the selected bloodline
   const bloodline = bloodEl.value;
   
-  // Define colors for each bloodline
-  const bloodlineColors = {
-    "Nakamoto": [
-      { label: "Bay", hex: "#5E3A22" },
-      { label: "Black", hex: "#000000" },
-      { label: "White", hex: "#FFFFFF" }
-    ],
-    "Szabo": [
-      { label: "Gray", hex: "#808080" },
-      { label: "Chestnut", hex: "#954535" },
-      { label: "Blue", hex: "#4169E1" }
-    ],
-    "Finney": [
-      { label: "Roan", hex: "#A76C64" },
-      { label: "Palomino", hex: "#D9B280" },
-      { label: "Green", hex: "#4CAF50" }
-    ],
-    "Buterin": [
-      { label: "Dun", hex: "#D6B76F" },
-      { label: "Buckskin", hex: "#CC9966" },
-      { label: "Purple", hex: "#8A2BE2" }
-    ]
-  };
-  
   // Update color options
-  colorEl.innerHTML = '<option value="">--Select--</option>';
+  colorEl.innerHTML = '<option value="">--Select Color--</option>';
   
-  if (bloodline && bloodlineColors[bloodline]) {
-    bloodlineColors[bloodline].forEach(color => {
-      const option = document.createElement('option');
-      option.value = color.hex;
-      option.textContent = color.label;
-      colorEl.appendChild(option);
+  if (bloodline && window.breedColorOptions && window.breedColorOptions[bloodline]) {
+    ["normal", "rare", "super rare"].forEach(rarity => {
+      if (window.breedColorOptions[bloodline][rarity]) {
+        window.breedColorOptions[bloodline][rarity].forEach(color => {
+          const option = document.createElement('option');
+          option.value = color.hex;
+          option.textContent = color.label;
+          colorEl.appendChild(option);
+        });
+      }
     });
   }
   
   // Set the first color option as selected
   if (colorEl.options.length > 1) {
     colorEl.selectedIndex = 1;
+  }
+  
+  // Update traits if element exists
+  if (traitsEl && bloodline && window.bloodlineTraits && window.bloodlineTraits[bloodline]) {
+    traitsEl.innerHTML = '';
+    window.bloodlineTraits[bloodline].forEach(trait => {
+      const option = document.createElement('option');
+      option.value = trait;
+      option.textContent = trait;
+      traitsEl.appendChild(option);
+    });
+  }
+  
+  // Update attributes if element exists
+  if (attrsEl && bloodline && window.bloodlineAttributes && window.bloodlineAttributes[bloodline]) {
+    attrsEl.innerHTML = '';
+    window.bloodlineAttributes[bloodline].forEach(attr => {
+      const option = document.createElement('option');
+      option.value = attr;
+      option.textContent = attr;
+      attrsEl.appendChild(option);
+    });
   }
 }
 
@@ -300,6 +390,7 @@ window.onBloodlineChange = onBloodlineChange;
 window.showStatus = showStatus;
 window.zedAuth = zedAuth;
 window.zedApi = zedApi;
+window.saveData = saveData;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -307,162 +398,321 @@ document.addEventListener('DOMContentLoaded', function() {
   
   setupTabs();
   
-  // Initialize Import UI
-  setupImportUI();
+  // Set up bloodline change handlers
+  const bloodlineSelects = [
+    'horse-bloodline',
+    'breeding-horse-bloodline'
+  ];
+  
+  bloodlineSelects.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener('change', function() {
+        const colorId = id.replace('bloodline', 'color');
+        const traitsId = id.replace('bloodline', 'traits');
+        const attrsId = id.replace('bloodline', 'attributes');
+        window.onBloodlineChange(colorId, traitsId, attrsId);
+      });
+    }
+  });
+  
+  // Set up API import handlers
+  setupApiHandlers();
 });
 
-// Setup the import UI functionality
-function setupImportUI() {
-  const importContainer = document.getElementById('api-import-container');
-  if (!importContainer) {
-    console.warn("API import container not found");
-    return;
+// API Import UI setup
+function setupApiHandlers() {
+  const saveTokenBtn = document.getElementById('save-api-token-btn');
+  const testConnectionBtn = document.getElementById('test-api-connection-btn');
+  const importRacingBtn = document.getElementById('import-racing-stable-btn');
+  const importBreedingBtn = document.getElementById('import-breeding-stable-btn');
+  const importSingleBtn = document.getElementById('import-single-horse-btn');
+  
+  if (saveTokenBtn) {
+    saveTokenBtn.addEventListener('click', function() {
+      const token = document.getElementById('zed-api-token').value.trim();
+      if (token) {
+        if (window.zedAuth.setToken(token)) {
+          window.showStatus(
+            document.getElementById('test-api-connection-status'),
+            'Token saved successfully!',
+            true
+          );
+          window.ZED_API.authToken = token;
+        } else {
+          window.showStatus(
+            document.getElementById('test-api-connection-status'),
+            'Invalid token format',
+            false
+          );
+        }
+      }
+    });
   }
   
-  // Create the import UI if it doesn't exist
-  if (!document.getElementById('zed-api-token')) {
-    importContainer.innerHTML = `
-      <h2>ZED Champions API Authentication</h2>
-      <p>Enter your API token to import horses directly from ZED Champions.</p>
+  if (testConnectionBtn) {
+    testConnectionBtn.addEventListener('click', async function() {
+      const statusEl = document.getElementById('test-api-connection-status');
+      window.showStatus(statusEl, 'Testing connection...', null);
       
-      <div style="margin-top: 15px;">
-        <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px;">
-          <textarea id="zed-api-token" placeholder="Enter your ZED Champions API Bearer token" 
-            style="height: 60px; padding: 10px;" autocomplete="off"></textarea>
-          <button id="save-api-token-btn" class="button">Save Token</button>
-        </div>
+      try {
+        const result = await window.zedApi.testConnection();
+        window.showStatus(statusEl, result.message, result.success);
+      } catch (error) {
+        window.showStatus(statusEl, `Error: ${error.message}`, false);
+      }
+    });
+  }
+  
+  if (importRacingBtn) {
+    importRacingBtn.addEventListener('click', async function() {
+      const statusEl = document.getElementById('import-status');
+      if (!window.zedAuth.getToken()) {
+        window.showStatus(statusEl, 'No API token set. Please set your token first.', false);
+        return;
+      }
+      
+      window.showStatus(statusEl, 'Loading your racing stable... Please wait...', null);
+      
+      try {
+        const result = await window.zedApi.fetchAllHorses('racing');
         
-        <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
-          <button id="test-api-connection-btn" class="button">Test Connection</button>
-          <div id="test-api-connection-status" style="flex: 1;"></div>
-        </div>
-      </div>
-      
-      <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-        <h3>Import Horses</h3>
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
-          <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
-        </div>
-        <div id="import-status" style="margin-top: 10px;"></div>
+        if (!result.success) {
+          window.showStatus(statusEl, `Error: ${result.message}`, false);
+          return;
+        }
         
-        <h4>Import Single Horse</h4>
-        <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-end;">
-          <div>
-            <label for="zed-horse-id">Horse ID:</label>
-            <input type="text" id="zed-horse-id" placeholder="Enter horse ID">
-          </div>
-          <div>
-            <label for="import-horse-type">Import As:</label>
-            <select id="import-horse-type">
-              <option value="racing">Racing Horse</option>
-              <option value="breeding">Breeding Horse</option>
-            </select>
-          </div>
-          <button id="import-single-horse-btn" class="button">Import Horse</button>
-        </div>
-        <div id="single-import-status"></div>
-      </div>
-    `;
-    
-    // Set up event handlers for the import UI
-    document.getElementById('save-api-token-btn').addEventListener('click', saveApiToken);
-    document.getElementById('test-api-connection-btn').addEventListener('click', testApiConnection);
-    document.getElementById('import-racing-stable-btn').addEventListener('click', () => importStable('racing'));
-    document.getElementById('import-breeding-stable-btn').addEventListener('click', () => importStable('breeding'));
-    document.getElementById('import-single-horse-btn').addEventListener('click', importSingleHorse);
-  }
-}
-
-// API Token functions
-function saveApiToken() {
-  const token = document.getElementById('zed-api-token').value.trim();
-  if (token) {
-    if (window.zedAuth.setToken(token)) {
-      showStatus(
-        document.getElementById('test-api-connection-status'),
-        'Token saved successfully!', 
-        true
-      );
-    } else {
-      showStatus(
-        document.getElementById('test-api-connection-status'),
-        'Invalid token format', 
-        false
-      );
-    }
-  }
-}
-
-async function testApiConnection() {
-  const statusEl = document.getElementById('test-api-connection-status');
-  showStatus(statusEl, 'Testing connection...', null);
-  
-  try {
-    const result = await window.zedApi.testConnection();
-    showStatus(statusEl, result.message, result.success);
-  } catch (error) {
-    showStatus(statusEl, `Error: ${error.message}`, false);
-  }
-}
-
-// Import functions
-async function importStable(type) {
-  const statusEl = document.getElementById('import-status');
-  
-  if (!window.zedAuth.getToken()) {
-    showStatus(statusEl, 'No API token set. Please set your token first.', false);
-    return;
+        const horses = result.data;
+        
+        if (horses.length === 0) {
+          window.showStatus(statusEl, "No racing horses found to import.", false);
+          return;
+        }
+        
+        // Process the horses
+        let newCount = 0;
+        let updateCount = 0;
+        
+        horses.forEach(horseData => {
+          const existingHorse = window.horses.find(h => h.zedId === horseData.id);
+          
+          const processedHorse = {
+            id: existingHorse?.id || crypto.randomUUID(),
+            name: horseData.name,
+            bloodline: horseData.bloodline,
+            color: horseData.color || '#CCCCCC',
+            gender: horseData.gender,
+            stars: horseData.overall_rating || null,
+            speedStars: horseData.speed_rating || null,
+            sprintStars: horseData.sprint_rating || null,
+            enduranceStars: horseData.endurance_rating || null,
+            initialZedBalance: existingHorse?.initialZedBalance || 0,
+            initialMmRating: existingHorse?.initialMmRating || 1000,
+            status: 'racing',
+            zedId: horseData.id,
+            lastUpdated: new Date().toISOString()
+          };
+          
+          if (existingHorse) {
+            Object.assign(existingHorse, processedHorse);
+            updateCount++;
+          } else {
+            window.horses.push(processedHorse);
+            newCount++;
+          }
+        });
+        
+        // Save and update UI
+        window.saveData();
+        
+        if (typeof window.renderHorsesTable === 'function') {
+          window.renderHorsesTable();
+        }
+        
+        window.showStatus(
+          statusEl, 
+          `Successfully imported ${horses.length} racing horses (${newCount} new, ${updateCount} updated)`,
+          true
+        );
+        
+        // Switch to Racing tab
+        window.activateTab('racing');
+      } catch (error) {
+        console.error("Error importing racing stable:", error);
+        window.showStatus(statusEl, `Error: ${error.message}`, false);
+      }
+    });
   }
   
-  showStatus(statusEl, `Loading your ${type} stable... Please wait...`, null);
-  
-  try {
-    const result = await window.zedApi.fetchAllHorses(type);
-    
-    if (result.success && result.data.length > 0) {
-      // Process the horses (just show success for now)
-      showStatus(statusEl, `Successfully imported ${result.data.length} ${type} horses`, true);
+  if (importBreedingBtn) {
+    importBreedingBtn.addEventListener('click', async function() {
+      const statusEl = document.getElementById('import-status');
+      if (!window.zedAuth.getToken()) {
+        window.showStatus(statusEl, 'No API token set. Please set your token first.', false);
+        return;
+      }
       
-      // Switch to relevant tab
-      window.activateTab(type === 'racing' ? 'racing' : 'breeding');
-    } else {
-      showStatus(statusEl, result.success ? 'No horses found.' : result.message, !result.success);
-    }
-  } catch (error) {
-    showStatus(statusEl, `Error: ${error.message}`, false);
-  }
-}
-
-async function importSingleHorse() {
-  const horseId = document.getElementById('zed-horse-id').value.trim();
-  const importType = document.getElementById('import-horse-type').value;
-  const statusEl = document.getElementById('single-import-status');
-  
-  if (!horseId) {
-    showStatus(statusEl, 'Please enter a horse ID', false);
-    return;
-  }
-  
-  if (!window.zedAuth.getToken()) {
-    showStatus(statusEl, 'No API token set. Please set your token first.', false);
-    return;
-  }
-  
-  showStatus(statusEl, `Importing horse ${horseId}...`, null);
-  
-  try {
-    const result = await window.zedApi.fetchHorse(horseId);
-    
-    if (result.success) {
-      showStatus(statusEl, `Successfully imported horse: ${result.data.name}`, true);
+      window.showStatus(statusEl, 'Loading your breeding stable... Please wait...', null);
       
-      // Switch to relevant tab
-      window.activateTab(importType === 'racing' ? 'racing' : 'breeding');
-    } else {
-      showStatus(statusEl, `Error: ${result.message}`, false);
-    }
-  } catch (error) {
-    showStatus(statusEl, `Error: ${error.message}`, false);
+      try {
+        const result = await window.zedApi.fetchAllHorses('breeding');
+        
+        if (!result.success) {
+          window.showStatus(statusEl, `Error: ${result.message}`, false);
+          return;
+        }
+        
+        const horses = result.data;
+        
+        if (horses.length === 0) {
+          window.showStatus(statusEl, "No breeding horses found to import.", false);
+          return;
+        }
+        
+        // Process the horses
+        let newCount = 0;
+        let updateCount = 0;
+        
+        horses.forEach(horseData => {
+          const existingHorse = window.breedingHorses.find(h => h.zedId === horseData.id);
+          
+          const processedHorse = {
+            id: existingHorse?.id || crypto.randomUUID(),
+            name: horseData.name,
+            bloodline: horseData.bloodline,
+            color: horseData.color || '#CCCCCC',
+            gender: horseData.gender,
+            stars: horseData.overall_rating || null,
+            status: 'breeding',
+            zedId: horseData.id,
+            lastUpdated: new Date().toISOString()
+          };
+          
+          if (existingHorse) {
+            Object.assign(existingHorse, processedHorse);
+            updateCount++;
+          } else {
+            window.breedingHorses.push(processedHorse);
+            newCount++;
+          }
+        });
+        
+        // Save and update UI
+        window.saveData();
+        
+        if (typeof window.renderBreedingHorsesTable === 'function') {
+          window.renderBreedingHorsesTable();
+        }
+        
+        window.showStatus(
+          statusEl, 
+          `Successfully imported ${horses.length} breeding horses (${newCount} new, ${updateCount} updated)`,
+          true
+        );
+        
+        // Switch to Breeding tab
+        window.activateTab('breeding');
+      } catch (error) {
+        console.error("Error importing breeding stable:", error);
+        window.showStatus(statusEl, `Error: ${error.message}`, false);
+      }
+    });
+  }
+  
+  if (importSingleBtn) {
+    importSingleBtn.addEventListener('click', async function() {
+      const horseId = document.getElementById('zed-horse-id').value.trim();
+      const importType = document.getElementById('import-horse-type').value;
+      const statusEl = document.getElementById('single-import-status');
+      
+      if (!horseId) {
+        window.showStatus(statusEl, 'Please enter a horse ID', false);
+        return;
+      }
+      
+      if (!window.zedAuth.getToken()) {
+        window.showStatus(statusEl, 'No API token set. Please set your token first.', false);
+        return;
+      }
+      
+      window.showStatus(statusEl, `Importing horse ${horseId}...`, null);
+      
+      try {
+        const result = await window.zedApi.fetchHorse(horseId);
+        
+        if (!result.success) {
+          window.showStatus(statusEl, `Error: ${result.message}`, false);
+          return;
+        }
+        
+        const horseData = result.data;
+        
+        if (importType === 'racing') {
+          const existingHorse = window.horses.find(h => h.zedId === horseData.id);
+          
+          const processedHorse = {
+            id: existingHorse?.id || crypto.randomUUID(),
+            name: horseData.name,
+            bloodline: horseData.bloodline,
+            color: horseData.color || '#CCCCCC',
+            gender: horseData.gender,
+            stars: horseData.overall_rating || null,
+            speedStars: horseData.speed_rating || null,
+            sprintStars: horseData.sprint_rating || null,
+            enduranceStars: horseData.endurance_rating || null,
+            initialZedBalance: existingHorse?.initialZedBalance || 0,
+            initialMmRating: existingHorse?.initialMmRating || 1000,
+            status: 'racing',
+            zedId: horseData.id,
+            lastUpdated: new Date().toISOString()
+          };
+          
+          if (existingHorse) {
+            Object.assign(existingHorse, processedHorse);
+            window.showStatus(statusEl, `Updated horse: ${horseData.name}`, true);
+          } else {
+            window.horses.push(processedHorse);
+            window.showStatus(statusEl, `Imported new horse: ${horseData.name}`, true);
+          }
+          
+          window.saveData();
+          if (typeof window.renderHorsesTable === 'function') {
+            window.renderHorsesTable();
+          }
+          window.activateTab('racing');
+        } else {
+          const existingHorse = window.breedingHorses.find(h => h.zedId === horseData.id);
+          
+          const processedHorse = {
+            id: existingHorse?.id || crypto.randomUUID(),
+            name: horseData.name,
+            bloodline: horseData.bloodline,
+            color: horseData.color || '#CCCCCC',
+            gender: horseData.gender,
+            stars: horseData.overall_rating || null,
+            status: 'breeding',
+            zedId: horseData.id,
+            lastUpdated: new Date().toISOString()
+          };
+          
+          if (existingHorse) {
+            Object.assign(existingHorse, processedHorse);
+            window.showStatus(statusEl, `Updated horse: ${horseData.name}`, true);
+          } else {
+            window.breedingHorses.push(processedHorse);
+            window.showStatus(statusEl, `Imported new horse: ${horseData.name}`, true);
+          }
+          
+          window.saveData();
+          if (typeof window.renderBreedingHorsesTable === 'function') {
+            window.renderBreedingHorsesTable();
+          }
+          window.activateTab('breeding');
+        }
+      } catch (error) {
+        console.error("Error importing single horse:", error);
+        window.showStatus(statusEl, `Error: ${error.message}`, false);
+      }
+    });
   }
 }
