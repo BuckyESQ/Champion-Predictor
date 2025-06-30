@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Page</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.4;
+        }
+        h1 { color: #3498db; }
+        .result {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #2e86c1;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ZED Champions Tracker Debug Page</h1>
+    <p>Use the buttons below to test various aspects of your application:</p>
+    
+    <div>
+        <button id="check-files">Check Files</button>
+        <button id="test-api">Test API</button>
+        <button id="check-scripts">Check Scripts</button>
+    </div>
+    
+    <div id="result" class="result">Results will appear here...</div>
+    
+    <script>
+        document.getElementById('check-files').addEventListener('click', async function() {
+            const result = document.getElementById('result');
+            result.innerHTML = "Checking files...";
+            
+            try {
+                // Test different files
+                const files = ['app.js', 'index.html', 'champion-predictor.html'];
+                const results = [];
+                
+                for (const file of files) {
+                    try {
+                        const response = await fetch(file);
+                        results.push(`${file}: ${response.ok ? '✅' : '❌'} (${response.status})`);
+                        
+                        if (response.ok && file === 'app.js') {
+                            const text = await response.text();
+                            results.push(`- app.js size: ${text.length} bytes`);
+                            results.push(`- Contains activateTab: ${text.includes('activateTab') ? '✅' : '❌'}`);
+                            results.push(`- Contains ZedAuthManager: ${text.includes('ZedAuthManager') ? '✅' : '❌'}`);
+                        }
+                    } catch (err) {
+                        results.push(`${file}: ❌ (${err.message})`);
+                    }
+                }
+                
+                result.innerHTML = results.join('\n');
+            } catch (error) {
+                result.innerHTML = `Error: ${error.message}`;
+            }
+        });
+        
+        document.getElementById('test-api').addEventListener('click', async function() {
+            const result = document.getElementById('result');
+            result.innerHTML = "Testing API...";
+            
+            try {
+                // Test API endpoints
+                const response = await fetch('/api/zed/test', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const status = response.status;
+                let data;
+                
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = await response.text();
+                }
+                
+                result.innerHTML = `API Status: ${status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                result.innerHTML = `API Error: ${error.message}`;
+            }
+        });
+        
+        document.getElementById('check-scripts').addEventListener('click', function() {
+            const result = document.getElementById('result');
+            result.innerHTML = "Checking global script objects...";
+            
+            const checks = [
+                `window.activateTab: ${typeof window.activateTab === 'function' ? '✅' : '❌'}`,
+                `window.zedAuth: ${typeof window.zedAuth === 'object' ? '✅' : '❌'}`,
+                `window.zedApi: ${typeof window.zedApi === 'object' ? '✅' : '❌'}`,
+                `window.horses: ${Array.isArray(window.horses) ? '✅' : '❌'}`
+            ];
+            
+            result.innerHTML = checks.join('\n');
+        });
+    </script>
+</body>
+</html>
