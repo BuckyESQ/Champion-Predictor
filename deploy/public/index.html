@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StableFields ZED Champions Tracker</title>
+    <meta name="description" content="Track your ZED Champions horses, races, and breeding operations with this comprehensive management tool.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Theme Colors and Variables */
+        :root {
+            --primary-color: #2e86c1;
+            --secondary-color: #3498db;
+            --accent-color: #0EB3E3;
+            --background-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --muted-text: #8e9ea9;
+            --border-color: #444;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --warning-color: #FFC107;
+            --tab-bg: #2c3e50;
+            --tab-active-bg: #34495e;
+            --section-bg: rgba(45, 52, 54, 0.8);
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Layout Components */
+        .section {
+            background-color: var(--section-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid #3a3a3a;
+        }
+        
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        /* Tab Navigation */
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            background-color: var(--tab-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.2s;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .tab-button:hover {
+            background-color: var(--tab-active-bg);
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Form Elements */
+        input, select, textarea {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 12px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(14, 179, 227, 0.15);
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted-text);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background-color: rgba(0,0,0,0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        th {
+            text-align: left;
+            background-color: var(--tab-bg);
+            color: var(--secondary-color);
+            padding: 12px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        /* Welcome Banner */
+        #welcome-banner {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(14, 179, 227, 0.1) 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(46, 134, 193, 0.3);
+        }
+        
+        #welcome-banner h2 {
+            margin-top: 0;
+        }
+        
+        #welcome-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        #welcome-banner a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Import Status */
+        .import-status {
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        /* Emergency Reset */
+        #emergency-reset-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .tab-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-banner" class="section">
+        <h2>Welcome to StableFields ZED Champions Tracker</h2>
+        <p>This tool helps you track your ZED Champions horses, races, breeding, and more. Get started by entering your data or importing directly from the ZED Champions API.</p>
+        <p><a href="#tab-content-import" onclick="activateTab('import'); return false;">Go to Import Tab</a> to quickly import your horses from ZED Champions.</p>
+    </div>
+
+    <h1>ZED Champions Tracker</h1>
+    
+    <div id="tab-buttons" class="tab-buttons">
+        <button class="tab-button" data-tab="racing">Racing</button>
+        <button class="tab-button" data-tab="breeding">Breeding</button>
+        <button class="tab-button" data-tab="transactions">Transactions</button>
+        <button class="tab-button" data-tab="import">Import</button>
+        <button class="tab-button" data-tab="races">Races</button> <!-- New Races tab -->
+    </div>
+    
+    <div id="tab-content">
+        <!-- Racing Tab Content -->
+        <div id="tab-content-racing" class="tab-content">
+            <div class="section">
+                <h2>Racing Horses</h2>
+                <p>Manage your racing horses and track their performance.</p>
+                
+                <table id="horses-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Bloodline</th>
+                            <th>Gender</th>
+                            <th>Rating ⭐</th>
+                            <th>ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="horses-table-body">
+                        <!-- Racing horses will be displayed here -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No racing horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Breeding Tab Content -->
+        <div id="tab-content-breeding" class="tab-content">
+            <div class="section">
+                <h2>Breeding Horses</h2>
+                <p>Manage your breeding horses and track breeding operations.</p>
+                
+                <table id="breeding-horses-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Bloodline</th>
+                            <th>Gender</th>
+                            <th>Rating ⭐</th>
+                            <th>ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breeding-horses-table-body">
+                        <!-- Breeding horses will be displayed here -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No breeding horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Transactions Tab Content -->
+        <div id="tab-content-transactions" class="tab-content">
+            <div class="section">
+                <h2>Transactions</h2>
+                <p>Track your financial transactions related to horses.</p>
+                
+                <table id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Horse</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body">
+                        <!-- Transactions will be displayed here -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted-text);">
+                                No transactions recorded yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Import Tab Content -->
+        <div id="tab-content-import" class="tab-content">
+            <div id="api-import-container" class="section">
+                <h2>ZED Champions API Authentication</h2>
+                <p>Enter your API token to import horses directly from ZED Champions.</p>
+                
+                <div style="margin-top: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px;">
+                        <textarea id="zed-api-token" placeholder="Enter your ZED Champions API Bearer token" 
+                            style="height: 60px; padding: 10px;"></textarea>
+                        <button id="save-api-token-btn" class="button">Save Token</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
+                        <button id="test-api-connection-btn" class="button">Test Connection</button>
+                        <div id="test-api-connection-status" style="flex: 1;"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <h3>Import Horses</h3>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
+                        <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
+                    </div>
+                    <div id="import-status" class="import-status"></div>
+                    
+                    <h4>Import Single Horse</h4>
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
+                        <div>
+                            <label for="zed-horse-id">Horse ID or URL:</label>
+                            <input type="text" id="zed-horse-id" placeholder="Enter horse ID or full URL from ZED Champions">
+                            <p style="margin-top: 5px; font-size: 12px; color: #8e9ea9;">
+                                Example formats:
+                                <br>- Full URL: https://app.zedchampions.com/horse/96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+                                <br>- ID only: 96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-end;">
+                            <div>
+                                <label for="import-horse-type">Import As:</label>
+                                <select id="import-horse-type">
+                                    <option value="racing">Racing Horse</option>
+                                    <option value="breeding">Breeding Horse</option>
+                                </select>
+                            </div>
+                            <button id="import-single-horse-btn" class="button">Import Horse</button>
+                            <button id="import-horse-with-races-btn" class="button">Import Horse + Race History</button>
+                        </div>
+                        <div id="single-import-status" class="import-status"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h3>Debug Tools</h3>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="debug-check-token" class="button">Check Token</button>
+                    <button id="debug-test-api" class="button">Test API</button>
+                    <button id="debug-log-storage" class="button">Log Storage</button>
+                </div>
+                <div id="debug-output" class="import-status" style="background-color: #2c3e50; font-family: monospace; white-space: pre-wrap;"></div>
+            </div>
+        </div>
+        
+        <!-- Races Tab Content - New Section -->
+        <div id="tab-content-races" class="tab-content">
+            <div class="section">
+                <h2>Race History</h2>
+                <p>View detailed race history for selected horse.</p>
+                
+                <div id="horse-selector" class="form-grid">
+                  <div>
+                    <label for="race-history-horse">Select Horse:</label>
+                    <select id="race-history-horse">
+                      <option value="">-- Select Horse --</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <table id="race-history-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Position</th>
+                      <th>Time</th>
+                      <th>Distance</th>
+                      <th>Class</th>
+                      <th>Prize</th>
+                    </tr>
+                  </thead>
+                  <tbody id="race-history-table-body">
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        Select a horse to view race history.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+
+        <!-- Augments Tab Content - New Section -->
+        <div id="tab-content-augments" class="tab-content">
+          <div class="section">
+            <h2>Augment Performance</h2>
+            <p>View and analyze augment combinations and their performance.</p>
+            
+            <div id="horse-selector" class="form-grid">
+              <div>
+                <label for="augment-horse">Select Horse:</label>
+                <select id="augment-horse">
+                  <option value="">-- Select Horse --</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="augment-chart-container" style="height: 400px; margin-top: 20px;">
+              <canvas id="augment-chart"></canvas>
+            </div>
+            
+            <table id="augment-combinations-table" style="margin-top: 20px;">
+              <thead>
+                <tr>
+                  <th>CPU Slot</th>
+                  <th>RAM Slot</th>
+                  <th>Hydraulic Slot</th>
+                  <th>Avg Position</th>
+                  <th>Win %</th>
+                  <th>Races</th>
+                </tr>
+              </thead>
+              <tbody id="augment-combinations-tbody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                    Select a horse to view augment combinations.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+    
+    <!-- Emergency reset button -->
+    <button id="emergency-reset-btn">
+        Reset App Data
+    </button>
+    
+    <!-- Script References -->
+    <script src="app.js"></script>
+
+    <script>
+        // Emergency reset functionality
+        document.getElementById('emergency-reset-btn').addEventListener('click', function() {
+            if (confirm('This will reset ALL application data. Continue?')) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        });
+        
+        // Table rendering
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render racing horses table
+            function renderRacingHorses() {
+                const tbody = document.getElementById('horses-table-body');
+                if (!tbody) return;
+                
+                const horses = window.horses || [];
+                
+                if (horses.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No racing horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort horses by name
+                const sortedHorses = [...horses].sort((a, b) => a.name.localeCompare(b.name));
+                
+                tbody.innerHTML = '';
+                sortedHorses.forEach(horse => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${horse.name}</td>
+                        <td>${horse.bloodline || 'Unknown'}</td>
+                        <td>${horse.gender || 'Unknown'}</td>
+                        <td>${horse.stars || '0'} ⭐</td>
+                        <td>${horse.zedId || 'N/A'}</td>
+                        <td>
+                            <button class="button" onclick="alert('View details for ${horse.name}')">View</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render breeding horses table
+            function renderBreedingHorses() {
+                const tbody = document.getElementById('breeding-horses-table-body');
+                if (!tbody) return;
+                
+                const horses = window.breedingHorses || [];
+                
+                if (horses.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No breeding horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort horses by name
+                const sortedHorses = [...horses].sort((a, b) => a.name.localeCompare(b.name));
+                
+                tbody.innerHTML = '';
+                sortedHorses.forEach(horse => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${horse.name}</td>
+                        <td>${horse.bloodline || 'Unknown'}</td>
+                        <td>${horse.gender || 'Unknown'}</td>
+                        <td>${horse.stars || '0'} ⭐</td>
+                        <td>${horse.zedId || 'N/A'}</td>
+                        <td>
+                            <button class="button" onclick="alert('View details for ${horse.name}')">View</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render transactions table
+            function renderTransactions() {
+                const tbody = document.getElementById('transactions-table-body');
+                if (!tbody) return;
+                
+                const transactions = window.transactions || [];
+                
+                if (transactions.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted-text);">
+                                No transactions recorded yet.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort transactions by date (newest first)
+                const sortedTransactions = [...transactions].sort((a, b) => 
+                    new Date(b.date) - new Date(a.date));
+                
+                tbody.innerHTML = '';
+                sortedTransactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.type}</td>
+                        <td>${transaction.horseName || 'N/A'}</td>
+                        <td>$${transaction.amount.toFixed(2)}</td>
+                        <td>
+                            <button class="button" onclick="alert('Edit transaction')">Edit</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render race history table
+            function renderRaceHistory() {
+                const tbody = document.getElementById('race-history-table-body');
+                const horseSelect = document.getElementById('race-history-horse');
+                if (!tbody || !horseSelect) return;
+                
+                const horseId = horseSelect.value;
+                const raceHistory = window.raceHistories ? window.raceHistories[horseId] : [];
+                
+                if (raceHistory && raceHistory.length > 0) {
+                    // Sort race history by date (newest first)
+                    raceHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+                
+                tbody.innerHTML = '';
+                if (raceHistory.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No race history found for this horse.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    raceHistory.forEach(race => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(race.date).toLocaleDateString()}</td>
+                            <td>${race.position || 'N/A'}</td>
+                            <td>${race.time || 'N/A'}</td>
+                            <td>${race.distance || 'N/A'}</td>
+                            <td>${race.class || 'N/A'}</td>
+                            <td>$${race.prize ? race.prize.toFixed(2) : 'N/A'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            }
+            
+            // Render augment data
+            function renderAugmentData() {
+                const horseSelect = document.getElementById('augment-horse');
+                const horseId = horseSelect.value;
+                
+                if (!horseId) return;
+                
+                // Find the horse
+                const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+                const horse = allHorses.find(h => h.id === horseId);
+                
+                if (!horse || !horse.races || horse.races.length === 0) {
+                  document.getElementById('augment-combinations-tbody').innerHTML = `
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        No race history with augment data found for this horse.
+                      </td>
+                    </tr>
+                  `;
+                  
+                  // Destroy existing chart
+                  const existingChart = Chart.getChart('augment-chart');
+                  if (existingChart) {
+                    existingChart.destroy();
+                  }
+                  
+                  return;
+                }
+                
+                // Process augment combinations
+                const combinations = processAugmentCombinations(horse.races);
+                
+                // Render the table
+                renderAugmentTable(combinations);
+                
+                // Render the chart
+                renderAugmentChart(combinations);
+              }
+              
+              // Function to process augment combinations
+              function processAugmentCombinations(races) {
+                // Group races by augment combination
+                const combinationMap = {};
+                
+                races.forEach(race => {
+                  if (!race.augments) return;
+                  
+                  // Create key from augments
+                  const cpuAugment = race.augments[0] || '-';
+                  const ramAugment = race.augments[1] || '-';
+                  const hydraulicAugment = race.augments[2] || '-';
+                  const key = `${cpuAugment}|${ramAugment}|${hydraulicAugment}`;
+                  
+                  if (!combinationMap[key]) {
+                    combinationMap[key] = {
+                      cpu: cpuAugment,
+                      ram: ramAugment,
+                      hydraulic: hydraulicAugment,
+                      positions: [],
+                      races: 0,
+                      wins: 0
+                    };
+                  }
+                  
+                  combinationMap[key].positions.push(parseInt(race.position));
+                  combinationMap[key].races++;
+                  if (parseInt(race.position) === 1) {
+                    combinationMap[key].wins++;
+                  }
+                });
+                
+                // Calculate averages and convert to array
+                return Object.values(combinationMap).map(combo => {
+                  const avgPosition = combo.positions.reduce((sum, pos) => sum + pos, 0) / combo.positions.length;
+                  const winPercentage = (combo.wins / combo.races) * 100;
+                  
+                  return {
+                    ...combo,
+                    avgPosition: avgPosition.toFixed(2),
+                    winPercentage: winPercentage.toFixed(1)
+                  };
+                }).sort((a, b) => a.avgPosition - b.avgPosition);
+              }
+              
+              // Function to render the augment table
+              function renderAugmentTable(combinations) {
+                const tbody = document.getElementById('augment-combinations-tbody');
+                if (!tbody) return;
+                
+                if (combinations.length === 0) {
+                  tbody.innerHTML = `
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        No augment combinations found.
+                      </td>
+                    </tr>
+                  `;
+                  return;
+                }
+                
+                tbody.innerHTML = '';
+                combinations.forEach(combo => {
+                  const row = document.createElement('tr');
+                  
+                  // Determine CSS classes for augments
+                  const getCssClass = (augment) => {
+                    if (!augment || augment === '-') return 'augment-empty';
+                    if (augment.includes('GX')) return 'augment-gx';
+                    if (augment.includes('Crimson')) return 'augment-crimson';
+                    if (augment.includes('Midnight')) return 'augment-midnight';
+                    if (augment.includes('Darklight')) return 'augment-darklight';
+                    if (augment.includes('Void')) return 'augment-void';
+                    return '';
+                  };
+                  
+                  row.innerHTML = `
+                    <td><span class="${getCssClass(combo.cpu)}">${combo.cpu}</span></td>
+                    <td><span class="${getCssClass(combo.ram)}">${combo.ram}</span></td>
+                    <td><span class="${getCssClass(combo.hydraulic)}">${combo.hydraulic}</span></td>
+                    <td>${combo.avgPosition}</td>
+                    <td>${combo.winPercentage}%</td>
+                    <td>${combo.races}</td>
+                  `;
+                  
+                  tbody.appendChild(row);
+                });
+              }
+              
+              // Function to render the augment chart
+              function renderAugmentChart(combinations) {
+                // Destroy existing chart
+                const existingChart = Chart.getChart('augment-chart');
+                if (existingChart) {
+                  existingChart.destroy();
+                }
+                
+                if (combinations.length === 0) return;
+                
+                // Prepare chart data
+                const chartData = {
+                  labels: combinations.map(c => {
+                    let label = '';
+                    if (c.cpu && c.cpu !== '-') label += c.cpu;
+                    if (c.ram && c.ram !== '-') label += label ? ` + ${c.ram}` : c.ram;
+                    if (c.hydraulic && c.hydraulic !== '-') label += label ? ` + ${c.hydraulic}` : c.hydraulic;
+                    return label || 'No Augments';
+                  }),
+                  datasets: [
+                    {
+                      label: 'Average Position',
+                      data: combinations.map(c => parseFloat(c.avgPosition)),
+                      backgroundColor: combinations.map(c => {
+                        // Lower (better) positions get greener colors
+                        const avgPos = parseFloat(c.avgPosition);
+                        if (avgPos <= 2) return 'rgba(76, 175, 80, 0.8)'; // Green
+                        if (avgPos <= 3) return 'rgba(139, 195, 74, 0.8)'; // Light green
+                        if (avgPos <= 4) return 'rgba(255, 235, 59, 0.8)'; // Yellow
+                        if (avgPos <= 5) return 'rgba(255, 152, 0, 0.8)'; // Orange
+                        return 'rgba(244, 67, 54, 0.8)'; // Red
+                      }),
+                      borderWidth: 1
+                    },
+                    {
+                      label: 'Races',
+                      data: combinations.map(c => c.races),
+                      type: 'line',
+                      fill: false,
+                      borderColor: 'rgba(54, 162, 235, 1)',
+                      tension: 0.1,
+                      yAxisID: 'y1'
+                    }
+                  ]
+                };
+                
+                // Create the chart
+                const ctx = document.getElementById('augment-chart').getContext('2d');
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: chartData,
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bar chart
+                    scales: {
+                      y: {
+                        beginAtZero: false
+                      },
+                      y1: {
+                        position: 'right',
+                        grid: {
+                          drawOnChartArea: false
+                        }
+                      }
+                    },
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            const datasetLabel = context.dataset.label || '';
+                            const value = context.raw;
+                            if (datasetLabel === 'Average Position') {
+                              return `Avg Position: ${value}`;
+                            } else if (datasetLabel === 'Races') {
+                              return `Races: ${value}`;
+                            }
+                            return `${datasetLabel}: ${value}`;
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+              }
+        });
+        
+        document.getElementById('debug-check-token').addEventListener('click', function() {
+            const token = localStorage.getItem('zedAuthToken');
+            const output = document.getElementById('debug-output');
+            
+            if (!token) {
+                output.innerHTML = 'No token found in localStorage.';
+                return;
+            }
+            
+            // Show token info without revealing the full token
+            output.innerHTML = `Token found: ${token.substring(0, 10)}...${token.substring(token.length - 5)}
+Length: ${token.length} characters
+Format: ${token.includes('.') ? 'Looks like JWT format' : 'Not JWT format'}`;
+        });
+        
+        document.getElementById('debug-test-api').addEventListener('click', async function() {
+            const output = document.getElementById('debug-output');
+            output.innerHTML = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                output.innerHTML = `API test endpoint response:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.innerHTML = `API test error: ${error.message}`;
+            }
+        });
+        
+        document.getElementById('debug-log-storage').addEventListener('click', function() {
+            const output = document.getElementById('debug-output');
+            output.innerHTML = 'Current localStorage contents:';
+            
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                try {
+                    if (key === 'zedAuthToken') {
+                        const token = localStorage.getItem(key);
+                        storage[key] = `${token.substring(0, 10)}...${token.substring(token.length - 5)} (${token.length} chars)`;
+                    } else {
+                        storage[key] = JSON.parse(localStorage.getItem(key));
+                    }
+                } catch (e) {
+                    storage[key] = localStorage.getItem(key);
+                }
+            }
+            
+            output.innerHTML += '\n' + JSON.stringify(storage, null, 2);
+        });
+    </script>
+
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <script>
+      // Add Augment Chart functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        // Create Augment Chart tab
+        const tabButtons = document.getElementById('tab-buttons');
+        const tabContent = document.getElementById('tab-content');
+        
+        if (tabButtons && tabContent) {
+          // Add the augment tab button
+          const augmentTabButton = document.createElement('button');
+          augmentTabButton.className = 'tab-button';
+          augmentTabButton.setAttribute('data-tab', 'augments');
+          augmentTabButton.textContent = 'Augments';
+          tabButtons.appendChild(augmentTabButton);
+          
+          // Add the augment tab content container
+          const augmentTabContent = document.createElement('div');
+          augmentTabContent.id = 'tab-content-augments';
+          augmentTabContent.className = 'tab-content';
+          
+          augmentTabContent.innerHTML = `
+            <div class="section">
+              <h2>Augment Performance</h2>
+              <p>View and analyze augment combinations and their performance.</p>
+              
+              <div id="horse-selector" class="form-grid">
+                <div>
+                  <label for="augment-horse">Select Horse:</label>
+                  <select id="augment-horse">
+                    <option value="">-- Select Horse --</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div id="augment-chart-container" style="height: 400px; margin-top: 20px;">
+                <canvas id="augment-chart"></canvas>
+              </div>
+              
+              <table id="augment-combinations-table" style="margin-top: 20px;">
+                <thead>
+                  <tr>
+                    <th>CPU Slot</th>
+                    <th>RAM Slot</th>
+                    <th>Hydraulic Slot</th>
+                    <th>Avg Position</th>
+                    <th>Win %</th>
+                    <th>Races</th>
+                  </tr>
+                </thead>
+                <tbody id="augment-combinations-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                      Select a horse to view augment combinations.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+          
+          tabContent.appendChild(augmentTabContent);
+          
+          // Add event listener for the augment tab
+          augmentTabButton.addEventListener('click', function() {
+            const horseSelect = document.getElementById('augment-horse');
+            updateHorseSelectors(horseSelect);
+            activateTab('augments');
+          });
+          
+          // Add event listener for horse selection
+          const horseSelect = document.getElementById('augment-horse');
+          if (horseSelect) {
+            horseSelect.addEventListener('change', renderAugmentData);
+          }
+        }
+      });
+      
+      // Function to populate horse selectors
+      function updateHorseSelectors(selector) {
+        if (!selector) return;
+        
+        // Clear existing options except the first one
+        while (selector.options.length > 1) {
+          selector.remove(1);
+        }
+        
+        // Get all horses (combine racing and breeding)
+        const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+        
+        // Sort by name
+        allHorses.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Add options
+        allHorses.forEach(horse => {
+          const option = document.createElement('option');
+          option.value = horse.id;
+          option.textContent = `${horse.name} (${horse.bloodline || 'Unknown'})`;
+          selector.appendChild(option);
+        });
+      }
+      
+      // Function to render augment data
+      function renderAugmentData() {
+        const horseSelect = document.getElementById('augment-horse');
+        const horseId = horseSelect.value;
+        
+        if (!horseId) return;
+        
+        // Find the horse
+        const allHorses = [...(window.horses || []), ...(window.breedingHorses || [])];
+        const horse = allHorses.find(h => h.id === horseId);
+        
+        if (!horse || !horse.races || horse.races.length === 0) {
+          document.getElementById('augment-combinations-tbody').innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                No race history with augment data found for this horse.
+              </td>
+            </tr>
+          `;
+          
+          // Destroy existing chart
+          const existingChart = Chart.getChart('augment-chart');
+          if (existingChart) {
+            existingChart.destroy();
+          }
+          
+          return;
+        }
+        
+        // Process augment combinations
+        const combinations = processAugmentCombinations(horse.races);
+        
+        // Render the table
+        renderAugmentTable(combinations);
+        
+        // Render the chart
+        renderAugmentChart(combinations);
+      }
+      
+      // Function to process augment combinations
+      function processAugmentCombinations(races) {
+        // Group races by augment combination
+        const combinationMap = {};
+        
+        races.forEach(race => {
+          if (!race.augments) return;
+          
+          // Create key from augments
+          const cpuAugment = race.augments[0] || '-';
+          const ramAugment = race.augments[1] || '-';
+          const hydraulicAugment = race.augments[2] || '-';
+          const key = `${cpuAugment}|${ramAugment}|${hydraulicAugment}`;
+          
+          if (!combinationMap[key]) {
+            combinationMap[key] = {
+              cpu: cpuAugment,
+              ram: ramAugment,
+              hydraulic: hydraulicAugment,
+              positions: [],
+              races: 0,
+              wins: 0
+            };
+          }
+          
+          combinationMap[key].positions.push(parseInt(race.position));
+          combinationMap[key].races++;
+          if (parseInt(race.position) === 1) {
+            combinationMap[key].wins++;
+          }
+        });
+        
+        // Calculate averages and convert to array
+        return Object.values(combinationMap).map(combo => {
+          const avgPosition = combo.positions.reduce((sum, pos) => sum + pos, 0) / combo.positions.length;
+          const winPercentage = (combo.wins / combo.races) * 100;
+          
+          return {
+            ...combo,
+            avgPosition: avgPosition.toFixed(2),
+            winPercentage: winPercentage.toFixed(1)
+          };
+        }).sort((a, b) => a.avgPosition - b.avgPosition);
+      }
+      
+      // Function to render the augment table
+      function renderAugmentTable(combinations) {
+        const tbody = document.getElementById('augment-combinations-tbody');
+        if (!tbody) return;
+        
+        if (combinations.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                No augment combinations found.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        tbody.innerHTML = '';
+        combinations.forEach(combo => {
+          const row = document.createElement('tr');
+          
+          // Determine CSS classes for augments
+          const getCssClass = (augment) => {
+            if (!augment || augment === '-') return 'augment-empty';
+            if (augment.includes('GX')) return 'augment-gx';
+            if (augment.includes('Crimson')) return 'augment-crimson';
+            if (augment.includes('Midnight')) return 'augment-midnight';
+            if (augment.includes('Darklight')) return 'augment-darklight';
+            if (augment.includes('Void')) return 'augment-void';
+            return '';
+          };
+          
+          row.innerHTML = `
+            <td><span class="${getCssClass(combo.cpu)}">${combo.cpu}</span></td>
+            <td><span class="${getCssClass(combo.ram)}">${combo.ram}</span></td>
+            <td><span class="${getCssClass(combo.hydraulic)}">${combo.hydraulic}</span></td>
+            <td>${combo.avgPosition}</td>
+            <td>${combo.winPercentage}%</td>
+            <td>${combo.races}</td>
+          `;
+          
+          tbody.appendChild(row);
+        });
+      }
+      
+      // Function to render the augment chart
+      function renderAugmentChart(combinations) {
+        // Destroy existing chart
+        const existingChart = Chart.getChart('augment-chart');
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        
+        if (combinations.length === 0) return;
+        
+        // Prepare chart data
+        const chartData = {
+          labels: combinations.map(c => {
+            let label = '';
+            if (c.cpu && c.cpu !== '-') label += c.cpu;
+            if (c.ram && c.ram !== '-') label += label ? ` + ${c.ram}` : c.ram;
+            if (c.hydraulic && c.hydraulic !== '-') label += label ? ` + ${c.hydraulic}` : c.hydraulic;
+            return label || 'No Augments';
+          }),
+          datasets: [
+            {
+              label: 'Average Position',
+              data: combinations.map(c => parseFloat(c.avgPosition)),
+              backgroundColor: combinations.map(c => {
+                // Lower (better) positions get greener colors
+                const avgPos = parseFloat(c.avgPosition);
+                if (avgPos <= 2) return 'rgba(76, 175, 80, 0.8)'; // Green
+                if (avgPos <= 3) return 'rgba(139, 195, 74, 0.8)'; // Light green
+                if (avgPos <= 4) return 'rgba(255, 235, 59, 0.8)'; // Yellow
+                if (avgPos <= 5) return 'rgba(255, 152, 0, 0.8)'; // Orange
+                return 'rgba(244, 67, 54, 0.8)'; // Red
+              }),
+              borderWidth: 1
+            },
+            {
+              label: 'Races',
+              data: combinations.map(c => c.races),
+              type: 'line',
+              fill: false,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              tension: 0.1,
+              yAxisID: 'y1'
+            }
+          ]
+        };
+        
+        // Create the chart
+        const ctx = document.getElementById('augment-chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: chartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y', // Horizontal bar chart
+            scales: {
+              y: {
+                beginAtZero: false
+              },
+              y1: {
+                position: 'right',
+                grid: {
+                  drawOnChartArea: false
+                }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const datasetLabel = context.dataset.label || '';
+                    const value = context.raw;
+                    if (datasetLabel === 'Average Position') {
+                      return `Avg Position: ${value}`;
+                    } else if (datasetLabel === 'Races') {
+                      return `Races: ${value}`;
+                    }
+                    return `${datasetLabel}: ${value}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    </script>
+
+    <style>
+      /* Augment styles */
+      .augment-empty {
+        color: var(--muted-text);
+        font-style: italic;
+      }
+      .augment-gx {
+        color: #4CAF50;
+        font-weight: bold;
+      }
+      .augment-crimson {
+        color: #F44336;
+        font-weight: bold;
+      }
+      .augment-midnight {
+        color: #3F51B5;
+        font-weight: bold;
+      }
+      .augment-darklight {
+        color: #FF9800;
+        font-weight: bold;
+      }
+      .augment-void {
+        color: #9C27B0;
+        font-weight: bold;
+      }
+    </style>
+</body>
+</html>
