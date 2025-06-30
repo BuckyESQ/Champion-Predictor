@@ -4,7 +4,7 @@ export default function Home() {
 
 export async function getServerSideProps({ res }) {
   if (res) {
-    res.setHeader("Location", "/index.html");
+    res.setHeader('Location', '/index.html');
     res.statusCode = 302;
     res.end();
   }
