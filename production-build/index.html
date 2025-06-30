@@ -277,6 +277,7 @@
         <button class="tab-button" data-tab="breeding">Breeding</button>
         <button class="tab-button" data-tab="transactions">Transactions</button>
         <button class="tab-button" data-tab="import">Import</button>
+        <button class="tab-button" data-tab="races">Races</button> <!-- New Races tab -->
     </div>
     
     <div id="tab-content">
@@ -434,6 +435,43 @@
                 <div id="debug-output" class="import-status" style="background-color: #2c3e50; font-family: monospace; white-space: pre-wrap;"></div>
             </div>
         </div>
+        
+        <!-- Races Tab Content - New Section -->
+        <div id="tab-content-races" class="tab-content">
+            <div class="section">
+                <h2>Race History</h2>
+                <p>View detailed race history for selected horse.</p>
+                
+                <div id="horse-selector" class="form-grid">
+                  <div>
+                    <label for="race-history-horse">Select Horse:</label>
+                    <select id="race-history-horse">
+                      <option value="">-- Select Horse --</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <table id="race-history-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Position</th>
+                      <th>Time</th>
+                      <th>Distance</th>
+                      <th>Class</th>
+                      <th>Prize</th>
+                    </tr>
+                  </thead>
+                  <tbody id="race-history-table-body">
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                        Select a horse to view race history.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+        </div>
     </div>
     
     <!-- Emergency reset button -->
@@ -569,10 +607,50 @@
                 });
             }
             
+            // Render race history table
+            function renderRaceHistory() {
+                const tbody = document.getElementById('race-history-table-body');
+                const horseSelect = document.getElementById('race-history-horse');
+                if (!tbody || !horseSelect) return;
+                
+                const horseId = horseSelect.value;
+                const raceHistory = window.raceHistories ? window.raceHistories[horseId] : [];
+                
+                if (raceHistory && raceHistory.length > 0) {
+                    // Sort race history by date (newest first)
+                    raceHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+                
+                tbody.innerHTML = '';
+                if (raceHistory.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No race history found for this horse.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    raceHistory.forEach(race => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(race.date).toLocaleDateString()}</td>
+                            <td>${race.position || 'N/A'}</td>
+                            <td>${race.time || 'N/A'}</td>
+                            <td>${race.distance || 'N/A'}</td>
+                            <td>${race.class || 'N/A'}</td>
+                            <td>$${race.prize ? race.prize.toFixed(2) : 'N/A'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            }
+            
             // Render all tables and set up auto-update
             renderRacingHorses();
             renderBreedingHorses();
             renderTransactions();
+            renderRaceHistory(); // Initial render for race history
             
             // Update tables when tab is changed
             const originalActivateTab = window.activateTab;
@@ -583,6 +661,7 @@
                 if (tabId === 'racing') renderRacingHorses();
                 if (tabId === 'breeding') renderBreedingHorses();
                 if (tabId === 'transactions') renderTransactions();
+                if (tabId === 'races') renderRaceHistory(); // Refresh race history
             };
             
             // Subscribe to data changes
@@ -592,7 +671,14 @@
                 renderRacingHorses();
                 renderBreedingHorses();
                 renderTransactions();
+                renderRaceHistory(); // Refresh race history on data save
             };
+            
+            // Horse selector for race history
+            const horseSelect = document.getElementById('race-history-horse');
+            horseSelect.addEventListener('change', function() {
+                renderRaceHistory();
+            });
         });
         
         document.getElementById('debug-check-token').addEventListener('click', function() {
