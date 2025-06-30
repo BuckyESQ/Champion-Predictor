@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZED Champions Tracker - Debug Page</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        h1, h2 {
+            color: #3498db;
+        }
+        .section {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .result {
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+        .button {
+            background-color: #2e86c1;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .button:hover {
+            background-color: #3498db;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #F44336; }
+        .info { color: #2196F3; }
+        .test-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ZED Champions Tracker - Debug Page</h1>
+    <p>Use this page to troubleshoot issues with the application.</p>
+    
+    <div class="section">
+        <h2>Environment</h2>
+        <div class="test-group">
+            <button id="check-environment" class="button">Check Environment</button>
+        </div>
+        <div id="environment-result" class="result">Click the button to check environment variables and configuration.</div>
+    </div>
+    
+    <div class="section">
+        <h2>File System</h2>
+        <div class="test-group">
+            <button id="check-files" class="button">Check Files</button>
+            <button id="check-api-proxy" class="button">Check API Proxy</button>
+        </div>
+        <div id="files-result" class="result">Click the button to check for required files.</div>
+    </div>
+    
+    <div class="section">
+        <h2>API Testing</h2>
+        <div class="test-group">
+            <button id="test-api-options" class="button">Test OPTIONS Request</button>
+            <button id="test-api-get" class="button">Test GET Request</button>
+            <button id="test-api-post" class="button">Test POST Request</button>
+            <button id="test-api-me" class="button">Test /me</button>
+            <button id="test-api-stable" class="button">Test /stable/racing</button>
+            <button id="test-api-horse" class="button">Test Horse by ID</button>
+        </div>
+        <div id="api-result" class="result">Click a button to test API connectivity.</div>
+    </div>
+    
+    <div class="section">
+        <h2>App Data</h2>
+        <div class="test-group">
+            <button id="check-localstorage" class="button">Check localStorage</button>
+            <button id="check-global-objects" class="button">Check Global Objects</button>
+        </div>
+        <div id="data-result" class="result">Click a button to examine application data.</div>
+    </div>
+
+    <script>
+        // Environment Checks
+        document.getElementById('check-environment').addEventListener('click', function() {
+            const result = document.getElementById('environment-result');
+            result.innerHTML = 'Checking environment...';
+            
+            const info = {
+                url: window.location.href,
+                host: window.location.hostname,
+                protocol: window.location.protocol,
+                userAgent: navigator.userAgent,
+                screenSize: `${window.innerWidth}x${window.innerHeight}`,
+                timestamp: new Date().toISOString()
+            };
+            
+            result.innerHTML = JSON.stringify(info, null, 2);
+        });
+        
+        // File System Checks
+        document.getElementById('check-files').addEventListener('click', async function() {
+            const result = document.getElementById('files-result');
+            result.innerHTML = 'Checking files...';
+            
+            const files = [
+                '/',
+                '/index.html',
+                '/app.js',
+                '/champion-predictor.html',
+                '/debug.html'
+            ];
+            
+            const results = [];
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(file);
+                    results.push({
+                        file,
+                        status: response.status,
+                        ok: response.ok,
+                        contentType: response.headers.get('content-type')
+                    });
+                } catch (error) {
+                    results.push({
+                        file,
+                        error: error.message
+                    });
+                }
+            }
+            
+            result.innerHTML = JSON.stringify(results, null, 2);
+        });
+        
+        document.getElementById('check-api-proxy').addEventListener('click', async function() {
+            const result = document.getElementById('files-result');
+            result.innerHTML = 'Checking API proxy...';
+            
+            try {
+                const response = await fetch('/api/zed/test', {
+                    method: 'OPTIONS',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                result.innerHTML = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    headers
+                }, null, 2);
+            } catch (error) {
+                result.innerHTML = JSON.stringify({
+                    error: error.message
+                }, null, 2);
+            }
+        });
+        
+        // API Testing
+        document.getElementById('test-api-options').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing OPTIONS request...';
+            
+            try {
+                const response = await fetch('/api/zed/test', {
+                    method: 'OPTIONS',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+                
+                result.innerHTML = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    headers
+                }, null, 2);
+            } catch (error) {
+                result.innerHTML = JSON.stringify({
+                    error: error.message
+                }, null, 2);
+            }
+        });
+        
+        document.getElementById('test-api-get').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing GET request...';
+            
+            try {
+                const response = await fetch('/api/zed/test', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = await response.text();
+                }
+                
+                result.innerHTML = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    data
+                }, null, 2);
+            } catch (error) {
+                result.innerHTML = JSON.stringify({
+                    error: error.message
+                }, null, 2);
+            }
+        });
+        
+        document.getElementById('test-api-post').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing POST request...';
+            
+            try {
+                const response = await fetch('/api/zed/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ test: true })
+                });
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    data = await response.text();
+                }
+                
+                result.innerHTML = JSON.stringify({
+                    status: response.status,
+                    ok: response.ok,
+                    data
+                }, null, 2);
+            } catch (error) {
+                result.innerHTML = JSON.stringify({
+                    error: error.message
+                }, null, 2);
+            }
+        });
+        
+        document.getElementById('test-api-me').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing /me endpoint...';
+            
+            try {
+              const token = localStorage.getItem('zedAuthToken') || '';
+              const response = await fetch('/api/zed/me', {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
+          
+          document.getElementById('test-api-stable').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Testing /stable/racing endpoint...';
+            
+            try {
+              const token = localStorage.getItem('zedAuthToken') || '';
+              const response = await fetch('/api/zed/stable/racing', {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data: typeof data === 'object' ? data : { text: data }
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
+          
+          document.getElementById('test-api-horse').addEventListener('click', async function() {
+            const result = document.getElementById('api-result');
+            const horseId = prompt('Enter a horse ID:');
+            
+            if (!horseId) {
+              result.innerHTML = 'Horse ID is required';
+              return;
+            }
+            
+            result.innerHTML = `Testing /horses/${horseId} endpoint...`;
+            
+            try {
+              const token = localStorage.getItem('zedAuthToken') || '';
+              const response = await fetch(`/api/zed/horses/${horseId}`, {
+                method: 'GET',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
+                }
+              });
+              
+              let data;
+              try {
+                data = await response.json();
+              } catch (e) {
+                data = await response.text();
+              }
+              
+              result.innerHTML = JSON.stringify({
+                status: response.status,
+                ok: response.ok,
+                data
+              }, null, 2);
+            } catch (error) {
+              result.innerHTML = JSON.stringify({
+                error: error.message
+              }, null, 2);
+            }
+          });
+        
+        // App Data Checks
+        document.getElementById('check-localstorage').addEventListener('click', function() {
+            const result = document.getElementById('data-result');
+            result.innerHTML = 'Checking localStorage...';
+            
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                try {
+                    storage[key] = JSON.parse(localStorage.getItem(key));
+                } catch (e) {
+                    storage[key] = localStorage.getItem(key);
+                }
+            }
+            
+            result.innerHTML = JSON.stringify(storage, null, 2);
+        });
+        
+        document.getElementById('check-global-objects').addEventListener('click', function() {
+            const result = document.getElementById('data-result');
+            result.innerHTML = 'Checking global objects...';
+            
+            const globals = {
+                zedAuth: typeof window.zedAuth === 'object',
+                zedApi: typeof window.zedApi === 'object',
+                activateTab: typeof window.activateTab === 'function',
+                showStatus: typeof window.showStatus === 'function',
+                saveData: typeof window.saveData === 'function',
+                horses: Array.isArray(window.horses),
+                horsesCount: window.horses?.length || 0,
+                breedingHorses: Array.isArray(window.breedingHorses),
+                breedingHorsesCount: window.breedingHorses?.length || 0,
+                transactions: Array.isArray(window.transactions),
+                transactionsCount: window.transactions?.length || 0
+            };
+            
+            result.innerHTML = JSON.stringify(globals, null, 2);
+        });
+        // Add this in your debug.html script section
+        // Duplicate event listener for 'test-api-me' removed to avoid confusion and errors.
