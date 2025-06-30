@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StableFields ZED Champions Tracker</title>
+    <style>
+        :root {
+            --primary-color: #2e86c1;
+            --secondary-color: #3498db;
+            --background-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --tab-bg: #2c3e50;
+            --tab-active-bg: #34495e;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+        }
+        
+        .section {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .tab-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            background-color: var(--tab-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .tab-button.active {
+            background-color: var(--tab-active-bg);
+            color: var(--secondary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        input, select, textarea {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        #horses-table, #breeding-horses-table, #transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        #horses-table th, #horses-table td,
+        #breeding-horses-table th, #breeding-horses-table td, 
+        #transactions-table th, #transactions-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #horses-table th, #breeding-horses-table th, #transactions-table th {
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        /* Add hover effect for rows */
+        #horses-table tbody tr:hover, 
+        #breeding-horses-table tbody tr:hover,
+        #transactions-table tbody tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>ZED Champions Tracker</h1>
+    
+    <div id="tab-buttons" class="tab-buttons">
+        <button class="tab-button active" data-tab="racing">Racing</button>
+        <button class="tab-button" data-tab="breeding">Breeding</button>
+        <button class="tab-button" data-tab="transactions">Transactions</button>
+        <button class="tab-button" data-tab="import">Import</button>
+    </div>
+    
+    <div id="tab-content">
+        <!-- Racing Tab Content -->
+        <div id="tab-content-racing" class="tab-content active">
+            <div class="section" id="horses-section">
+                <h2>Racing Horses</h2>
+                <div class="content-wrapper">
+                    <h3>Add New Racing Horse</h3>
+                    <form id="add-horse-form">
+                        <div class="form-grid">
+                            <div>
+                                <label for="horse-name">Name:</label>
+                                <input type="text" id="horse-name" required>
+                            </div>
+                            <div>
+                                <label for="horse-bloodline">Bloodline:</label>
+                                <select id="horse-bloodline" required>
+                                    <option value="">--Select--</option>
+                                    <option value="Nakamoto">Nakamoto</option>
+                                    <option value="Szabo">Szabo</option>
+                                    <option value="Finney">Finney</option>
+                                    <option value="Buterin">Buterin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="horse-color">Color:</label>
+                                <select id="horse-color" required>
+                                    <option value="">--Select--</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="horse-gender">Gender:</label>
+                                <select id="horse-gender" required>
+                                    <option value="">--Select--</option>
+                                    <option value="Colt">Colt</option>
+                                    <option value="Filly">Filly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="button">Add Horse</button>
+                    </form>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Racing Horses List</h3>
+                    <table id="horses-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Bloodline</th>
+                                <th>Gender</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breeding Tab Content -->
+        <div id="tab-content-breeding" class="tab-content">
+            <div class="section">
+                <h2>Breeding Horses</h2>
+                <div class="content-wrapper">
+                    <h3>Add New Breeding Horse</h3>
+                    <form id="add-breeding-horse-form">
+                        <div class="form-grid">
+                            <div>
+                                <label for="breeding-horse-name">Name:</label>
+                                <input type="text" id="breeding-horse-name" required>
+                            </div>
+                            <div>
+                                <label for="breeding-horse-bloodline">Bloodline:</label>
+                                <select id="breeding-horse-bloodline" required>
+                                    <option value="">--Select--</option>
+                                    <option value="Nakamoto">Nakamoto</option>
+                                    <option value="Szabo">Szabo</option>
+                                    <option value="Finney">Finney</option>
+                                    <option value="Buterin">Buterin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="breeding-horse-color">Color:</label>
+                                <select id="breeding-horse-color" required>
+                                    <option value="">--Select--</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="breeding-horse-gender">Gender:</label>
+                                <select id="breeding-horse-gender" required>
+                                    <option value="">--Select--</option>
+                                    <option value="Colt">Colt</option>
+                                    <option value="Filly">Filly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="button">Add Horse</button>
+                    </form>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Breeding Horses List</h3>
+                    <table id="breeding-horses-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Bloodline</th>
+                                <th>Gender</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transactions Tab Content -->
+        <div id="tab-content-transactions" class="tab-content">
+            <div class="section">
+                <h2>Transactions</h2>
+                <div class="content-wrapper">
+                    <h3>Add New Transaction</h3>
+                    <form id="add-transaction-form">
+                        <div class="form-grid">
+                            <div>
+                                <label for="transaction-type">Type:</label>
+                                <select id="transaction-type" required>
+                                    <option value="">--Select--</option>
+                                    <option value="Purchase">Purchase</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Race Entry">Race Entry</option>
+                                    <option value="Race Winnings">Race Winnings</option>
+                                    <option value="Stud Fee">Stud Fee</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="transaction-horse">Horse:</label>
+                                <select id="transaction-horse">
+                                    <option value="">--Select--</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="transaction-amount">Amount:</label>
+                                <input type="number" id="transaction-amount" step="0.01" required>
+                            </div>
+                            <div>
+                                <label for="transaction-date">Date:</label>
+                                <input type="date" id="transaction-date" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="button">Add Transaction</button>
+                    </form>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Transactions List</h3>
+                    <table id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Horse</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Import Tab Content -->
+        <div id="tab-content-import" class="tab-content">
+            <div id="api-import-container" class="section">
+                <!-- API Import UI will be injected here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Emergency reset button -->
+    <button id="emergency-reset-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
+        Reset App
+    </button>
+    
+    <!-- Script References -->
+    <script src="app.js"></script>
+
+    <script>
+        // Add emergency reset functionality
+        document.getElementById('emergency-reset-btn').addEventListener('click', function() {
+            if (confirm('This will reset the application state. Continue?')) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
+EOL
