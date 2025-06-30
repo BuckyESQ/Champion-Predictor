@@ -162,6 +162,34 @@ class ZedApiService {
       return { success: false, message: error.message };
     }
   }
+  
+  async fetchHorseRaces(horseId) {
+    try {
+      // Clean the horse ID if needed
+      let cleanId = horseId;
+      if (typeof horseId === 'string') {
+        if (horseId.includes('app.zedchampions.com/horse/')) {
+          const parts = horseId.split('horse/');
+          cleanId = parts[parts.length - 1].split('/')[0].trim();
+        }
+      }
+      
+      // First get the horse details
+      const horseData = await this.fetchFromApi(`/horses/${cleanId}`);
+      
+      // Then fetch race history
+      const raceData = await this.fetchFromApi(`/horses/${cleanId}/races`);
+      
+      // Return both horse details and race history
+      return {
+        success: true,
+        horse: horseData,
+        races: raceData.races || []
+      };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  }
 }
 
 // ------------- Utility Functions -------------
