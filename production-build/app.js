@@ -129,11 +129,21 @@ class ZedApiService {
   
   async fetchHorse(horseId) {
     try {
-      // Extract just the ID if a full URL is provided
+      // Extract just the ID if a full URL or other format is provided
       let cleanId = horseId;
-      if (typeof horseId === 'string' && horseId.includes('https://')) {
-        cleanId = horseId.split('horse/')[1];
+      
+      // Check if it's a URL or has the URL embedded
+      if (typeof horseId === 'string') {
+        // Case: Full URL like https://app.zedchampions.com/horse/96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+        if (horseId.includes('app.zedchampions.com/horse/')) {
+          const parts = horseId.split('horse/');
+          cleanId = parts[parts.length - 1].split('/')[0].trim();
+        } 
+        // Case: Just an ID - leave as is
       }
+      
+      console.log(`Original horse ID: ${horseId}`);
+      console.log(`Cleaned horse ID: ${cleanId}`);
       
       const data = await this.fetchFromApi(`/horses/${cleanId}`);
       return { success: true, data };
