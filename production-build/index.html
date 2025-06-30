@@ -418,6 +418,16 @@
                     </div>
                 </div>
             </div>
+            
+            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h3>Debug Tools</h3>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="debug-check-token" class="button">Check Token</button>
+                    <button id="debug-test-api" class="button">Test API</button>
+                    <button id="debug-log-storage" class="button">Log Storage</button>
+                </div>
+                <div id="debug-output" class="import-status" style="background-color: #2c3e50; font-family: monospace; white-space: pre-wrap;"></div>
+            </div>
         </div>
     </div>
     
@@ -578,6 +588,56 @@
                 renderBreedingHorses();
                 renderTransactions();
             };
+        });
+        
+        document.getElementById('debug-check-token').addEventListener('click', function() {
+            const token = localStorage.getItem('zedAuthToken');
+            const output = document.getElementById('debug-output');
+            
+            if (!token) {
+                output.innerHTML = 'No token found in localStorage.';
+                return;
+            }
+            
+            // Show token info without revealing the full token
+            output.innerHTML = `Token found: ${token.substring(0, 10)}...${token.substring(token.length - 5)}
+Length: ${token.length} characters
+Format: ${token.includes('.') ? 'Looks like JWT format' : 'Not JWT format'}`;
+        });
+        
+        document.getElementById('debug-test-api').addEventListener('click', async function() {
+            const output = document.getElementById('debug-output');
+            output.innerHTML = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                output.innerHTML = `API test endpoint response:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.innerHTML = `API test error: ${error.message}`;
+            }
+        });
+        
+        document.getElementById('debug-log-storage').addEventListener('click', function() {
+            const output = document.getElementById('debug-output');
+            output.innerHTML = 'Current localStorage contents:';
+            
+            const storage = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                try {
+                    if (key === 'zedAuthToken') {
+                        const token = localStorage.getItem(key);
+                        storage[key] = `${token.substring(0, 10)}...${token.substring(token.length - 5)} (${token.length} chars)`;
+                    } else {
+                        storage[key] = JSON.parse(localStorage.getItem(key));
+                    }
+                } catch (e) {
+                    storage[key] = localStorage.getItem(key);
+                }
+            }
+            
+            output.innerHTML += '\n' + JSON.stringify(storage, null, 2);
         });
     </script>
 </body>
