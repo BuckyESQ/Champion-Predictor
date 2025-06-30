@@ -271,18 +271,30 @@ function saveData() {
   console.log("Data saved to localStorage");
 }
 
-// Horse ID helper function - Add this before the "Initialize Services" section
+// Horse ID helper function - Update this function in your app.js
 function cleanHorseId(input) {
   if (!input) return '';
   
-  // Case 1: Full URL 
-  if (input.includes('app.zedchampions.com/horse/')) {
+  // Case 1: Full URL pattern
+  if (typeof input === 'string' && input.includes('horse/')) {
     const parts = input.split('horse/');
-    return parts[parts.length - 1].split('/')[0].trim();
+    if (parts.length > 1) {
+      // Extract the ID from the last part, handling any trailing slashes or params
+      return parts[parts.length - 1].split(/[\/\?#]/)[0].trim();
+    }
   }
   
-  // Case 2: Just the ID - remove any whitespace
-  return input.trim();
+  // Case 2: Just the ID - but ensure it's a valid format
+  // A ZED horse ID is typically a UUID
+  const idPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const trimmedInput = input.trim();
+  if (idPattern.test(trimmedInput)) {
+    return trimmedInput;
+  }
+  
+  // If we're here, it's not a recognized format
+  // Just return the trimmed input and let the API handle errors
+  return trimmedInput;
 }
 
 // ------------- Initialize Services -------------
