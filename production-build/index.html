@@ -11,18 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Theme Colors and Variables */
         :root {
             --primary-color: #2e86c1;
             --secondary-color: #3498db;
+            --accent-color: #0EB3E3;
             --background-color: #1a1a1a;
             --text-color: #f0f0f0;
+            --muted-text: #8e9ea9;
             --border-color: #444;
             --success-color: #4CAF50;
             --error-color: #F44336;
+            --warning-color: #FFC107;
             --tab-bg: #2c3e50;
             --tab-active-bg: #34495e;
+            --section-bg: rgba(45, 52, 54, 0.8);
         }
         
+        /* Base Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--background-color);
@@ -35,13 +41,24 @@
         h1, h2, h3, h4 {
             font-family: 'Orbitron', sans-serif;
             color: var(--primary-color);
+            margin-top: 0;
         }
         
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Layout Components */
         .section {
-            background-color: rgba(255,255,255,0.05);
+            background-color: var(--section-bg);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 1px solid #3a3a3a;
         }
         
         .button {
@@ -51,13 +68,22 @@
             padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
         }
         
         .button:hover {
             background-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        /* Tab Navigation */
         .tab-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -69,14 +95,21 @@
             background-color: var(--tab-bg);
             border: none;
             color: var(--text-color);
-            padding: 10px 15px;
+            padding: 12px 20px;
             cursor: pointer;
             border-radius: 4px 4px 0 0;
+            transition: all 0.2s;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .tab-button:hover {
+            background-color: var(--tab-active-bg);
         }
         
         .tab-button.active {
-            background-color: var(--tab-active-bg);
-            color: var(--secondary-color);
+            background-color: var(--primary-color);
+            color: white;
         }
         
         .tab-content {
@@ -85,15 +118,38 @@
         
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
+        /* Form Elements */
         input, select, textarea {
             background-color: rgba(255,255,255,0.1);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 4px;
             width: 100%;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(14, 179, 227, 0.15);
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted-text);
+            font-size: 14px;
+            font-weight: 500;
         }
         
         .form-grid {
@@ -103,23 +159,107 @@
             margin-bottom: 20px;
         }
         
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin: 15px 0;
+            background-color: rgba(0,0,0,0.15);
+            border-radius: 4px;
+            overflow: hidden;
         }
         
-        th, td {
-            padding: 8px 12px;
+        th {
             text-align: left;
+            background-color: var(--tab-bg);
+            color: var(--secondary-color);
+            padding: 12px 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 10px 8px;
             border-bottom: 1px solid var(--border-color);
         }
         
+        tbody tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        /* Welcome Banner */
         #welcome-banner {
-            background-color: rgba(76, 175, 80, 0.1);
-            padding: 15px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(14, 179, 227, 0.1) 100%);
+            padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(46, 134, 193, 0.3);
+        }
+        
+        #welcome-banner h2 {
+            margin-top: 0;
+        }
+        
+        #welcome-banner a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        #welcome-banner a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Import Status */
+        .import-status {
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        /* Emergency Reset */
+        #emergency-reset-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .tab-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -127,7 +267,7 @@
     <div id="welcome-banner" class="section">
         <h2>Welcome to StableFields ZED Champions Tracker</h2>
         <p>This tool helps you track your ZED Champions horses, races, breeding, and more. Get started by entering your data or importing directly from the ZED Champions API.</p>
-        <p><a href="#tab-content-import" onclick="activateTab('import'); return false;" style="font-weight: bold;">Go to Import Tab</a> to quickly import your horses from ZED Champions.</p>
+        <p><a href="#tab-content-import" onclick="activateTab('import'); return false;">Go to Import Tab</a> to quickly import your horses from ZED Champions.</p>
     </div>
 
     <h1>ZED Champions Tracker</h1>
@@ -144,17 +284,27 @@
         <div id="tab-content-racing" class="tab-content">
             <div class="section">
                 <h2>Racing Horses</h2>
+                <p>Manage your racing horses and track their performance.</p>
+                
                 <table id="horses-table">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Bloodline</th>
                             <th>Gender</th>
-                            <th>Rating</th>
+                            <th>Rating ⭐</th>
+                            <th>ID</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="horses-table-body">
+                        <!-- Racing horses will be displayed here -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No racing horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -163,17 +313,27 @@
         <div id="tab-content-breeding" class="tab-content">
             <div class="section">
                 <h2>Breeding Horses</h2>
+                <p>Manage your breeding horses and track breeding operations.</p>
+                
                 <table id="breeding-horses-table">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Bloodline</th>
                             <th>Gender</th>
-                            <th>Rating</th>
+                            <th>Rating ⭐</th>
+                            <th>ID</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="breeding-horses-table-body">
+                        <!-- Breeding horses will be displayed here -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No breeding horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -182,6 +342,8 @@
         <div id="tab-content-transactions" class="tab-content">
             <div class="section">
                 <h2>Transactions</h2>
+                <p>Track your financial transactions related to horses.</p>
+                
                 <table id="transactions-table">
                     <thead>
                         <tr>
@@ -192,7 +354,14 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="transactions-table-body">
+                        <!-- Transactions will be displayed here -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted-text);">
+                                No transactions recorded yet.
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -222,7 +391,7 @@
                         <button id="import-racing-stable-btn" class="button">Import Racing Stable</button>
                         <button id="import-breeding-stable-btn" class="button">Import Breeding Stable</button>
                     </div>
-                    <div id="import-status" style="margin-top: 10px;"></div>
+                    <div id="import-status" class="import-status"></div>
                     
                     <h4>Import Single Horse</h4>
                     <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-end;">
@@ -239,15 +408,15 @@
                         </div>
                         <button id="import-single-horse-btn" class="button">Import Horse</button>
                     </div>
-                    <div id="single-import-status"></div>
+                    <div id="single-import-status" class="import-status"></div>
                 </div>
             </div>
         </div>
     </div>
     
     <!-- Emergency reset button -->
-    <button id="emergency-reset-btn" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: #ff5722; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
-        Reset App
+    <button id="emergency-reset-btn">
+        Reset App Data
     </button>
     
     <!-- Script References -->
@@ -256,10 +425,152 @@
     <script>
         // Emergency reset functionality
         document.getElementById('emergency-reset-btn').addEventListener('click', function() {
-            if (confirm('This will reset the application state. Continue?')) {
+            if (confirm('This will reset ALL application data. Continue?')) {
                 localStorage.clear();
                 window.location.reload();
             }
+        });
+        
+        // Table rendering
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render racing horses table
+            function renderRacingHorses() {
+                const tbody = document.getElementById('horses-table-body');
+                if (!tbody) return;
+                
+                const horses = window.horses || [];
+                
+                if (horses.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No racing horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort horses by name
+                const sortedHorses = [...horses].sort((a, b) => a.name.localeCompare(b.name));
+                
+                tbody.innerHTML = '';
+                sortedHorses.forEach(horse => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${horse.name}</td>
+                        <td>${horse.bloodline || 'Unknown'}</td>
+                        <td>${horse.gender || 'Unknown'}</td>
+                        <td>${horse.stars || '0'} ⭐</td>
+                        <td>${horse.zedId || 'N/A'}</td>
+                        <td>
+                            <button class="button" onclick="alert('View details for ${horse.name}')">View</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render breeding horses table
+            function renderBreedingHorses() {
+                const tbody = document.getElementById('breeding-horses-table-body');
+                if (!tbody) return;
+                
+                const horses = window.breedingHorses || [];
+                
+                if (horses.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--muted-text);">
+                                No breeding horses found. Import horses from the Import tab.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort horses by name
+                const sortedHorses = [...horses].sort((a, b) => a.name.localeCompare(b.name));
+                
+                tbody.innerHTML = '';
+                sortedHorses.forEach(horse => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${horse.name}</td>
+                        <td>${horse.bloodline || 'Unknown'}</td>
+                        <td>${horse.gender || 'Unknown'}</td>
+                        <td>${horse.stars || '0'} ⭐</td>
+                        <td>${horse.zedId || 'N/A'}</td>
+                        <td>
+                            <button class="button" onclick="alert('View details for ${horse.name}')">View</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render transactions table
+            function renderTransactions() {
+                const tbody = document.getElementById('transactions-table-body');
+                if (!tbody) return;
+                
+                const transactions = window.transactions || [];
+                
+                if (transactions.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--muted-text);">
+                                No transactions recorded yet.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Sort transactions by date (newest first)
+                const sortedTransactions = [...transactions].sort((a, b) => 
+                    new Date(b.date) - new Date(a.date));
+                
+                tbody.innerHTML = '';
+                sortedTransactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.type}</td>
+                        <td>${transaction.horseName || 'N/A'}</td>
+                        <td>$${transaction.amount.toFixed(2)}</td>
+                        <td>
+                            <button class="button" onclick="alert('Edit transaction')">Edit</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Render all tables and set up auto-update
+            renderRacingHorses();
+            renderBreedingHorses();
+            renderTransactions();
+            
+            // Update tables when tab is changed
+            const originalActivateTab = window.activateTab;
+            window.activateTab = function(tabId) {
+                originalActivateTab(tabId);
+                
+                // Refresh data for the selected tab
+                if (tabId === 'racing') renderRacingHorses();
+                if (tabId === 'breeding') renderBreedingHorses();
+                if (tabId === 'transactions') renderTransactions();
+            };
+            
+            // Subscribe to data changes
+            const originalSaveData = window.saveData;
+            window.saveData = function() {
+                originalSaveData();
+                renderRacingHorses();
+                renderBreedingHorses();
+                renderTransactions();
+            };
         });
     </script>
 </body>
