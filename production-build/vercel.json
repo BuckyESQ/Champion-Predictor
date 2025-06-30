@@ -1,16 +1,8 @@
 {
   "version": 2,
-  "functions": {
-    "api/test.js": {
-      "runtime": "nodejs18.x"
-    },
-    "api/zed/[...path].js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "routes": [
-    { "src": "/api/test", "dest": "/api/test" },
-    { "src": "/api/zed/(.*)", "dest": "/api/zed/$1" }
+  "rewrites": [
+    { "source": "/api/test", "destination": "/api/test" },
+    { "source": "/api/zed/:path*", "destination": "/api/zed/[...path]" }
   ],
   "headers": [
     {
@@ -23,6 +15,5 @@
       ]
     }
   ],
-  "outputDirectory": "production-build",
   "domains": ["stablefields.com", "www.stablefields.com"]
 }
