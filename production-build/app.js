@@ -74,7 +74,8 @@ class ZedApiService {
     const options = {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       }
     };
     
@@ -94,15 +95,35 @@ class ZedApiService {
       console.log("Fetching from API:", url);
       const response = await fetch(url, options);
       
-      // First, try to get the response as text
-      const responseText = await response.text();
+      if (!response.ok) {
+        let errorMessage = `HTTP error: ${response.status}`;
+        try {
+          // Try to get more details from the error response
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = `API error: ${errorData.error}`;
+          }
+        } catch (e) {
+          // If parsing fails, use the response text
+          try {
+            errorMessage = await response.text();
+          } catch (textError) {
+            // Fallback to status
+            errorMessage = `HTTP error: ${response.status}`;
+          }
+        }
+        throw new Error(errorMessage);
+      }
       
-      // Then try to parse it as JSON
+      // Get response as text first
+      const text = await response.text();
+      
+      // Try to parse as JSON
       try {
-        return JSON.parse(responseText);
-      } catch (jsonError) {
-        // If not valid JSON, return an error object
-        throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}...`);
+        return text ? JSON.parse(text) : {};
+      } catch (e) {
+        console.error("Error parsing JSON:", e);
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}...`);
       }
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
