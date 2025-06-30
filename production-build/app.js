@@ -57,7 +57,7 @@ class ZedApiService {
   constructor(authManager) {
     this.authManager = authManager;
     
-    // Dynamic API base URL
+    // Dynamic API base URL - make sure the path matches our serverless function
     const host = window.location.hostname;
     const isDev = host === 'localhost' || host === '127.0.0.1';
     this.apiBase = isDev ? 'http://localhost:3000/api/zed' : '/api/zed';
