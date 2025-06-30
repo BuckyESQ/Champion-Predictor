@@ -195,6 +195,20 @@ function saveData() {
   console.log("Data saved to localStorage");
 }
 
+// Horse ID helper function - Add this before the "Initialize Services" section
+function cleanHorseId(input) {
+  if (!input) return '';
+  
+  // Case 1: Full URL 
+  if (input.includes('app.zedchampions.com/horse/')) {
+    const parts = input.split('horse/');
+    return parts[parts.length - 1].split('/')[0].trim();
+  }
+  
+  // Case 2: Just the ID - remove any whitespace
+  return input.trim();
+}
+
 // ------------- Initialize Services -------------
 const zedAuth = new ZedAuthManager();
 const zedApi = new ZedApiService(zedAuth);
@@ -429,12 +443,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const importSingleHorseBtn = document.getElementById('import-single-horse-btn');
   if (importSingleHorseBtn) {
     importSingleHorseBtn.addEventListener('click', async function() {
-      const horseId = document.getElementById('zed-horse-id').value.trim();
+      const rawHorseId = document.getElementById('zed-horse-id').value.trim();
+      const cleanedId = cleanHorseId(rawHorseId); // Use the helper function
       const importType = document.getElementById('import-horse-type').value;
       const statusEl = document.getElementById('single-import-status');
       
-      if (!horseId) {
-        showStatus(statusEl, 'Please enter a horse ID.', false);
+      if (!cleanedId) {
+        showStatus(statusEl, 'Please enter a valid horse ID or URL.', false);
         return;
       }
       
@@ -443,10 +458,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      showStatus(statusEl, `Importing horse ${horseId}... Please wait.`, null);
+      showStatus(statusEl, `Importing horse ${cleanedId}... Please wait.`, null);
       
       try {
-        const result = await zedApi.fetchHorse(horseId);
+        const result = await zedApi.fetchHorse(cleanedId);
         
         if (result.success) {
           const horse = result.data;
