@@ -8,9 +8,8 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
-    "node-fetch": "^3.3.0" 
+    "node-fetch": "^3.3.2"
   },
-  "devDependencies": {},
   "author": "",
   "license": "ISC",
   "type": "module"
