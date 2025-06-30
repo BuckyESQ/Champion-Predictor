@@ -11,12 +11,12 @@ module.exports = async (req, res) => {
     
     // Handle different formats of horse IDs
     if (cleanPath.includes('horse/')) {
-      // Extract ID from full URL path like https://app.zedchampions.com/horse/96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+      // Extract ID from URL path
       const parts = cleanPath.split('horse/');
       const horseId = parts[parts.length - 1].split('/')[0].trim();
       cleanPath = `horses/${horseId}`;
     } else if (cleanPath.startsWith('horses/https://')) {
-      // Handle malformed URL where the full URL was passed as the ID
+      // Handle malformed URL
       const urlParts = cleanPath.split('horses/https://app.zedchampions.com/horse/');
       if (urlParts.length > 1) {
         const horseId = urlParts[1].split('/')[0].trim();
@@ -46,11 +46,17 @@ module.exports = async (req, res) => {
     
     // Forward authorization header if present
     if (req.headers.authorization) {
-      headers['Authorization'] = req.headers.authorization;
+      console.log('Authorization header present');
+      headers.Authorization = req.headers.authorization;
+    } else {
+      console.log('No authorization header');
     }
     
     // Parse the URL
     const parsedUrl = new URL(apiUrl);
+    
+    // Log the request details
+    console.log(`Making request: ${req.method} ${parsedUrl.hostname}${parsedUrl.pathname}`);
     
     // Configure request options
     const options = {
@@ -65,6 +71,8 @@ module.exports = async (req, res) => {
       const proxyReq = https.request(options, (proxyRes) => {
         let responseBody = '';
         
+        console.log(`Response status: ${proxyRes.statusCode}`);
+        
         proxyRes.on('data', (chunk) => {
           responseBody += chunk;
         });
@@ -72,11 +80,18 @@ module.exports = async (req, res) => {
         proxyRes.on('end', () => {
           // Try to parse JSON response, send as text if not valid JSON
           try {
-            const jsonResponse = JSON.parse(responseBody);
-            res.status(proxyRes.statusCode).json(jsonResponse);
+            if (responseBody) {
+              const jsonResponse = JSON.parse(responseBody);
+              console.log('Successfully parsed JSON response');
+              res.status(proxyRes.statusCode).json(jsonResponse);
+            } else {
+              console.log('Empty response body');
+              res.status(proxyRes.statusCode).json({});
+            }
           } catch (err) {
             console.log(`Error parsing JSON response: ${err.message}`);
-            res.status(proxyRes.statusCode).send(responseBody);
+            console.log(`Response body (first 100 chars): ${responseBody.substring(0, 100)}`);
+            res.status(proxyRes.statusCode).send(responseBody || 'No response data');
           }
           resolve();
         });
