@@ -268,11 +268,12 @@
             result.innerHTML = 'Testing /me endpoint...';
             
             try {
+              const token = localStorage.getItem('zedAuthToken') || '';
               const response = await fetch('/api/zed/me', {
                 method: 'GET',
                 headers: { 
                   'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
                 }
               });
               
@@ -300,11 +301,12 @@
             result.innerHTML = 'Testing /stable/racing endpoint...';
             
             try {
+              const token = localStorage.getItem('zedAuthToken') || '';
               const response = await fetch('/api/zed/stable/racing', {
                 method: 'GET',
                 headers: { 
                   'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
                 }
               });
               
@@ -339,11 +341,12 @@
             result.innerHTML = `Testing /horses/${horseId} endpoint...`;
             
             try {
+              const token = localStorage.getItem('zedAuthToken') || '';
               const response = await fetch(`/api/zed/horses/${horseId}`, {
                 method: 'GET',
                 headers: { 
                   'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + (localStorage.getItem('zedAuthToken') || '')
+                  'Authorization': 'Bearer ' + (token ? '[MASKED]' : '')
                 }
               });
               
@@ -404,6 +407,5 @@
             
             result.innerHTML = JSON.stringify(globals, null, 2);
         });
-    </script>
-</body>
-</html>
+        // Add this in your debug.html script section
+        // Duplicate event listener for 'test-api-me' removed to avoid confusion and errors.
