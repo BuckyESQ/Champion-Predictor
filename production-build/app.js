@@ -556,6 +556,115 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  
+  // Add this to your event handlers section
+  const importHorseWithRacesBtn = document.getElementById('import-horse-with-races-btn');
+  if (importHorseWithRacesBtn) {
+    importHorseWithRacesBtn.addEventListener('click', async function() {
+      const rawHorseId = document.getElementById('zed-horse-id').value.trim();
+      const cleanedId = cleanHorseId(rawHorseId);
+      const importType = document.getElementById('import-horse-type').value;
+      const statusEl = document.getElementById('single-import-status');
+      
+      if (!cleanedId) {
+        showStatus(statusEl, 'Please enter a valid horse ID or URL.', false);
+        return;
+      }
+      
+      if (!zedAuth.getToken()) {
+        showStatus(statusEl, 'Please set your API token first.', false);
+        return;
+      }
+      
+      showStatus(statusEl, `Importing horse ${cleanedId} with race history... Please wait.`, null);
+      
+      try {
+        const result = await zedApi.fetchHorseRaces(cleanedId);
+        
+        if (result.success) {
+          const horse = result.horse;
+          const races = result.races;
+          
+          // Prepare horse data
+          const horseData = {
+            id: crypto.randomUUID(),
+            name: horse.name,
+            bloodline: horse.bloodline,
+            gender: horse.gender,
+            color: horse.color || '#CCCCCC',
+            stars: horse.overall_rating || 0,
+            zedId: horse.id,
+            importDate: new Date().toISOString()
+          };
+          
+          // Add race history
+          const raceHistory = races.map(race => ({
+            id: crypto.randomUUID(),
+            horseId: horse.id,
+            raceId: race.id,
+            date: race.timestamp,
+            distance: race.distance,
+            position: race.position,
+            class: race.class,
+            prize: race.prize_pool
+          }));
+          
+          if (importType === 'racing') {
+            // Update or add the horse
+            const existingIndex = window.horses.findIndex(h => h.zedId === horse.id);
+            
+            if (existingIndex >= 0) {
+              // Update existing horse
+              window.horses[existingIndex] = {
+                ...window.horses[existingIndex],
+                ...horseData,
+                races: raceHistory
+              };
+              showStatus(statusEl, `Updated racing horse: ${horse.name} with ${races.length} races`, true);
+            } else {
+              // Add new horse
+              window.horses.push({
+                ...horseData,
+                races: raceHistory
+              });
+              showStatus(statusEl, `Imported new racing horse: ${horse.name} with ${races.length} races`, true);
+            }
+            
+            // Switch to racing tab
+            activateTab('racing');
+          } else {
+            // Update or add the breeding horse
+            const existingIndex = window.breedingHorses.findIndex(h => h.zedId === horse.id);
+            
+            if (existingIndex >= 0) {
+              window.breedingHorses[existingIndex] = {
+                ...window.breedingHorses[existingIndex],
+                ...horseData,
+                races: raceHistory
+              };
+              showStatus(statusEl, `Updated breeding horse: ${horse.name} with ${races.length} races`, true);
+            } else {
+              window.breedingHorses.push({
+                ...horseData,
+                races: raceHistory
+              });
+              showStatus(statusEl, `Imported new breeding horse: ${horse.name} with ${races.length} races`, true);
+            }
+            
+            // Switch to breeding tab
+            activateTab('breeding');
+          }
+          
+          // Save the updated data
+          saveData();
+        } else {
+          showStatus(statusEl, `Import failed: ${result.message}`, false);
+        }
+      } catch (error) {
+        showStatus(statusEl, `Import error: ${error.message}`, false);
+      }
+    });
+  }
 });
 
 // Make key objects available globally
