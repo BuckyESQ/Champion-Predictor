@@ -1,0 +1,22 @@
+.html
+
+// Add this in your debug.html script section
+document.getElementById('test-api-me').addEventListener('click', async function() {
+  const result = document.getElementById('api-result');
+  
+  // First, check the token format
+  const token = localStorage.getItem('zedAuthToken');
+  if (!token) {
+    result.innerHTML = 'No ZED auth token found in localStorage. Please set your token first.';
+    return;
+  }
+  
+  // Verify token format looks reasonable
+  if (token.length < 20 || !token.includes('.')) {
+    result.innerHTML = `WARNING: Token doesn't look like a valid JWT (${token.substring(0, 10)}...)`; 
+    return;
+  }
+  
+  result.innerHTML = 'Testing /me endpoint...';
+  // ... rest of the function
+});
