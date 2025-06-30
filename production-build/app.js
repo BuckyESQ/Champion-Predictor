@@ -129,7 +129,13 @@ class ZedApiService {
   
   async fetchHorse(horseId) {
     try {
-      const data = await this.fetchFromApi(`/horses/${horseId}`);
+      // Extract just the ID if a full URL is provided
+      let cleanId = horseId;
+      if (typeof horseId === 'string' && horseId.includes('https://')) {
+        cleanId = horseId.split('horse/')[1];
+      }
+      
+      const data = await this.fetchFromApi(`/horses/${cleanId}`);
       return { success: true, data };
     } catch (error) {
       return { success: false, message: error.message };
