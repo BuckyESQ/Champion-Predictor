@@ -1,8 +1,16 @@
 {
   "version": 2,
+  "functions": {
+    "api/test.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/zed/[...path].js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "routes": [
-    { "src": "/api/zed/(.*)", "dest": "/api/zed/[...path].js" },
-    { "src": "/api/test", "dest": "/api/test.js" }
+    { "src": "/api/test", "dest": "/api/test" },
+    { "src": "/api/zed/(.*)", "dest": "/api/zed/$1" }
   ],
   "headers": [
     {
