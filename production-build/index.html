@@ -394,21 +394,28 @@
                     <div id="import-status" class="import-status"></div>
                     
                     <h4>Import Single Horse</h4>
-                    <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-end;">
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
                         <div>
-                            <label for="zed-horse-id">Horse ID:</label>
-                            <input type="text" id="zed-horse-id" placeholder="Enter horse ID">
+                            <label for="zed-horse-id">Horse ID or URL:</label>
+                            <input type="text" id="zed-horse-id" placeholder="Enter horse ID or full URL from ZED Champions">
+                            <p style="margin-top: 5px; font-size: 12px; color: #8e9ea9;">
+                                Example formats:
+                                <br>- Full URL: https://app.zedchampions.com/horse/96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+                                <br>- ID only: 96b9b9c8-45a5-4cf7-bb9f-3812e6bf59ad
+                            </p>
                         </div>
-                        <div>
-                            <label for="import-horse-type">Import As:</label>
-                            <select id="import-horse-type">
-                                <option value="racing">Racing Horse</option>
-                                <option value="breeding">Breeding Horse</option>
-                            </select>
+                        <div style="display: flex; gap: 10px; align-items: flex-end;">
+                            <div>
+                                <label for="import-horse-type">Import As:</label>
+                                <select id="import-horse-type">
+                                    <option value="racing">Racing Horse</option>
+                                    <option value="breeding">Breeding Horse</option>
+                                </select>
+                            </div>
+                            <button id="import-single-horse-btn" class="button">Import Horse</button>
                         </div>
-                        <button id="import-single-horse-btn" class="button">Import Horse</button>
+                        <div id="single-import-status" class="import-status"></div>
                     </div>
-                    <div id="single-import-status" class="import-status"></div>
                 </div>
             </div>
         </div>
