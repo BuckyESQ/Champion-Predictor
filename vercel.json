@@ -15,5 +15,6 @@
       ]
     }
   ],
-  "outputDirectory": "production-build"
+  "outputDirectory": "production-build",
+  "domains": ["stablefields.com", "www.stablefields.com"]
 }
